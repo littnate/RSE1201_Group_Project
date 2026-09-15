@@ -2,4 +2,4 @@
 *.o
 *.exe
 .DS_Store
-!MS_1.*.o
+!MS_1_files/*.o
