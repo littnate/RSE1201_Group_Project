@@ -1,0 +1,625 @@
+=== VehExplorer — Mission Setup ===
+Scenario file name / path: Is the file encrypted? (y/n): Randomize start position? (y/n): Mission type (1-8):
+  1 Casual Explore
+  2 Find 1 End Point
+  3 Reach 1 End Point
+  4 Find All End Points
+  5 Reach ALL End Points
+  6 Find ALL Danger Points
+  7 Find Map Boundaries
+  8 Map Everything
+Enter 1-8: 
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+Manual control ready. Enter 'v' for usage instructions.
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields : 
+200000 energy units allocated to shields! 
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 200090, Tot Shld Enrg Used : 0, Engy Left : 1485998, Shld Enrg Left : 200000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     f
+     _
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 200735, Tot Shld Enrg Used : 954, Engy Left : 1485353, Shld Enrg Left : 199046
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     f
+     .
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 1686088, Tot Enrg Used : 200825, Tot Shld Enrg Used : 954, Engy Left : 1485263, Shld Enrg Left : 199046
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     w
+     f
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 201463, Tot Shld Enrg Used : 1863, Engy Left : 1484625, Shld Enrg Left : 198137
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w
+     f
+     .
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 1686088, Tot Enrg Used : 201553, Tot Shld Enrg Used : 1863, Engy Left : 1484535, Shld Enrg Left : 198137
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #
+     w
+     f
+
+
+Enter your command (q to quit) : 
+INVALID / IMPASSABLE LOCATION! Unable to move NORTH!
+
+Initial Enrg : 1686088, Tot Enrg Used : 202247, Tot Shld Enrg Used : 3798, Engy Left : 1483841, Shld Enrg Left : 196202
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w
+     f
+     .
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'h'
+
+Initial Enrg : 1686088, Tot Enrg Used : 202337, Tot Shld Enrg Used : 3798, Engy Left : 1483751, Shld Enrg Left : 196202
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #   
+     w  h
+     f   
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 203033, Tot Shld Enrg Used : 5841, Engy Left : 1483055, Shld Enrg Left : 194159
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h
+     f   
+     .   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 203123, Tot Shld Enrg Used : 5841, Engy Left : 1482965, Shld Enrg Left : 194159
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #      
+     w  h  f
+     f      
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 203768, Tot Shld Enrg Used : 6795, Engy Left : 1482320, Shld Enrg Left : 193205
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f
+     f      
+     .      
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 1686088, Tot Enrg Used : 203858, Tot Shld Enrg Used : 6795, Engy Left : 1482230, Shld Enrg Left : 193205
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f         
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 204468, Tot Shld Enrg Used : 7609, Engy Left : 1481620, Shld Enrg Left : 192391
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f  _
+     f         
+     .         
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 1686088, Tot Enrg Used : 204558, Tot Shld Enrg Used : 7609, Engy Left : 1481530, Shld Enrg Left : 192391
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f  _
+     f         
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 205168, Tot Shld Enrg Used : 8423, Engy Left : 1480920, Shld Enrg Left : 191577
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f        _
+     .         
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'h'
+
+Initial Enrg : 1686088, Tot Enrg Used : 205258, Tot Shld Enrg Used : 8423, Engy Left : 1480830, Shld Enrg Left : 191577
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f        _
+              h
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 205954, Tot Shld Enrg Used : 10466, Engy Left : 1480134, Shld Enrg Left : 189534
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     .        h
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 1686088, Tot Enrg Used : 206044, Tot Shld Enrg Used : 10466, Engy Left : 1480044, Shld Enrg Left : 189534
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f         
+              h
+              X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 206738, Tot Shld Enrg Used : 12401, Engy Left : 1479350, Shld Enrg Left : 187599
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     .        h
+              X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 206828, Tot Shld Enrg Used : 12401, Engy Left : 1479260, Shld Enrg Left : 187599
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f         
+              h
+           f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 207473, Tot Shld Enrg Used : 13355, Engy Left : 1478615, Shld Enrg Left : 186645
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     .        h
+           f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 1686088, Tot Enrg Used : 207563, Tot Shld Enrg Used : 13355, Engy Left : 1478525, Shld Enrg Left : 186645
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f         
+              h
+           f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 208173, Tot Shld Enrg Used : 14169, Engy Left : 1477915, Shld Enrg Left : 185831
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     .        h
+        _  f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 1686088, Tot Enrg Used : 208263, Tot Shld Enrg Used : 14169, Engy Left : 1477825, Shld Enrg Left : 185831
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     #         
+     w  h  f   
+     f         
+              h
+     j  _  f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 208949, Tot Shld Enrg Used : 15070, Engy Left : 1477139, Shld Enrg Left : 184930
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     .        h
+     j     f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 209309, Tot Shld Enrg Used : 15070, Engy Left : 1476779, Shld Enrg Left : 184930
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        #         
+        w  h  f   
+        f         
+     f           h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 210003, Tot Shld Enrg Used : 15764, Engy Left : 1476085, Shld Enrg Left : 184236
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     w  h  f   
+     f         
+     _        h
+     j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 210648, Tot Shld Enrg Used : 16718, Engy Left : 1475440, Shld Enrg Left : 183282
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+        f         
+     f  .        h
+        j     f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 211008, Tot Shld Enrg Used : 16718, Engy Left : 1475080, Shld Enrg Left : 183282
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        #         
+        w  h  f   
+        f         
+     f           h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 211704, Tot Shld Enrg Used : 18761, Engy Left : 1474384, Shld Enrg Left : 181239
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     _  f         
+     f  .        h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 212349, Tot Shld Enrg Used : 19715, Engy Left : 1473739, Shld Enrg Left : 180285
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     .  f         
+     f  .        h
+        j     f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 212709, Tot Shld Enrg Used : 19715, Engy Left : 1473379, Shld Enrg Left : 180285
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        #         
+        w  h  f   
+        f         
+     f           h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 213403, Tot Shld Enrg Used : 20409, Engy Left : 1472685, Shld Enrg Left : 179591
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     .  f         
+     f  _        h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 214048, Tot Shld Enrg Used : 21363, Engy Left : 1472040, Shld Enrg Left : 178637
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     .  f         
+     f  .        h
+        j     f  X
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 1686088, Tot Enrg Used : 214408, Tot Shld Enrg Used : 21363, Engy Left : 1471680, Shld Enrg Left : 178637
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        #         
+        w  h  f   
+        f         
+     f           h
+        j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 215053, Tot Shld Enrg Used : 22317, Engy Left : 1471035, Shld Enrg Left : 177683
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     .  f         
+     f  .        h
+     _  j     f  X
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 215739, Tot Shld Enrg Used : 23218, Engy Left : 1470349, Shld Enrg Left : 176782
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+        w  h  f   
+     .  f         
+     f  .        h
+     .  j     f  X
+
+
+Enter your command (q to quit) : 
+Initial Enrg : 1686088, Tot Enrg Used : 215739, Tot Shld Enrg Used : 23218, Engy Left : 1470349, Shld Enrg Left : 176782
+Moves issued : 20, Successful moves : 19
+Scans issued : 16, Successful scans : 16
+
+Enter your command (q to quit) : Leaving manual control.
+
+=====================================
+=== Mission Summary Report ==========
+=====================================
+
+-- Final vehicle status --
+Initial Enrg : 1686088, Tot Enrg Used : 215739, Tot Shld Enrg Used : 23218, Engy Left : 1470349, Shld Enrg Left : 176782
+
+-- Command counters --
+Moves issued : 20, Successful moves : 19
+Scans issued : 16, Successful scans : 16
+
+-- Terrain scanned vs explored --
+Terrain     Scanned   Explored
+  '#'             1          0
+  'w'             1          1
+  'h'             2          2
+  'f'             4          4
+  ' '             3          3
+  '?'             0          3
+  'j'             1          1
+  'X'             1          1
+
+-- Observed move / shield energy by destination terrain --
+Terrain      MoveEnrg     ShldEnrg  Samples
+  'f'            3870         5724        6
+  'w'             638          909        1
+  'h'            1392         4086        2
+  ' '            1830         2442        3
+  'X'             694         1935        1
+  'j'            1372         1802        2
+  '?'            2729         4385        4
+
+-- Observed scan energy by direction / radius --
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1          270            0        3
+E         1          270            0        3
+S         1          270            0        3
+W         1          270            0        3
+NW        1          360            0        1
+NE        1          360            0        1
+SW        1          360            0        1
+SE        1          360            0        1
+
+=====================================
+=== End of Summary Report ===========
+=====================================
+Vehicle closed. Goodbye.

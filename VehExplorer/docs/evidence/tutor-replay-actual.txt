@@ -1,0 +1,208 @@
+Please enter the scenario file's name : Is the scenario file encrypted? (y/n) : Do you wish to randomize start position? (y/n) : Please select Mission Type :
+  1) Casual Explore
+  2) Find 1 End Point
+  3) Reach 1 End Point
+  4) Find ALL End Points
+  5) Reach ALL End Points
+  6) Find ALL Danger Points
+  7) Find Map Boundaries
+  8) Explore Everything
+Enter 1-8 : fileName : input-files/2026_Basic_Scenario_MS_1.dat, isFileEncrypted : 1, randomizeStartPosition : 0
+
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+
+*** Welcome to VehExplorer ! ***
+
+[ Usage Instructions ]
+-------------------------------------
+Enter 'q' to Quit
+Enter 'v' to show this help
+'w', 's', 'a', 'd' keys to MOVE vehicle North, South, West & East
+'t' key = Toggle Scan Radius (betw. 1-2)
+NumPad keys to SCAN : SW (1), S (2), SE (3), W (4), E (6), NW (7), N (8), NE (9) respectively
+'i' = Increase / divert energy to shield
+'z' key = Info on Vehicle Status
+'c' key = Map of terrain scanned by Vehicle
+'x' key = Map of terrain travelled by Vehicle
+In map display, '_' underline indicates curr. veh. location!
+
+Press 'y' key and hit Enter to continue! 
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+Moves issued : 0, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : 
+Currently Explored Terrain Layout :
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     _
+
+
+Enter your command (q to quit) : 
+Currently Scanned Terrain Layout :
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     _
+
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields (1 - 1686088) : Error: Insufficient energy reserves. Try reducing the quantity allocated to shield!
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields (1 - 1686088) : Error: Invalid energy qty '-5' for shield allocation!
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields (1 - 1686088) : 
+20000 energy units allocated to shields! 
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 1686088, Tot Enrg Used : 20000, Tot Shld Enrg Used : 0, Engy Left : 1666088, Shld Enrg Left : 20000
+Moves issued : 0, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : Toggle Scan Radius => now set to 2 terrain units!
+
+Enter your command (q to quit) : Toggle Scan Radius => now set to 1 terrain units!
+
+Enter your command (q to quit) : Invalid Command : '5', please try again!
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 20090, Tot Shld Enrg Used : 0, Engy Left : 1665998, Shld Enrg Left : 20000
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     f
+     _
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'M'
+
+Initial Enrg : 1686088, Tot Enrg Used : 20180, Tot Shld Enrg Used : 0, Engy Left : 1665908, Shld Enrg Left : 20000
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     f   
+     _  M
+
+
+Enter your command (q to quit) : Toggle Scan Radius => now set to 2 terrain units!
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 1686088, Tot Enrg Used : 20360, Tot Shld Enrg Used : 0, Engy Left : 1665728, Shld Enrg Left : 20000
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     w   
+     f   
+     _  M
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 21005, Tot Shld Enrg Used : 954, Engy Left : 1665083, Shld Enrg Left : 19046
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     f
+     .
+
+
+Enter your command (q to quit) : 
+Currently Explored Terrain Layout :
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     f
+     .
+
+
+Enter your command (q to quit) : 
+Currently Scanned Terrain Layout :
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     w   
+     f   
+        M
+
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 1686088, Tot Enrg Used : 21005, Tot Shld Enrg Used : 954, Engy Left : 1665083, Shld Enrg Left : 19046
+Moves issued : 1, Successful moves : 1
+Scans issued : 3, Successful scans : 3
+
+Enter your command (q to quit) : 
+-------------------------------------
+-- Exploration Report --
+-------------------------------------
+
+Total no. of scans taken : 3
+Total no. of movements (steps) taken : 1
+
+[ Energy Report ]
+Initial Energy : 1686088
+Total Energy Used : 21005
+Total Shield Energy Used : 954
+Energy Left : 1665083
+Shield Energy Left : 19046
+
+[ Command Counters ]
+Moves issued : 1, Successful moves : 1
+Scans issued : 3, Successful scans : 3
+
+[ Terrain Types Scanned / Explored ]
+Terrain     Scanned   Explored
+  'w'             1          0
+  'f'             1          1
+  '?'             0          1
+  'M'             1          0
+
+[ Move / Shield Energy by Destination Terrain ]
+Terrain      MoveEnrg     ShldEnrg  Samples
+  'f'             645          954        1
+
+[ Scan Energy by Direction / Radius ]
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1           90            0        1
+E         1           90            0        1
+N         2          180            0        1
+
+-------------------------------------
+-- End of Exploration Report --
+-------------------------------------
+Vehicle closed. Goodbye.

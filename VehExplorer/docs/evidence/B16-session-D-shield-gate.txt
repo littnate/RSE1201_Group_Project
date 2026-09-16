@@ -1,0 +1,103 @@
+=== VehExplorer — Mission Setup ===
+Scenario file name / path: Is the file encrypted? (y/n): Randomize start position? (y/n): Mission type (1-8):
+  1 Casual Explore
+  2 Find 1 End Point
+  3 Reach 1 End Point
+  4 Find All End Points
+  5 Reach ALL End Points
+  6 Find ALL Danger Points
+  7 Find Map Boundaries
+  8 Map Everything
+Enter 1-8: 
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+Manual control ready. Enter 'v' for usage instructions.
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 90, Tot Shld Enrg Used : 0, Engy Left : 1685998, Shld Enrg Left : 0
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     f
+     _
+
+
+Enter your command (q to quit) : Cannot move: shields are down (allocate with 'i' first). Moving onto damaging terrain would destroy the vehicle.
+
+Initial Enrg : 1686088, Tot Enrg Used : 90, Tot Shld Enrg Used : 0, Engy Left : 1685998, Shld Enrg Left : 0
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     _
+
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields : 
+1000 energy units allocated to shields! 
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 1180, Tot Shld Enrg Used : 0, Engy Left : 1684908, Shld Enrg Left : 1000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     f
+     _
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 1686088, Tot Enrg Used : 1825, Tot Shld Enrg Used : 954, Engy Left : 1684263, Shld Enrg Left : 46
+
+-------------------------------------
+-- Explored / travelled map --
+-------------------------------------
+
+
+     f
+     .
+
+
+Enter your command (q to quit) : Leaving manual control.
+
+=====================================
+=== Mission Summary Report ==========
+=====================================
+
+-- Final vehicle status --
+Initial Enrg : 1686088, Tot Enrg Used : 1825, Tot Shld Enrg Used : 954, Engy Left : 1684263, Shld Enrg Left : 46
+
+-- Command counters --
+Moves issued : 2, Successful moves : 1
+Scans issued : 2, Successful scans : 2
+
+-- Terrain scanned vs explored --
+Terrain     Scanned   Explored
+  'f'             1          1
+  '?'             0          1
+
+-- Observed move / shield energy by destination terrain --
+Terrain      MoveEnrg     ShldEnrg  Samples
+  'f'             645          954        1
+
+-- Observed scan energy by direction / radius --
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1          180            0        2
+
+=====================================
+=== End of Summary Report ===========
+=====================================
+Vehicle closed. Goodbye.

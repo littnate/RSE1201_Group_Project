@@ -1,0 +1,321 @@
+=== VehExplorer — Mission Setup ===
+Scenario file name / path: Is the file encrypted? (y/n): Randomize start position? (y/n): Mission type (1-8):
+  1 Casual Explore
+  2 Find 1 End Point
+  3 Reach 1 End Point
+  4 Find All End Points
+  5 Reach ALL End Points
+  6 Find ALL Danger Points
+  7 Find Map Boundaries
+  8 Map Everything
+Enter 1-8: 
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+
+Initial Enrg : 1686088, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 1686088, Shld Enrg Left : 0
+Manual control ready. Enter 'v' for usage instructions.
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields : 
+100000 energy units allocated to shields! 
+
+Enter your command (q to quit) : 
+Initial Enrg : 1686088, Tot Enrg Used : 100000, Tot Shld Enrg Used : 0, Engy Left : 1586088, Shld Enrg Left : 100000
+Moves issued : 0, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 100090, Tot Shld Enrg Used : 0, Engy Left : 1585998, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     f
+     _
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 1686088, Tot Enrg Used : 100180, Tot Shld Enrg Used : 0, Engy Left : 1585908, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     f
+     _
+     j
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 100270, Tot Shld Enrg Used : 0, Engy Left : 1585818, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        f
+     f  _
+        j
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'M'
+
+Initial Enrg : 1686088, Tot Enrg Used : 100360, Tot Shld Enrg Used : 0, Engy Left : 1585728, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        f   
+     f  _  M
+        j   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'h'
+
+Initial Enrg : 1686088, Tot Enrg Used : 100720, Tot Shld Enrg Used : 0, Engy Left : 1585368, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     h  f   
+     f  _  M
+        j   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'M'
+
+Initial Enrg : 1686088, Tot Enrg Used : 101080, Tot Shld Enrg Used : 0, Engy Left : 1585008, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     h  f  M
+     f  _  M
+        j   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 101440, Tot Shld Enrg Used : 0, Engy Left : 1584648, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     h  f  M
+     f  _  M
+     f  j   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 1686088, Tot Enrg Used : 101800, Tot Shld Enrg Used : 0, Engy Left : 1584288, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     h  f  M
+     f  _  M
+     f  j   
+
+
+Enter your command (q to quit) : Toggle Scan Radius => now set to 2 terrain units!
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 1686088, Tot Enrg Used : 101980, Tot Shld Enrg Used : 0, Engy Left : 1584108, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        w   
+     h  f  M
+     f  _  M
+     f  j   
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 1686088, Tot Enrg Used : 102160, Tot Shld Enrg Used : 0, Engy Left : 1583928, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+        w   
+     h  f  M
+     f  _  M
+     f  j   
+            
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 1686088, Tot Enrg Used : 102340, Tot Shld Enrg Used : 0, Engy Left : 1583748, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+           w   
+        h  f  M
+     j  f  _  M
+        f  j   
+               
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'M'
+
+Initial Enrg : 1686088, Tot Enrg Used : 102520, Tot Shld Enrg Used : 0, Engy Left : 1583568, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+           w      
+        h  f  M   
+     j  f  _  M  M
+        f  j      
+                  
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 1686088, Tot Enrg Used : 103240, Tot Shld Enrg Used : 0, Engy Left : 1582848, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     X     w      
+        h  f  M   
+     j  f  _  M  M
+        f  j      
+                  
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 103960, Tot Shld Enrg Used : 0, Engy Left : 1582128, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     X     w     f
+        h  f  M   
+     j  f  _  M  M
+        f  j      
+                  
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 1686088, Tot Enrg Used : 104680, Tot Shld Enrg Used : 0, Engy Left : 1581408, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     X     w     f
+        h  f  M   
+     j  f  _  M  M
+        f  j      
+     f            
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 1686088, Tot Enrg Used : 105400, Tot Shld Enrg Used : 0, Engy Left : 1580688, Shld Enrg Left : 100000
+
+-------------------------------------
+-- Scanned terrain map --
+-------------------------------------
+
+
+     X     w     f
+        h  f  M   
+     j  f  _  M  M
+        f  j      
+     f           j
+
+
+Enter your command (q to quit) : 
+Initial Enrg : 1686088, Tot Enrg Used : 105400, Tot Shld Enrg Used : 0, Engy Left : 1580688, Shld Enrg Left : 100000
+Moves issued : 0, Successful moves : 0
+Scans issued : 16, Successful scans : 16
+
+Enter your command (q to quit) : Leaving manual control.
+
+=====================================
+=== Mission Summary Report ==========
+=====================================
+
+-- Final vehicle status --
+Initial Enrg : 1686088, Tot Enrg Used : 105400, Tot Shld Enrg Used : 0, Engy Left : 1580688, Shld Enrg Left : 100000
+
+-- Command counters --
+Moves issued : 0, Successful moves : 0
+Scans issued : 16, Successful scans : 16
+
+-- Terrain scanned vs explored --
+Terrain     Scanned   Explored
+  'X'             1          0
+  'w'             1          0
+  'f'             5          0
+  'h'             1          0
+  'M'             3          0
+  'j'             3          0
+  '?'             0          1
+  ' '             2          0
+
+-- Observed move / shield energy by destination terrain --
+(none recorded — need successful moves)
+
+-- Observed scan energy by direction / radius --
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1           90            0        1
+S         1           90            0        1
+W         1           90            0        1
+E         1           90            0        1
+NW        1          360            0        1
+NE        1          360            0        1
+SW        1          360            0        1
+SE        1          360            0        1
+N         2          180            0        1
+S         2          180            0        1
+W         2          180            0        1
+E         2          180            0        1
+NW        2          720            0        1
+NE        2          720            0        1
+SW        2          720            0        1
+SE        2          720            0        1
+
+=====================================
+=== End of Summary Report ===========
+=====================================
+Vehicle closed. Goodbye.
