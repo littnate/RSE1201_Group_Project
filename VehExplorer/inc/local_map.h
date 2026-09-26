@@ -1,7 +1,6 @@
 #ifndef LOCAL_MAP_H
 #define LOCAL_MAP_H
 
-#include <stddef.h>
 #include <stdbool.h>
 
 /* Relative grid grown from successful moves and scans.
@@ -11,8 +10,8 @@
 
 typedef struct {
     char terrain; /* known symbol, or LM_TERRAIN_UNKNOWN */
-    unsigned long scanned;
-    unsigned long explored;
+    unsigned scanned;
+    unsigned explored;
 } LocalMapTerrainCount;
 
 void local_map_init(void);
@@ -42,7 +41,7 @@ char local_map_peek_terrain_at_offset(int dx, int dy);
  * Returns number of distinct entries written (0 if out is NULL / capacity 0
  * or map empty). Truncates silently if more than capacity entries exist.
  */
-size_t local_map_terrain_counts(LocalMapTerrainCount *out, size_t capacity);
+unsigned local_map_terrain_counts(LocalMapTerrainCount *out, unsigned capacity);
 
 /* Print explored / scanned views to match tutor TerrainMap style:
  * dashed green header, cell field-width 3, cyan bold+underline vehicle,

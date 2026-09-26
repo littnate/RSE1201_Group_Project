@@ -176,11 +176,12 @@ static void print_command_stats(void)
 static void print_terrain_counts(void)
 {
     LocalMapTerrainCount counts[64];
-    size_t n;
-    size_t i;
+    unsigned n;
+    unsigned i;
 
     printf("\n[ Terrain Types Scanned / Explored ]\n");
-    n = local_map_terrain_counts(counts, sizeof counts / sizeof counts[0]);
+    n = local_map_terrain_counts(counts,
+                                (unsigned)(sizeof counts / sizeof counts[0]));
     if (n == 0) {
         printf("(none recorded)\n");
         return;
@@ -188,7 +189,7 @@ static void print_terrain_counts(void)
 
     printf("%-8s %10s %10s\n", "Terrain", "Scanned", "Explored");
     for (i = 0; i < n; i++) {
-        printf("  '%c'    %10lu %10lu\n",
+        printf("  '%c'    %10u %10u\n",
                counts[i].terrain,
                counts[i].scanned,
                counts[i].explored);

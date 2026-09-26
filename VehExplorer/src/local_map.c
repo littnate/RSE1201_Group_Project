@@ -84,8 +84,8 @@ static bool ensure_cell(int x, int y)
     new_w = new_max_x - new_min_x + 1;
     new_h = new_max_y - new_min_y + 1;
 
-    new_explored = calloc((size_t)new_w * (size_t)new_h, sizeof *new_explored);
-    new_scanned = calloc((size_t)new_w * (size_t)new_h, sizeof *new_scanned);
+    new_explored = calloc(new_w * new_h, sizeof *new_explored);
+    new_scanned = calloc(new_w * new_h, sizeof *new_scanned);
     if (new_explored == NULL || new_scanned == NULL) {
         free(new_explored);
         free(new_scanned);
@@ -185,13 +185,13 @@ char local_map_peek_terrain_at_offset(int dx, int dy)
 }
 
 static void tally_bump(LocalMapTerrainCount *out,
-                       size_t capacity,
-                       size_t *used,
+                       unsigned capacity,
+                       unsigned *used,
                        char terrain,
                        bool scanned_inc,
                        bool explored_inc)
 {
-    size_t i;
+    unsigned i;
 
     for (i = 0; i < *used; i++) {
         if (out[i].terrain == terrain) {
@@ -210,14 +210,14 @@ static void tally_bump(LocalMapTerrainCount *out,
     }
 
     out[*used].terrain = terrain;
-    out[*used].scanned = scanned_inc ? 1UL : 0UL;
-    out[*used].explored = explored_inc ? 1UL : 0UL;
+    out[*used].scanned = scanned_inc ? 1U : 0U;
+    out[*used].explored = explored_inc ? 1U : 0U;
     (*used)++;
 }
 
-size_t local_map_terrain_counts(LocalMapTerrainCount *out, size_t capacity)
+unsigned local_map_terrain_counts(LocalMapTerrainCount *out, unsigned capacity)
 {
-    size_t used = 0;
+    unsigned used = 0;
     int x;
     int y;
 
