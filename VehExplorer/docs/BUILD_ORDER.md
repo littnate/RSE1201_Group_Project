@@ -1,11 +1,34 @@
-# BUILD_ORDER.md — Independently testable build slices (MS_1)
+# BUILD_ORDER.md — Independently testable build slices
 
-Scope: SPEC.md Milestone 1 only. Check off when verification passes.  
-No implementation design here — order and proof only.
+MS_1 (B0–B19) is complete. Current scope: **SPEC.md Milestone 2**.  
+Check off when verification passes. No implementation design here — order and proof only.
 
 ---
 
-## Progress
+## Progress (MS_2)
+
+- [x] M2-0 — Course files in `MS_2_files/`
+- [x] M2-S — SPEC / PROJECT approved (draft in `docs/SPEC.md`)
+- [x] C0 — Discovery (MS_2 `.dat`: end / danger / perimeter symbols, mission-over text)
+- [x] C1 — `o` options prompts (Appendix A skip rules + stop a–c)
+- [x] C2 — `p` toggle + idle auto loop (no planner yet)
+- [x] C3 — Display gating + delays (`sleep`)
+- [x] C4 — Stop a–c (energy / move cap / scan cap)
+- [x] C5 — Shared act-vs-print helpers (manual maps still print; auto respects `o`)
+- [x] C6 — Planner: shield + scan-before-move + walls
+- [x] C7 — Type 1 casual (only a–c)
+- [x] C8 — Types 2 and 3 (find 1 end / reach 1 end)
+- [x] C9 — Types 4 and 5 (find/reach ALL ends)
+- [x] C10 — Type 6 (find ALL danger, do not visit)
+- [x] C11 — Type 7 (map boundaries)
+- [x] C12 — Type 8 (map everything)
+- [x] C13 — `p`/`q` interrupt; stuck/exhausted stop; Close rules
+- [x] C14 — MS_1 regression + second-scenario auto smoke
+- [x] C15 — Help text + evidence notes
+
+---
+
+## Progress (MS_1 — complete)
 
 - [x] B0 — Toolchain & link smoke
 - [x] B1 — Hardcoded Init / Close
@@ -172,6 +195,142 @@ B0 → B1 → B2 → B3 → B4 → B5 → B10
 ```
 
 B6 may proceed in parallel with B5 after B4. B16/B17 are documentation/artifact slices after core playable path (B13+). B18 is rubric reference + audit (no code required). B19 aligns CLI/report wording with scenario PDF captures.
+
+---
+
+## MS_2 slices
+
+### M2-0 — Course files in `MS_2_files/`
+
+- **Objective:** Keep the MS_2 brief and test scenario in-repo, read-only.
+- **Dependencies:** None.
+- **Deliverable:** `MS_2_files/2026_RSE1201_GroupProject_MS2_Scenario.pdf`, `2026_Test_Scenario_MS_2.dat`, page PNGs, `INDEX.md`; `input-files/` symlink.
+- **Verification:** Files exist; `.dat` is not edited; program still Inits that path from `VehExplorer/` (MS_1 binary).
+
+### M2-S — SPEC / PROJECT approved
+
+- **Objective:** Lock MS_2 behaviour before coding.
+- **Dependencies:** M2-0.
+- **Deliverable:** `docs/SPEC.md` (MS_2), `docs/PROJECT.md`, this file’s MS_2 progress list.
+- **Verification:** User replies Approve / Approve with changes.
+
+### C0 — Discovery
+
+- **Objective:** Record end / danger / perimeter symbols and any mission-over messages on `2026_Test_Scenario_MS_2.dat`.
+- **Dependencies:** M2-S (may start in parallel as notes-only using the MS_1 binary).
+- **Deliverable:** `docs/evidence/M2-discovery-notes.md` — **not** hard-coded cost tables.
+- **Verification:** Notes list observed chars and example stop evidence; reproducible.
+
+### C1 — `o` options prompts
+
+- **Objective:** Interactive Appendix A + stop a–c with skip rules.
+- **Dependencies:** M2-S.
+- **Deliverable:** `o` in the command loop; saved options; summary print.
+- **Verification:** 1=y skips 2–4; t4>0 skips t5–t7; t4=0 asks t5–t7; bad input re-prompts.
+
+### C2 — `p` toggle + idle auto loop
+
+- **Objective:** `p` on enters a loop that does **no** vehicle actions yet (or a no-op tick) and can be turned off.
+- **Dependencies:** C1.
+- **Deliverable:** Auto on/off flag; `p` before `o` runs `o` first; help lists `o`/`p`.
+- **Verification:** `p` … `p` returns to `Enter your command`; `q` still quits.
+
+### C3 — Display gating + delays
+
+- **Objective:** When auto later acts, prints/sleeps follow options.
+- **Dependencies:** C2, C5 (may land with first real action in C6).
+- **Deliverable:** Sleeps t1–t7 / t4 override; stats/maps only if enabled.
+- **Verification:** With maps=n and delays=0, auto output stays quiet except stop messages; with t4=1, ~1s pause per action.
+
+### C4 — Stop a–c
+
+- **Objective:** Energy floor, move cap, scan cap pause auto-pilot.
+- **Dependencies:** C2.
+- **Deliverable:** Checks after each auto action (and before starting).
+- **Verification:** Cap of 1 move (once planner exists) or injected counts; energy floor stops; N=0 caps disabled.
+
+### C5 — Shared act-vs-print helpers
+
+- **Objective:** Manual `handle_move`/`handle_scan` still auto-print maps; auto-pilot can suppress.
+- **Dependencies:** M2-S.
+- **Deliverable:** Shared perform-move/scan functions with print flags.
+- **Verification:** Manual session still prints maps after move/scan (MS_1 tutor flow).
+
+### C6 — Planner: shield + scan-before-move + walls
+
+- **Objective:** One generic explorer: allocate shield if needed, scan unknown neighbours, move onto known passable, treat impassable as walls.
+- **Dependencies:** C5, C0 (for not dying on first hazard).
+- **Deliverable:** `autopilot` next-action; uses `mc_*` only.
+- **Verification:** Short auto run on MS_2 `.dat` moves/scans without destroy; `#` (or equivalent) not entered after a failed bump is known.
+
+### C7 — Type 1 casual
+
+- **Objective:** Casual explore runs until a–c / `p` / `q` / destroy — never “mission complete”.
+- **Dependencies:** C4, C6.
+- **Verification:** Mission 1 with move cap 5 stops for cap, not for finding `'E'`.
+
+### C8 — Types 2 and 3 (find/reach 1 end)
+
+- **Objective:** Stop on first scanned end vs first occupied end.
+- **Dependencies:** C6, C0.
+- **Verification:** Type 2 stops when scanned map shows one end and vehicle may not be on it; type 3 continues until occupy.
+
+### C9 — Types 4 and 5 (ALL ends)
+
+- **Objective:** Stop when auto-pilot believes all ends are found / all found ends visited.
+- **Dependencies:** C8.
+- **Verification:** Notes + session: does not stop at first `'E'` for type 4; type 5 visits each known end.
+
+### C10 — Type 6 (ALL danger)
+
+- **Objective:** Locate all danger; do not occupy known danger cells.
+- **Dependencies:** C6, C0.
+- **Verification:** Explored map has no danger cell as a visited destination (spawn exception only if spawn is danger).
+
+### C11 — Type 7 (boundaries)
+
+- **Objective:** Stop when perimeter / bounding walls are believed complete.
+- **Dependencies:** C6.
+- **Verification:** Auto stops after tracing `#` (or failed-scan edges) without requiring full interior mapping.
+
+### C12 — Type 8 (map everything)
+
+- **Objective:** Stop when scanned map is believed complete for reachable terrain.
+- **Dependencies:** C6.
+- **Verification:** Auto stops; remaining frontier empty; type 1 with same map would still only stop on a–c.
+
+### C13 — Interrupts and teardown
+
+- **Objective:** `p`/`q` stop auto; stuck message; Close rules unchanged.
+- **Dependencies:** C2, C6.
+- **Verification:** `q` during auto still reports + Close; destroy still skips Close.
+
+### C14 — Regression + second scenario
+
+- **Objective:** MS_1 keys still work; auto works on another path without source changes.
+- **Dependencies:** C8 (minimum playable auto).
+- **Verification:** Manual MS_1 `.dat` smoke; auto Init on both `.dat` files.
+
+### C15 — Help + evidence
+
+- **Objective:** `v` documents `o`/`p`; short transcript of an auto session.
+- **Dependencies:** C8.
+- **Deliverable:** Help text; `docs/evidence/` auto transcript.
+- **Verification:** Help mentions configure + toggle; log contains `o` and `p`.
+
+## Suggested MS_2 dependency graph
+
+```
+M2-0 → M2-S → C1 → C2 → C4
+                 C5 → C6 → C7
+                 C0 ↗     ├→ C8 → C9
+                          ├→ C10
+                          ├→ C11
+                          └→ C12
+              C2/C6 → C13
+              C8 → C14, C15
+         C3 with first real auto actions
+```
 
 ### B18 — Rubric PDF pages + compliance audit
 

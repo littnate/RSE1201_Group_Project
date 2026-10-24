@@ -1,0 +1,144 @@
+Please enter the scenario file's name : Is the scenario file encrypted? (y/n) : Do you wish to randomize start position? (y/n) : Please select Mission Type :
+  1) Casual Explore
+  2) Find 1 End Point
+  3) Reach 1 End Point
+  4) Find ALL End Points
+  5) Reach ALL End Points
+  6) Find ALL Danger Points
+  7) Find Map Boundaries
+  8) Explore Everything
+Enter 1-8 : fileName : input-files/2026_Test_Scenario_MS_2.dat, isFileEncrypted : 1, randomizeStartPosition : 0
+
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 511984, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 511984, Shld Enrg Left : 0
+
+*** Welcome to VehExplorer ! ***
+
+[ Usage Instructions ]
+-------------------------------------
+Enter 'q' to Quit
+Enter 'v' to show this help
+'w', 's', 'a', 'd' keys to MOVE vehicle North, South, West & East
+'t' key = Toggle Scan Radius (betw. 1-2)
+NumPad keys to SCAN : SW (1), S (2), SE (3), W (4), E (6), NW (7), N (8), NE (9) respectively
+'i' = Increase / divert energy to shield
+'z' key = Info on Vehicle Status
+'c' key = Map of terrain scanned by Vehicle
+'x' key = Map of terrain travelled by Vehicle
+'o' key = Configure auto-pilot options
+'p' key = Toggle auto-pilot on / off
+In map display, '_' underline indicates curr. veh. location!
+
+Press 'y' key and hit Enter to continue! 
+Enter your command (q to quit) : 
+=== Configure Auto-Pilot ===
+(Press Enter to accept the default shown in [brackets].)
+1) After every action, show vehicle status / energy stats? (y/n) [n] : 2) After every scan, show energy stats? (y/n) [n] : 3) After every move, show energy stats? (y/n) [n] : 4) After every shield allocation, show energy stats? (y/n) [n] : 5) After every scan, show scanned map? (y/n) [y] : 6) After every move, show travelled map? (y/n) [y] : 7) t1 secs delay after displaying energy stats [0] : 8) t2 secs delay after displaying scanned map [0] : 9) t3 secs delay after displaying travelled map [0] : 10) t4 secs delay after any auto-pilot action [0] : 11) t5 secs delay after each auto scan [0] : 12) t6 secs delay after each auto move [0] : 13) t7 secs delay after each auto shield [0] : a) Pause when current energy falls below N [1] : b) Pause when move actions exceed N (0 = no cap) [0] : c) Pause when scan actions exceed N (0 = no cap) [0] : 
+[ Auto-pilot options ]
+  Stats after every action : n
+  Stats after scan/move/shield : n / n / n
+  Map after scan / move : n / n
+  Delays t1..t7 (s) : 0 0 0 0 0 0 0
+  Stop if energy < 1, moves > 0 (0=off), scans > 0 (0=off)
+
+Enter your command (q to quit) : 
+Auto-pilot ON (mission type 2). Press p to pause, q to quit.
+Auto-pilot: allocate 51198 to shields.
+
+51198 energy units allocated to shields! 
+Auto-pilot: scan N radius 1.
+Returned (scanned) terrain symbol is : 'X'
+Auto-pilot: scan E radius 1.
+Returned (scanned) terrain symbol is : 'f'
+Auto-pilot: scan S radius 1.
+Returned (scanned) terrain symbol is : 'w'
+Auto-pilot: scan W radius 1.
+Returned (scanned) terrain symbol is : ' '
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : ' '
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : ' '
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'j'
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'j'
+Auto-pilot: scan N radius 2.
+Returned (scanned) terrain symbol is : '~'
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'j'
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'X'
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '~'
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '~'
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+Auto-pilot: scan W radius 1.
+Returned (scanned) terrain symbol is : 'S'
+Auto-pilot stopped: mission objective achieved.
+
+Enter your command (q to quit) : 
+-------------------------------------
+-- Exploration Report --
+-------------------------------------
+
+Total no. of scans taken : 17
+Total no. of movements (steps) taken : 1
+
+[ Energy Report ]
+Initial Energy : 511984
+Total Energy Used : 57036
+Total Shield Energy Used : 559
+Energy Left : 454948
+Shield Energy Left : 50639
+
+[ Command Counters ]
+Moves issued : 1, Successful moves : 1
+Scans issued : 17, Successful scans : 17
+
+[ Terrain Types Scanned / Explored ]
+Terrain     Scanned   Explored
+  'X'             3          0
+  '~'             3          0
+  'f'             3          1
+  ' '             3          0
+  'S'             1          1
+  'j'             3          0
+  'w'             1          0
+
+[ Move / Shield Energy by Destination Terrain ]
+Terrain      MoveEnrg     ShldEnrg  Samples
+  'f'             348          559        1
+
+[ Scan Energy by Direction / Radius ]
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1           90            0        1
+E         1           90            0        1
+S         1           90            0        1
+W         1          180            0        2
+NE        1          360            0        1
+NW        1          360            0        1
+SE        1          360            0        1
+SW        1          360            0        1
+N         2          180            0        1
+E         2          180            0        1
+S         2          180            0        1
+W         2          180            0        1
+NE        2          720            0        1
+NW        2          720            0        1
+SE        2          720            0        1
+SW        2          720            0        1
+
+-------------------------------------
+-- End of Exploration Report --
+-------------------------------------
+Vehicle closed. Goodbye.

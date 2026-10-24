@@ -11,6 +11,23 @@ bool util_read_line(char *buf, size_t buf_size);
 /* Prompt until user enters y/Y or n/N. Returns true for yes. */
 bool util_prompt_yes_no(const char *prompt);
 
+/*
+ * Like util_prompt_yes_no, but an empty line uses default_yes.
+ * Returns false on EOF. Sets *out on success.
+ */
+bool util_prompt_yes_no_default(const char *prompt,
+                                bool default_yes,
+                                bool *out);
+
+/*
+ * Non-negative long. Empty line uses default_val.
+ * Returns false on EOF. Re-prompts on junk / values < min_val.
+ */
+bool util_prompt_long_default(const char *prompt,
+                              long min_val,
+                              long default_val,
+                              long *out);
+
 /* Prompt until user enters an integer in [min_val, max_val]. */
 int util_prompt_int_range(const char *prompt, int min_val, int max_val);
 

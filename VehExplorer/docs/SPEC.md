@@ -1,53 +1,53 @@
-# SPEC — RSE1201 Group Project (Milestone 1)
+# SPEC — RSE1201 Group Project (Milestone 2)
 
 **Course:** RSE1201 — C Programming (SIT)  
-**Product name (working):** VehExplorer (from sample interactions; rename later if desired)  
-**Scope of this spec:** Milestone 1 — Manual Control only  
-**Status:** Draft for approval (no implementation until approved)
+**Product name:** VehExplorer  
+**Scope of this spec:** Milestone 2 — Auto-pilot (MS_1 manual control remains)  
+**Status:** Approved (2026-10-24)
+
+**MS_1 baseline:** Manual control (B0–B19) is complete and **must keep working**. This spec adds auto-pilot on top of that program.
+
+**Brief:** `MS_2_files/2026_RSE1201_GroupProject_MS2_Scenario.pdf` (3 pages; renders in `MS_2_files/pages/`).
 
 ---
 
 ## 1. Problem summary
 
-Build a **C** program that lets a human operator manually control a damaged exploration vehicle via SpaceXXX’s still-working satellite relay stack.
+MS_1 restored **manual** satellite control. MS_2 must **evolve that same program** so the vehicle can also fly on **auto-pilot**: it chooses when to scan, which way and how far, how to move cheaply, and when/how much to allocate to shields — in order to meet the **mission type already selected at Init** (1–8).
 
-Your code does **not** reimplement vehicle physics, map loading, encryption, or scanning. It:
+The operator still uses the terminal. Auto-pilot is a function that, once started, runs **without further keypresses** until a configured pause/stop condition is met (or the operator toggles it off).
 
-1. Prompts for scenario / mission configuration  
-2. Calls the provided `SatComRelay` API  
-3. Presents a terminal UI for move / scan / shield / maps / stats / quit  
-4. Tracks enough local state to display maps and produce the required summary report correctly on **any** valid scenario file (not only the sample `.dat`)
-
-Milestone 2 (auto-pilot) is **out of scope** for implementation now, but MS_1 structure should not paint us into a corner (clean separation of UI, control loop, and vehicle-facing API).
+You still do **not** reimplement physics, map loading, encryption, or scanning. You still only call `SCRelay_Signal_Veh_*` (via the existing `mission_control` wrappers).
 
 ---
 
 ## 2. Goals and non-goals
 
-### Goals (MS_1 compulsory)
+### Goals (MS_2 compulsory)
 
 | ID | Requirement |
 |----|-------------|
-| G1 | Startup prompts: scenario filename, encrypted y/n, randomize start y/n, mission type 1–8 |
-| G2 | Move vehicle N / S / E / W |
-| G3 | Scan 8 directions, radius 1 or 2 |
-| G4 | Admin: init (via startup), allocate energy to shields, close/shutdown |
-| G5 | Display map of terrain **travelled / explored** by the vehicle |
-| G6 | Display map of terrain **scanned** by the vehicle |
-| G7 | Display vehicle statistics (energy, shield, move/scan command counts & successes, etc.) |
-| G8 | On quit: summary report — final veh stats; per-terrain scanned vs explored counts; energy / shield / scan costs as required by deliverables |
-| G9 | Interactive loop until user shuts down and quits |
-| G10 | Works on **unseen** scenario `.dat` files without source changes (no hard-coded map, terrains, or energy tables) |
-| G11 | Build with `gcc` on Ubuntu/Linux x86-64; link provided `.o` files |
+| G1 | Keep all MS_1 behaviour: Stage 1 prompts, manual keys, maps, stats, quit report, Close |
+| G2 | New key **`o`**: configure auto-pilot **display, delays, and stop criteria** (Appendix A + page 3) |
+| G3 | New key **`p`**: toggle auto-pilot **on / off** |
+| G4 | While on, auto-pilot chooses a sequence of scan / move / shield actions (no human move/scan keys required) |
+| G5 | Decisions cover: scan direction and radius; energy-aware travel; move direction; shield allocation |
+| G6 | Aim for an **efficient and/or effective** sequence for the **pre-configured** mission type (Init 1–8) |
+| G7 | Auto-pilot **keeps running** until pause/stop criteria, `p` off, `q` quit, or library mission-over / destroy |
+| G8 | Configurable **output filters and pauses** so the terminal stays followable (Agent T) |
+| G9 | Configurable **stop/pause**: energy floor, max moves, max scans, plus mission-objective stop (page 3) |
+| G10 | Same binary works on **unseen** scenario `.dat` files (including `MS_2_files/2026_Test_Scenario_MS_2.dat`) |
+| G11 | Still `gcc` + link **all** provided `MS_1_files/*.o`; do not decrypt `.dat` or patch binaries |
 
-### Non-goals (for now)
+### Non-goals
 
-- Auto-pilot / MS_2 decision engine  
-- GUI  
-- Decrypting or editing scenario files yourself  
-- Reverse-engineering or modifying provided `.o` binaries  
-- Using verification-only APIs meant for tutor testing (`PrintEntireMap` / password-gated helpers marked “Do not use!”) for normal gameplay  
-- Fancy extras beyond a small optional list (see §11)
+- GUI / ncurses  
+- Replacing manual control  
+- Custom decryption or editing scenario files  
+- Reverse-engineering / modifying provided `.o`  
+- Password-gated `PrintEntireMap` / `PrintScannedMap` / `PrintExploredMap` / `PrintReport`  
+- Calling undocumented symbols from other `.o` files  
+- Hard-coded map size, spawn, full terrain alphabet, or energy-cost tables from one scenario  
 
 ---
 
@@ -55,282 +55,282 @@ Milestone 2 (auto-pilot) is **out of scope** for implementation now, but MS_1 st
 
 | # | Assumption |
 |---|------------|
-| A1 | Solo development for now. |
-| A2 | Primary environment: **WSL2 Ubuntu** (x86-64). Course VM Ubuntu 22.04 is for later clone/demo if needed. |
-| A3 | Provided `.o` files are ELF x86-64 and will link on WSL Ubuntu; same sources should build on an Ubuntu 22.04 VM if glibc/toolchain are compatible (see §8). |
-| A4 | Official integration surface is **`SatComRelay.h` only**. Other modules are linked transitively via the provided objects. |
-| A5 | When `fileNeedsDecryption == true`, `SCRelay_Signal_Veh_Init` (and underlying libs) handle decryption — we pass the flag, we do **not** decrypt `.dat` ourselves. |
-| A6 | UI should follow the **sample CLI keybindings** in the MS_1 scenario PDF (not a numbered menu), so demo behavior matches tutor expectations. |
-| A7 | Mission type is selected at init for correctness / future MS_2; MS_1 does not auto-complete missions. |
-| A8 | “No hardcoding” means: no fixed map size, no fixed terrain symbol list/costs, no fixed scenario name, no assumptions that only the sample map exists. Values are discovered via API returns + runtime experimentation for the scenario report. |
-| A9 | Course materials live under `rubrics/` and are reference-only; application source will live elsewhere in the repo (see §9). The MS_1 scenario PDF is image-only — rendered page PNGs live in `rubrics/MS_1/2026_RSE1201_GroupProject_MS1_Scenario_pages/` (see `INDEX.md` and `docs/evidence/B18-rubric-compliance.md`). |
-| A10 | Submission naming (`TeamN-MS_1`, …) is deferred; ignore until packaging time. |
+| A1 | Solo development unless told otherwise. |
+| A2 | Primary env: **WSL2 Ubuntu x86-64**; later demo on Ubuntu 22.04 VM. |
+| A3 | MS_2 uses the **same** `SatComRelay.h` + `MS_1_files/*.o`. No new course objects were provided. |
+| A4 | Mission type is still chosen at **Init** (MS_1 Stage 1). Auto-pilot does not re-prompt mission type. |
+| A5 | Auto-pilot must call the same `mc_*` actions as the keyboard so maps/stats/report stay consistent. |
+| A6 | CLI keys `o` and `p` match the MS_2 PDF examples; other MS_1 keys unchanged. |
+| A7 | `'E'` (end), `'X'` (danger), `'#'` (perimeter / impassable) in the PDF are **examples**. Roles are discovered from scans + move failures; do not assume every map uses only those letters, and do not assume MS_1’s passable `'X'` is danger on every file. |
+| A8 | “Believes it has found ALL …” means: local knowledge + exploration of remaining unknown frontier is exhausted (or a library mission-over message), not a tutor-only progress API. |
+| A9 | Course files: `MS_1_files/` (library) and `MS_2_files/` (MS_2 PDF + test `.dat`). Do not edit either. |
+| A10 | Submission zip names deferred until packaging. |
 
 ---
 
 ## 4. Core requirements (behavioral)
 
-### 4.1 Stage 1 — Configuration
+### 4.1 Stage 1 — Configuration (unchanged)
 
-On startup, prompt approximately as in the scenario PDF:
+Same as MS_1: scenario path, encrypted y/n, randomize start y/n, mission type 1–8, then `SCRelay_Signal_Veh_Init`.
 
-1. Scenario file name / path (e.g. `2026_Basic_Scenario_MS_1.dat`)  
-2. Is the file encrypted? (`y`/`n`) → maps to `bool fileNeedsDecryption`  
-3. Randomize start position? (`y`/`n`)  
-4. Mission type `1`–`8` (see `SatComRelay.h` comments; sample UI labels “Explore Everything” for type 8)
+Typical MS_2 sample:
 
-Then call:
-
-```c
-VehDataType SCRelay_Signal_Veh_Init(
-    char *srcFilename,
-    bool fileNeedsDecryption,
-    bool randomizeStartPosition,
-    int missionType
-);
+```text
+input-files/2026_Test_Scenario_MS_2.dat
+y
+n
+<1–8>
 ```
 
-Show initial energy / status after successful init. Fail gracefully if init fails (file missing, bad path, etc.) — exact failure modes depend on library behavior (to be recorded during discovery).
+### 4.2 Stage 2 — Manual control (unchanged) plus two keys
 
-### 4.2 Stage 2 — Manual control loop
-
-Match sample interaction style (Appendix B + MS_1 scenario screen captures):
+All MS_1 keys remain (`w/s/a/d`, numpad scans, `t`, `i`, `z`, `c`, `x`, `v`, `q`).
 
 | Key | Action |
 |-----|--------|
-| `w` / `s` / `a` / `d` | Move North / South / West / East |
-| Numpad `1`–`9` except `5` | Scan SW,S,SE,W,E,NW,N,NE |
-| `t` | Toggle scan radius between 1 and 2 |
-| `i` | Allocate energy to shields (prompt amount; reject invalid / insufficient) |
-| `z` | Show vehicle status / statistics |
-| `c` | Show scanned terrain map |
-| `x` | Show explored / travelled terrain map |
-| `v` | Show usage / help |
-| `q` | Quit → Stage 3 |
+| `o` | Run the auto-pilot **options** prompts (Appendix A + stop criteria). May be used before first `p`, and again while auto-pilot is **off** / paused. |
+| `p` | Toggle auto-pilot **on** or **off**. |
 
-Notes:
+If `p` is pressed before `o` has been completed at least once, run `o` first (operator must have display/stop settings), then start auto-pilot.
 
-- In map display, underline `_` (or equivalent) marks current vehicle location (per sample).  
-- Scan/move must call the corresponding `SCRelay_Signal_Veh_*` functions.  
-- Track **local** counters the API does not expose (e.g. total move commands issued vs successful), if required for G7/G8.
+Help text (`v`) must mention `o` and `p`.
 
-### 4.3 Stage 3 — Shutdown & report
+### 4.3 Auto-pilot options (`o`) — Appendix A
 
-1. Display / generate summary report (final stats; per-terrain scanned vs explored; movement / shield / scan energy consumption breakdown as required by deliverables).  
-2. Call `SCRelay_Signal_Veh_Close()`.  
-3. Exit cleanly.
+Prompt in this order. Use **yes/no** for 1–6 and **non-negative numbers** for delays and stop limits. Reject empty / garbage; re-prompt.
 
-A terminal interaction log (`ScenarioXX-output-log.txt` style) is a **submission artifact**; capture strategy is TBD (manual `script` vs in-program logging) — see Unresolved Decisions.
+**Display**
 
-### 4.4 Correctness criteria (grading-facing)
+| # | Prompt (sense) | Notes |
+|---|----------------|--------|
+| 1 | After **every** action, show vehicle status / energy stats? (y/n) | If **y**, do **not** prompt 2–4 (1 overrides 2–4). If **n**, prompt 2–4. |
+| 2 | After every **scan**, show energy stats? | Only if 1 = n |
+| 3 | After every **move**, show energy stats? | Only if 1 = n |
+| 4 | After every **shield allocation**, show energy stats? | Only if 1 = n |
+| 5 | After every scan, show **scanned** map? (y/n) | |
+| 6 | After every move, show **travelled** map? (y/n) | |
 
-- Explored map matches actual moves that succeeded.  
-- Scanned map matches successful scans.  
-- Energy / shield / counters match library state + observed costs.  
-- Same binary works on **new unseen** scenarios without recompile of hard-coded data.
+**Delays (seconds)** — PDF labels `t1`…`t7`
+
+| # | Prompt (sense) | Notes |
+|---|----------------|--------|
+| 7 | `t1` delay after displaying energy stats | |
+| 8 | `t2` delay after displaying scanned map | |
+| 9 | `t3` delay after displaying travelled map | |
+| 10 | `t4` delay after **any** auto-pilot action | If **t4 > 0**, do **not** prompt 11–13. If **t4 == 0**, prompt 11–13. |
+| 11 | `t5` delay after each auto **scan** | Only if t4 == 0 |
+| 12 | `t6` delay after each auto **move** | Only if t4 == 0 |
+| 13 | `t7` delay after each auto **shield** | Only if t4 == 0 |
+
+Delay `0` means no sleep. Use whole seconds (`sleep`); fractional not required.
+
+**Stop / pause criteria** (PDF page 3)
+
+| # | Prompt (sense) | Notes |
+|---|----------------|--------|
+| a | Pause/stop when current energy available falls **below** N | `currEnergy < N` |
+| b | Pause/stop when total **move actions** exceed N | Count **issued** auto+manual moves unless discovery says otherwise; default = issued (`stats` moves_issued) |
+| c | Pause/stop when total **scan actions** exceed N | Same: `scans_issued` |
+| d | Mission-objective stop | Not a y/n — always **on**. Behaviour depends on Init mission type (see §4.5). |
+
+**Cap meaning (default):** for **b** and **c**, `N == 0` means **no cap** (disabled). For **a**, `N == 0` means stop when energy is **≤ 0** (already unsafe to continue).
+
+Print a one-screen summary of the saved options after `o` completes.
+
+### 4.4 Auto-pilot run (`p` on)
+
+When auto-pilot is **on**:
+
+1. Do **not** wait for move/scan keys. Loop: decide one action → perform it through `mission_control` → optional print → optional delay → check stop.
+2. Manual keys other than `p` / `q` are not required during a run. If a key is read, only **`p` (off)** and **`q` (quit)** need to interrupt; other keys may be ignored until auto is off. (See U12 if we later allow `o` mid-run.)
+3. Each action must update `local_map` and `stats` the same way a human keypress does (reuse the existing handle paths or shared helpers).
+4. Honour display flags: energy one-liner and/or maps only when the matching option is yes.
+5. Honour delays after the matching display / action.
+6. If shields would be too low to survive a damaging move, **allocate** before moving (never move with `currShieldEnergy <= 0` — MS_1 already DESTROYs the vehicle).
+7. Prefer **scan-before-move** onto unknown cells. Do not knowingly step onto impassable cells.
+8. For “find danger” missions, do **not** occupy a known danger cell.
+9. Scan radius: choose 1 or 2 via `mc_set_scan_radius` (to be added); do not require the user to press `t`.
+10. Stop the loop when any §4.5 condition is true; leave the operator in the **manual** command loop (auto off), unless `q` or library mission-over already ended Stage 2.
+
+### 4.5 Mission-objective stop (page 3)
+
+Uses Init `missionType`. Auto-pilot **believes** based on **local_map** (and library DESTROYED / MISSION OVER if it occurs).
+
+| Type | Name | Stop when |
+|------|------|-----------|
+| 1 | Casual Explore | **Only** energy / move-cap / scan-cap (a–c). No “map complete” stop. |
+| 2 | Find 1 End Point | A successful scan has recorded **one** end-point terrain (PDF example `'E'`) |
+| 3 | Reach 1 End Point | Vehicle **occupies** an end-point cell (successful move onto it, or spawn on it) |
+| 4 | Find ALL End Points | Auto-pilot believes **all** end points on the reachable/scannable map are located (frontier exhausted + no remaining unknown that could hide another, within what scans can reveal) |
+| 5 | Reach ALL End Points | Auto-pilot believes it has **visited** every end point it has found, and that no further end points remain (same “all” belief as type 4, plus occupancy of each found end) |
+| 6 | Find ALL Danger Points | Same “all located” belief for **danger** cells (PDF example `'X'`). Do not require visiting them. |
+| 7 | Find Map Boundaries | Auto-pilot believes it has located the **perimeter** (PDF example `'#'`, plus cells where scan/move fails at the edge) |
+| 8 | Map Everything | Auto-pilot believes it has scanned/located the **entire** reachable map of terrains |
+
+Print a clear reason when auto-pilot pauses or stops, e.g. `Auto-pilot stopped: found 1 end point.` / `energy below limit.` / `toggled off.`
+
+### 4.6 Stage 3 — Shutdown (unchanged)
+
+`q` → summary report → `Close` (skip Close if already mission-over destroy) → exit.
+
+### 4.7 Correctness
+
+- Explored/scanned maps and counters still match successful API results.  
+- Auto-pilot must not call forbidden Print* APIs.  
+- Auto-pilot must not decrypt `.dat`.  
+- Destroy / energy-0 / shield-0 guards from MS_1 remain.  
+- Second scenario without source changes still Inits and can run auto-pilot.
 
 ---
 
 ## 5. Technical architecture
 
-### 5.1 Ecosystem
+### 5.1 Ecosystem (unchanged)
 
 ```
-[ Your *.c / *.h ]  +  [ SatComRelay.h + provided *.o ]  +  [ libc ]
-                         └─ VehController, RadarSensor, Terrain*,
-                            ConfigSettings, FileUtil, ExpReport, ...
-        └─ gcc link ─►  VehExplorer (executable)
+[ src/*.c ]  +  [ MS_1_files/SatComRelay.h + *.o ]  →  bin/VehExplorer
 ```
 
-You only **call** `SCRelay_Signal_Veh_*`. You do not open-code against other modules unless discovery proves a header is missing and tutor materials require it (currently only `SatComRelay.h` is provided).
+MS_2 adds **student** modules only.
 
-### 5.2 Suggested module split (MS_1, MS_2-friendly)
+### 5.2 Module split
 
 | Module | Responsibility |
 |--------|----------------|
-| `main.c` | Entry, high-level stage flow |
-| `ui_cli.c` / `.h` | Prompts, key read loop, help text, map/stat printing |
-| `mission_control.c` / `.h` | Translate keys → SatComRelay calls; scan radius state; shield allocate flow |
-| `local_map.c` / `.h` | Maintain explored/scanned grids from scan results & successful moves (no reliance on forbidden full-map dump) |
-| `stats.c` / `.h` | Command success/fail counters; report assembly |
-| `util_input.c` / `.h` | Safe line/char input helpers |
+| `main.c` | Stages unchanged |
+| `ui_cli` | Prompts, keys, help, `o`/`p`, print gating for auto output |
+| `mission_control` | SatComRelay wrappers; add `mc_set_scan_radius` |
+| `local_map` | Explored/scanned grids; extra queries for planner (bounds, peek, frontier) |
+| `stats` | Counters + quit report (unchanged contract) |
+| `util_input` | Safe input |
+| **`autopilot` (new)** | Options struct; decide next action; mission-goal tests; run loop |
+| **`ap_config` (optional)** | If `o` prompts get large, keep them next to autopilot rather than bloating `ui_cli` |
 
-Exact file names can change; the separation matters more than names.
+Auto-pilot **must not** call `SCRelay_Signal_Veh_*` directly.
 
-### 5.3 Data the program must own locally
+### 5.3 Suggested planner (implementation, after spec approval)
 
-`VehDataType` from the API gives energy fields. For maps and rich reports, assume we must **record**:
+Each tick:
 
-- Relative or absolute grid of cells we have seen (char terrain symbols from scan returns)  
-- Which cells were actually visited  
-- Current position (infer from moves; underline on print)  
-- Scan radius mode (1 vs 2)  
-- Issued vs successful move/scan counts  
-- Optionally: observed energy deltas per action for the Excel discovery report  
+1. If stop condition already true → turn auto off, return to manual loop.  
+2. If shield below a safe reserve and energy remains → allocate a chunk (leave energy for scans/moves).  
+3. Inspect 8 neighbours in `local_map`.  
+4. If a mission-useful unknown cell is adjacent → scan it (radius 1 if adjacent unknown; radius 2 only when that helps).  
+5. Else if a useful passable cell is known → BFS on known passable cells, step one cardinal move toward it.  
+6. Else expand frontier (scan farther / move toward unknown).  
+7. If no legal action (stuck) → stop with a message (do not spin).
 
-**Do not** call password-gated `SCRelay_Signal_Veh_PrintEntireMap` (and siblings marked “Do not use!”) as part of the student solution path.
+“Useful” depends on mission type (unknown, end, danger, perimeter, unvisited end, etc.).
+
+Terrain **roles** (end / danger / wall) start from PDF examples and **discovery on the MS_2 `.dat`**, then treat unknown future symbols as data: walls = failed impassable moves; ends/dangers = classified symbols list that can grow if library messages name them. Do **not** copy MS_1 per-terrain cost tables into source.
 
 ### 5.4 Build
 
-- Compiler: `gcc`  
-- Link all provided MS_1 `*.o` with your objects  
-- `makefile` producing binary under `bin/` (final packaging layout per Appendix E-3 when we package)  
-- Suggested flags (adjust after first successful link): `-Wall -Wextra` ; C standard e.g. `-std=c11` unless course requires otherwise  
+Same makefile: `wildcard src/*.c` already picks up new files. Link all `MS_1_files/*.o`. Flags: `-std=c11 -Wall -Wextra`.
 
 ---
 
-## 6. Data sources and storage
+## 6. Data sources
 
-| Source | Role | Rules |
-|--------|------|--------|
-| `*.dat` scenario files | Encrypted (usual) or rare `*.txt` | Pass path + decrypt flag into Init; **never edit** scenario files |
-| User keyboard | Commands & config | Validate ranges; reject bad shield amounts |
-| SatComRelay return values | Terrain chars, `VehDataType` energy | Sole runtime truth for vehicle state |
-| In-memory local map/stats | Display + report | Derived only from successful API interactions |
-| Optional log file | Submission evidence | Append-only transcript of session |
-
-No database. No network I/O beyond what the libs might do internally (assume local).
+| Source | Role |
+|--------|------|
+| `*.dat` | Passed to Init; never edited |
+| Keyboard | Stage 1, manual keys, `o` config, `p`/`q` |
+| SatComRelay returns | Vehicle energy + scan chars |
+| `local_map` / `stats` | Belief for maps, report, and “ALL found” |
+| Auto-pilot options | In-memory; not required to persist across process runs |
 
 ---
 
-## 7. APIs and integrations
+## 7. APIs
 
-Primary header: `rubrics/MS_1/SatComRelay.h`
+Same public header: `MS_1_files/SatComRelay.h`.
 
-### Admin
-
-- `SCRelay_Signal_Veh_Init(...)`  
-- `SCRelay_Signal_Veh_Close()`  
-- `SCRelay_Signal_Veh_AllocateToShield(long amount)`
-
-### Movement
-
-- `..._MoveUpNorth / MoveDownSouth / MoveRightEast / MoveLeftWest`
-
-### Scanning
-
-- `..._Scan{Direction}` and `..._Scan{Direction}2` for radius 2  
-- Returns `char` terrain; `'\0'` if unsuccessful  
-
-### Forbidden / tutor-only (do not use in product path)
-
-- `PrintEntireMap` / `PrintScannedMap` / `PrintExploredMap` / `PrintReport` with password  
-
-Mission type integers 1–8 as documented in the header.
+Forbidden: password Print* helpers.
 
 ---
 
-## 8. Security
+## 8. Security / safety
 
-| Topic | Approach |
-|-------|----------|
-| Scenario encryption | Library-handled via Init flag; no custom crypto |
-| Binary integrity | Do not patch/strip provided `.o` |
-| Input safety | Bounds-check buffer reads; reject negative / oversize shield alloc |
-| Secrets | Ignore password-gated tutor APIs |
-| Path handling | Treat scenario path as untrusted string; don’t invent decryptor that writes plaintext next to assignment files unless library does |
+- No custom crypto; Init flag only.  
+- Bounded input; reject negative delays and negative stop limits.  
+- Never move with shields down.  
+- Never call vehicle APIs after DESTROYED / MISSION OVER.  
+- Do not store tutor passwords.
 
 ---
 
 ## 9. Performance
 
-Not a performance-critical system. Maps are small classroom grids.
-
-- Prefer simple 2D arrays / dynamic grow if bounds unknown until discovery  
-- Avoid unnecessary full-map scans every keypress  
-- No concurrency required for MS_1  
+Classroom maps. Planner may be simple BFS on the known grid. Sleeps are for the operator, not for speed.
 
 ---
 
-## 10. Deployment & portability (WSL ↔ Ubuntu VM)
+## 10. Deployment
 
-**Will WSL Ubuntu code work on Ubuntu 22.04 VM after clone?**
+Unchanged: local Linux x86-64 executable. Sample MS_2 path: `input-files/2026_Test_Scenario_MS_2.dat` (symlink to `MS_2_files/`).
 
-**Usually yes for your source + makefile**, with these caveats:
-
-1. **Architecture** must stay x86-64 (provided `.o` are x86-64).  
-2. **Bring the provided `.o` + `.h` + `.dat` with the repo** (or copy from `rubrics/MS_1`). Don’t assume the VM has them.  
-3. **glibc / Ubuntu version mismatch** is the main risk: if WSL is a much newer Ubuntu than 22.04, prebuilt `.o` almost always still *link*, but if anything ever fails, rebuild/test on the VM early. Prefer installing **Ubuntu 22.04 on WSL** if easy, to match the course VM.  
-4. Clone → install `build-essential` → `make` → run with scenario path relative to `input-files/`.
-
-No cloud deployment. Deliverable is a local Linux executable + docs.
-
-### Proposed repo layout (working tree)
+### Repo layout (actual)
 
 ```
-kor/
-  docs/                    # SPEC.md, PROJECT.md, BUILD_ORDER.md
-  rubrics/                 # course materials (read-only reference)
-    docs/                  # main brief, deliverable sheet, contribution form
-    MS_1/                  # header, objects, sample .dat, scenario PDF + page PNGs
-    MS_2/                  # held for later
-  src/                     # (to be created) your C sources
-  inc/                     # (to be created) your headers
-  ...                      # makefile / bin / obj / input-files when implementing
+RSE1201_Group_Project/
+  MS_1_files/              # SatComRelay.h, *.o, MS_1 .dat + PDF  (read-only)
+  MS_2_files/              # MS_2 PDF, test .dat, page PNGs       (read-only .dat/PDF)
+  VehExplorer/
+    docs/                  # SPEC.md, PROJECT.md, BUILD_ORDER.md
+    src/  inc/  obj/  bin/
+    input-files/           # symlinks to scenario .dat files
+    makefile
 ```
 
 ---
 
 ## 11. Edge cases
 
-| Case | Expected handling |
-|------|-------------------|
-| Missing / wrong scenario path | Clear error; do not crash silently |
-| Encrypted flag wrong | Observe library behavior; surface error; don’t invent decrypt |
-| Move into impassable / out of range | Detect via energy unchanged / API semantics; count as failed move; stay put |
-| Scan out of range | `'\0'` or unsuccessful; count failed scan; don’t corrupt local map |
-| Shield alloc > remaining energy or ≤ 0 | Reject with message (sample shows insufficient energy) |
-| Unknown terrain symbols on new maps | Store and display the `char` as returned; don’t assume a fixed alphabet |
-| Energy exhaustion mid-mission | Disable or fail moves/scans cleanly; still allow status/maps/quit |
-| Randomize start | Don’t assume a fixed spawn cell in code or tests |
-| Repeated failed moves/scans | Must remain stable (hinted in scenario PDF) |
+| Case | Handling |
+|------|----------|
+| `p` before `o` | Run `o`, then start auto |
+| Invalid y/n or number in `o` | Re-prompt; do not start with garbage |
+| Energy hits floor mid-run | Stop auto; manual `z/x/c/q` still work |
+| Move/scan cap hit | Stop auto; do not issue another of that action |
+| Type 1 (casual) | Never stop for “mission complete”; only a–c, `p`, `q`, or destroy |
+| Unknown terrain char | Store and display; classify as wall only after impassable failure |
+| `'X'` on MS_1 vs MS_2 | Do not globally hardcode `'X'` as danger from MS_1 costs; use MS_2 discovery + PDF roles |
+| Destroy | `mc_is_mission_over`; leave auto; skip Close |
+| No frontier left but goal unmet | Stop with “stuck / map exhausted” rather than infinite loop |
+| Delay while demoing | `sleep` is OK; keep it interruptible later only if easy (U13) |
 
 ---
 
 ## 12. Trade-offs
 
-| Decision | Choice | Why | Alternative |
-|----------|--------|-----|-------------|
-| UI style | Sample keybindings | Matches tutor captures / demo muscle memory | Numbered menu — clearer for novices, less demo-aligned |
-| Map source | Local tracking from API | Avoids forbidden print APIs; works offline from tutor password | Calling tutor print helpers — risky / against header |
-| Extras | **Minimum first** | Marks are correctness + report; extras are GTH | Small extras later (see below) |
-| Encrypt handling | Flag only | Assignment forbids DIY decrypt | Custom decrypt — out of scope / likely wrong |
-| Hardcoded costs | None in code | Unseen scenarios | Tables from sample only — fails new maps |
-
-### Optional “good to have” (defer unless time)
-
-Worth considering **after** core works — not required now:
-
-1. **Session log writer** — helps produce required `ScenarioXX-output-log.txt` without relying on external `script`.  
-2. **Replay-friendly verbose mode** — echo energy delta after each action (helps Excel discovery report).  
-3. **Config file** for defaults (still overridable at prompt) — nice, not necessary.
-
-Course note: basic input validation is **not** graded as an “enhancement”; it’s expected hygiene.
+| Decision | Choice | Why |
+|----------|--------|-----|
+| Auto uses `mc_*` only | Yes | One success/fail/map path |
+| Interrupt keys during auto | `p` and `q` | Brief: runs until stop; operator can still abort |
+| “ALL” completion | Frontier exhaustion + classified symbols | No public mission-% API (MS_1 B18) |
+| Cost-aware routing | Prefer empirically cheaper known cells when choosing among equals | Meets “energy cost effective”; no baked-in table required — use observed deltas already in `stats` if available, else treat unknown as scan-first |
+| Defaults for `o` | Conservative (see U10) | First run must be configurable; defaults only if Enter-on-empty is allowed |
 
 ---
 
-## 13. Deliverables awareness (docs — not coding yet)
+## 13. Deliverables awareness
 
-When packaging MS_1, course expects roughly:
-
-- Program + `makefile` in Appendix E-3 layout  
-- Word architecture/design/testing/reflection report  
-- Excel scenario discovery (terrain types, move/shield/scan energy findings)  
-- PowerPoint for demo  
-
-This spec does not schedule those; implementation plan will after approval.
+Course still expects program + makefile, reports, Excel discovery, demo slides at packaging time. This spec does not schedule Word/PPT.
 
 ---
 
 ## 14. Things easy to miss
 
-1. Linking **all** provided `.o` files, not only `SatComRelay.o`.  
-2. Building explored vs scanned maps as **two different views**.  
-3. Radius-2 scans use the `*2` API variants.  
-4. Stats must distinguish **commands issued** vs **successful** actions.  
-5. Report section on **per-terrain** and **per-scan-direction/radius** energy — needs disciplined discovery experiments, not guesses.  
-6. Don’t hardcode the sample filename or map dimensions.  
-7. Keep MS_2 out of the control loop for now, but keep `mission_control` / `ui` separable so autopilot can call the same actions later.
+1. Option **1** skips prompts **2–4**; option **10** (`t4 > 0`) skips **11–13**.  
+2. Casual explore has **no** objective stop.  
+3. Find vs reach: scan vs occupy.  
+4. Find-all danger: locate, **do not** visit.  
+5. Radius 2 is a decision, not only the `t` key.  
+6. Display suppression: auto-pilot must **not** always print maps like current manual `handle_move` / `handle_scan`. Factor print vs act.  
+7. `sleep` after prints so Agent T can read.  
+8. Link all MS_1 `.o`; MS_2 folder has **no** extra objects.  
 
 ---
 
@@ -338,32 +338,32 @@ This spec does not schedule those; implementation plan will after approval.
 
 | ID | Question | Default if unanswered |
 |----|----------|------------------------|
-| U1 | Exact executable name (`VehExplorer` vs other)? | `VehExplorer` |
-| U2 | In-program session logging vs external `script`/`tee`? | External `script` for MS_1 minimum; add in-program log if packaging becomes painful |
-| U3 | How to learn map bounds without full-map API — grow grid from relative moves, or probe until failure? | Grow from relative coordinates starting at (0,0); mark unknown as unseen |
-| U4 | WSL Ubuntu version (22.04 vs 24.04)? | Check with `lsb_release -a`; prefer 22.04 if choosing a new WSL distro |
-| U5 | C standard flag required by tutor? | `-std=c11` until told otherwise |
-| U6 | Depth of MS_1 summary report vs what `ExpReport.o` might already compute if linked — may we call those symbols without a header? | Prefer own report from local stats; revisit only if discovery shows a supported public path |
-| U7 | Final on-disk project folder names for submission | Defer until packaging |
+| U8 | Default values if operator wants a “just start” `o`? | Stats after every action = **n**; maps after scan/move = **y**; all delays = **0**; energy floor = **1**; move/scan caps = **0** (disabled) |
+| U9 | Do move/scan caps count **all** session actions or **auto-only**? | **All session** issued counts (`stats`) |
+| U10 | Allow empty Enter to accept U8 defaults during `o`? | **Yes** — empty uses default for that prompt |
+| U11 | May `o` run while auto is on? | **No** — must `p` off first |
+| U12 | Must auto-pilot be interruptible **during** `sleep`? | Best-effort: sleep full seconds first; non-blocking stdin later if needed |
+| U13 | How to classify end/danger if a new map uses different letters? | End = `'E'` only (PDF example). Danger = `'X'`. Walls = `'#'` plus impassable failures. Do **not** treat spawn or `'S'` as an end. |
+| U14 | Energy-aware path: use live `stats` averages per scanned symbol vs simple BFS? | **Scan-first + BFS** first; add cheapest-known-cell tie-break if time |
+| U15 | Should auto print the same tutor one-liner as manual when stats=y? | **Yes** (`ui_print_veh_data`) |
+
+MS_1 U1–U7 remain: executable `VehExplorer`, external `script`/`tee` OK, grow map from (0,0), `-std=c11`.
 
 ---
 
-## 16. Success definition (MS_1)
+## 16. Success definition (MS_2)
 
-A successful MS_1 is when, on WSL Ubuntu:
+On WSL Ubuntu, after `make`:
 
-1. `make` builds an executable linked against `rubrics/MS_1/*.o`  
-2. Operator can configure, move, scan (r=1/2), allocate shields, view both maps + stats, quit with report  
-3. Behavior stays correct on a **second** scenario file not baked into source  
-4. No custom decryption and no modification of provided binaries or `.dat` files  
+1. MS_1 manual session still works on both sample `.dat` files.  
+2. `o` prompts follow Appendix A skip rules (1 overrides 2–4; t4>0 overrides t5–t7).  
+3. `p` runs auto-pilot; `p` again returns to manual loop.  
+4. Auto-pilot performs scans/moves/shields without those keys, updates maps/stats, and stops for a–c and the matching mission objective.  
+5. Type 2 stops after scanning one end; type 3 after occupying one; type 6 locates dangers without requiring visits.  
+6. No decrypt, no forbidden Print*, no crash on shield-0 / missing file.  
 
 ---
 
 ## 17. Approval gate
 
-**No implementation plan and no code until you approve this SPEC** (or request edits).
-
-Please reply with:
-
-- **Approve** / **Approve with changes** (list changes)  
-- Answers to any Unresolved Decisions you care about (especially U1, U2, U4)
+Approved 2026-10-24. Unresolved U8–U15 use the defaults in §15.

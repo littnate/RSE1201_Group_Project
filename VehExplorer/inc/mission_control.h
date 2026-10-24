@@ -38,6 +38,7 @@ bool mc_allocate_shield(VehDataType *vdt, long amount);
 /* Scan radius mode: starts at 1; toggle flips 1 <-> 2. */
 int mc_get_scan_radius(void);
 int mc_toggle_scan_radius(void);
+int mc_set_scan_radius(int radius);
 
 /* Call Scan* or Scan*2 for dir based on current radius; refresh *vdt.
  * Returns the terrain char, or '\0' if the scan failed. */

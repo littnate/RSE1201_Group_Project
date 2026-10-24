@@ -88,6 +88,79 @@ bool util_prompt_yes_no(const char *prompt)
     }
 }
 
+bool util_prompt_yes_no_default(const char *prompt,
+                                bool default_yes,
+                                bool *out)
+{
+    char line[64];
+
+    if (out == NULL) {
+        return false;
+    }
+
+    for (;;) {
+        printf("%s", prompt);
+        fflush(stdout);
+
+        if (!util_read_line(line, sizeof line)) {
+            if (feof(stdin)) {
+                return false;
+            }
+            *out = default_yes;
+            return true;
+        }
+
+        if (strlen(line) == 1) {
+            char c = (char)tolower((unsigned char)line[0]);
+            if (c == 'y') {
+                *out = true;
+                return true;
+            }
+            if (c == 'n') {
+                *out = false;
+                return true;
+            }
+        }
+
+        printf("Please enter y or n (or Enter for default).\n");
+    }
+}
+
+bool util_prompt_long_default(const char *prompt,
+                              long min_val,
+                              long default_val,
+                              long *out)
+{
+    char line[64];
+    long value;
+    char extra;
+
+    if (out == NULL) {
+        return false;
+    }
+
+    for (;;) {
+        printf("%s", prompt);
+        fflush(stdout);
+
+        if (!util_read_line(line, sizeof line)) {
+            if (feof(stdin)) {
+                return false;
+            }
+            *out = default_val;
+            return true;
+        }
+
+        if (sscanf(line, "%ld%c", &value, &extra) == 1 && value >= min_val) {
+            *out = value;
+            return true;
+        }
+
+        printf("Please enter a number >= %ld (or Enter for default).\n",
+               min_val);
+    }
+}
+
 int util_prompt_int_range(const char *prompt, int min_val, int max_val)
 {
     char line[64];

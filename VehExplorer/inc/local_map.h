@@ -35,6 +35,16 @@ char local_map_peek_terrain(int x, int y);
 /* Known scanned terrain at offset (dx,dy) from vehicle. */
 char local_map_peek_terrain_at_offset(int dx, int dy);
 
+bool local_map_is_explored(int x, int y);
+bool local_map_is_blocked(int x, int y);
+void local_map_mark_blocked(int x, int y);
+void local_map_mark_blocked_at_offset(int dx, int dy);
+
+void local_map_get_bounds(int *min_x, int *max_x, int *min_y, int *max_y);
+bool local_map_has_grid(void);
+
+unsigned local_map_count_scanned(char terrain);
+
 /*
  * Fill out[] with per-terrain scanned/explored tallies (dynamic symbols).
  * Explored cells with no scanned symbol use LM_TERRAIN_UNKNOWN.

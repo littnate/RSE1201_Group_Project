@@ -72,16 +72,18 @@ The group `.gitignore` already keeps `MS_1_files/*.o` (it ignores other `*.o` bu
 | `x` | Explored / travelled map |
 | `v` | Help |
 | `q` | Summary report → close → quit |
+| `o` | Configure auto-pilot options |
+| `p` | Toggle auto-pilot on / off |
 
 ## Docs
 
 | File | Purpose |
 |------|---------|
-| `docs/SPEC.md` | Product / MS_1 requirements |
+| `docs/SPEC.md` | Product / MS_2 requirements (MS_1 remains) |
 | `docs/PROJECT.md` | Hard constraints for implementers |
 | `docs/BUILD_ORDER.md` | Build slices & progress |
 | `TESTING.md` | Short manual test reminder |
 
 ## Scope note
 
-Milestone 1 = **manual control only**. Auto-pilot (MS_2) is out of scope for this tree until scheduled separately.
+Milestone 1 = **manual control**. Milestone 2 = **auto-pilot** (`o` configure, `p` toggle) — see `docs/SPEC.md`.

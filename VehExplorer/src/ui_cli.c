@@ -1,9 +1,11 @@
 #include "ui_cli.h"
 
+#include "autopilot.h"
 #include "local_map.h"
 #include "mission_control.h"
 #include "stats.h"
 #include "util_input.h"
+#include "veh_action.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -101,6 +103,8 @@ void ui_print_help(void)
     printf("'z' key = Info on Vehicle Status\n");
     printf("'c' key = Map of terrain scanned by Vehicle\n");
     printf("'x' key = Map of terrain travelled by Vehicle\n");
+    printf("'o' key = Configure auto-pilot options\n");
+    printf("'p' key = Toggle auto-pilot on / off\n");
     printf("In map display, '_' underline indicates curr. veh. location!\n");
 }
 
@@ -155,77 +159,12 @@ static void handle_toggle_scan_radius(void)
     printf("Toggle Scan Radius => now set to %d terrain units!\n", radius);
 }
 
-static void handle_move(VehDataType *vdt,
-                        bool (*move_fn)(VehDataType *),
-                        int dx,
-                        int dy)
+void ui_run_command_loop(VehDataType *vdt, int mission_type)
 {
-    VehDataType before;
-    char dest_terrain;
-    bool ok;
+    ApOptions ap_opt;
 
-    before = *vdt;
-    dest_terrain = local_map_peek_terrain_at_offset(dx, dy);
-    ok = move_fn(vdt);
+    ap_options_set_defaults(&ap_opt);
 
-    stats_note_move(ok);
-
-    /* Library frees vehicle state on destroy — do not touch maps/API. */
-    if (mc_is_mission_over()) {
-        return;
-    }
-
-    if (ok) {
-        long move_e = vdt->totEnergyUsed - before.totEnergyUsed;
-        long shld_e = vdt->totShieldEnergyUsed - before.totShieldEnergyUsed;
-
-        stats_note_move_energy(dest_terrain, move_e, shld_e);
-        local_map_move_success(dx, dy);
-    }
-    /* Tutor flow: energy one-liner, then explored map. */
-    ui_print_veh_data(NULL, vdt);
-    local_map_print_explored();
-}
-
-static void handle_scan(VehDataType *vdt, McScanDir dir, const char *dir_name)
-{
-    VehDataType before;
-    char terrain;
-    int dx;
-    int dy;
-    int radius;
-    bool ok;
-    long scan_e;
-    long shld_e;
-
-    before = *vdt;
-    radius = mc_get_scan_radius();
-    terrain = mc_scan(vdt, dir);
-    ok = (terrain != '\0');
-    stats_note_scan(ok);
-
-    scan_e = vdt->totEnergyUsed - before.totEnergyUsed;
-    shld_e = vdt->totShieldEnergyUsed - before.totShieldEnergyUsed;
-    if (scan_e != 0 || shld_e != 0) {
-        stats_note_scan_energy(dir, radius, scan_e, shld_e);
-    }
-
-    if (!ok) {
-        printf("Scan %s (radius %d) failed.\n", dir_name, radius);
-        ui_print_veh_data(NULL, vdt);
-        return;
-    }
-
-    mc_scan_offset(dir, &dx, &dy);
-    local_map_record_scan(dx, dy, terrain);
-
-    printf("Returned (scanned) terrain symbol is : '%c'\n", terrain);
-    ui_print_veh_data(NULL, vdt);
-    local_map_print_scanned();
-}
-
-void ui_run_command_loop(VehDataType *vdt)
-{
     ui_print_help();
     ui_wait_continue();
     putchar('\n');
@@ -268,41 +207,54 @@ void ui_run_command_loop(VehDataType *vdt)
         case 't':
             handle_toggle_scan_radius();
             break;
+        case 'o':
+            (void)ap_prompt_options(&ap_opt);
+            break;
+        case 'p':
+            if (!ap_opt.configured) {
+                if (!ap_prompt_options(&ap_opt)) {
+                    break;
+                }
+            }
+            if (ap_run(vdt, mission_type, &ap_opt) == AP_RUN_QUIT) {
+                return;
+            }
+            break;
         case 'w':
-            handle_move(vdt, mc_move_north, 0, -1);
+            veh_action_move(vdt, mc_move_north, 0, -1, true, true);
             break;
         case 's':
-            handle_move(vdt, mc_move_south, 0, 1);
+            veh_action_move(vdt, mc_move_south, 0, 1, true, true);
             break;
         case 'a':
-            handle_move(vdt, mc_move_west, -1, 0);
+            veh_action_move(vdt, mc_move_west, -1, 0, true, true);
             break;
         case 'd':
-            handle_move(vdt, mc_move_east, 1, 0);
+            veh_action_move(vdt, mc_move_east, 1, 0, true, true);
             break;
         case '7':
-            handle_scan(vdt, MC_DIR_NW, "NW");
+            veh_action_scan(vdt, MC_DIR_NW, "NW", true, true);
             break;
         case '8':
-            handle_scan(vdt, MC_DIR_N, "N");
+            veh_action_scan(vdt, MC_DIR_N, "N", true, true);
             break;
         case '9':
-            handle_scan(vdt, MC_DIR_NE, "NE");
+            veh_action_scan(vdt, MC_DIR_NE, "NE", true, true);
             break;
         case '4':
-            handle_scan(vdt, MC_DIR_W, "W");
+            veh_action_scan(vdt, MC_DIR_W, "W", true, true);
             break;
         case '6':
-            handle_scan(vdt, MC_DIR_E, "E");
+            veh_action_scan(vdt, MC_DIR_E, "E", true, true);
             break;
         case '1':
-            handle_scan(vdt, MC_DIR_SW, "SW");
+            veh_action_scan(vdt, MC_DIR_SW, "SW", true, true);
             break;
         case '2':
-            handle_scan(vdt, MC_DIR_S, "S");
+            veh_action_scan(vdt, MC_DIR_S, "S", true, true);
             break;
         case '3':
-            handle_scan(vdt, MC_DIR_SE, "SE");
+            veh_action_scan(vdt, MC_DIR_SE, "SE", true, true);
             break;
         case '5':
             printf("Invalid Command : '5', please try again!\n");

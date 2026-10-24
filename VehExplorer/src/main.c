@@ -57,7 +57,7 @@ int main(void)
     local_map_mark_explored_here();
     stats_reset();
 
-    ui_run_command_loop(&vdt);
+    ui_run_command_loop(&vdt, cfg.mission_type);
 
     stats_print_summary(&vdt);
 

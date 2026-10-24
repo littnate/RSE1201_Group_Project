@@ -179,6 +179,16 @@ int mc_toggle_scan_radius(void)
     return g_scan_radius;
 }
 
+int mc_set_scan_radius(int radius)
+{
+    if (radius == 2) {
+        g_scan_radius = 2;
+    } else {
+        g_scan_radius = 1;
+    }
+    return g_scan_radius;
+}
+
 char mc_scan(VehDataType *vdt, McScanDir dir)
 {
     static const SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_r1[MC_DIR_COUNT] = {

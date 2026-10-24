@@ -25,6 +25,7 @@ typedef struct {
     int height;
     bool *explored; /* visited by successful move / spawn */
     char *scanned;  /* terrain char, or LM_UNSEEN */
+    bool *blocked;  /* impassable / out-of-range */
 } LocalMap;
 
 static LocalMap g_map;
@@ -33,8 +34,10 @@ static void free_grids(void)
 {
     free(g_map.explored);
     free(g_map.scanned);
+    free(g_map.blocked);
     g_map.explored = NULL;
     g_map.scanned = NULL;
+    g_map.blocked = NULL;
     g_map.width = 0;
     g_map.height = 0;
 }
@@ -61,6 +64,7 @@ static bool ensure_cell(int x, int y)
     int new_h;
     bool *new_explored;
     char *new_scanned;
+    bool *new_blocked;
     int yy;
 
     if (g_map.explored == NULL) {
@@ -70,7 +74,9 @@ static bool ensure_cell(int x, int y)
         g_map.height = 1;
         g_map.explored = calloc(1, sizeof *g_map.explored);
         g_map.scanned = calloc(1, sizeof *g_map.scanned);
-        return g_map.explored != NULL && g_map.scanned != NULL;
+        g_map.blocked = calloc(1, sizeof *g_map.blocked);
+        return g_map.explored != NULL && g_map.scanned != NULL &&
+               g_map.blocked != NULL;
     }
 
     if (in_bounds(x, y)) {
@@ -84,11 +90,13 @@ static bool ensure_cell(int x, int y)
     new_w = new_max_x - new_min_x + 1;
     new_h = new_max_y - new_min_y + 1;
 
-    new_explored = calloc(new_w * new_h, sizeof *new_explored);
-    new_scanned = calloc(new_w * new_h, sizeof *new_scanned);
-    if (new_explored == NULL || new_scanned == NULL) {
+    new_explored = calloc((size_t)(new_w * new_h), sizeof *new_explored);
+    new_scanned = calloc((size_t)(new_w * new_h), sizeof *new_scanned);
+    new_blocked = calloc((size_t)(new_w * new_h), sizeof *new_blocked);
+    if (new_explored == NULL || new_scanned == NULL || new_blocked == NULL) {
         free(new_explored);
         free(new_scanned);
+        free(new_blocked);
         return false;
     }
 
@@ -99,6 +107,7 @@ static bool ensure_cell(int x, int y)
             int new_i = (yy - new_min_y) * new_w + (xx - new_min_x);
             new_explored[new_i] = g_map.explored[old_i];
             new_scanned[new_i] = g_map.scanned[old_i];
+            new_blocked[new_i] = g_map.blocked[old_i];
         }
     }
 
@@ -111,6 +120,7 @@ static bool ensure_cell(int x, int y)
     g_map.height = new_h;
     g_map.explored = new_explored;
     g_map.scanned = new_scanned;
+    g_map.blocked = new_blocked;
     return true;
 }
 
@@ -165,6 +175,9 @@ void local_map_record_scan(int dx, int dy, char terrain)
         return;
     }
     g_map.scanned[index_at(sx, sy)] = terrain;
+    if (terrain == '#') {
+        g_map.blocked[index_at(sx, sy)] = true;
+    }
 }
 
 char local_map_peek_terrain(int x, int y)
@@ -182,6 +195,77 @@ char local_map_peek_terrain(int x, int y)
 char local_map_peek_terrain_at_offset(int dx, int dy)
 {
     return local_map_peek_terrain(g_map.x + dx, g_map.y + dy);
+}
+
+bool local_map_is_explored(int x, int y)
+{
+    if (g_map.explored == NULL || !in_bounds(x, y)) {
+        return false;
+    }
+    return g_map.explored[index_at(x, y)];
+}
+
+bool local_map_is_blocked(int x, int y)
+{
+    if (g_map.blocked == NULL || !in_bounds(x, y)) {
+        return false;
+    }
+    return g_map.blocked[index_at(x, y)];
+}
+
+void local_map_mark_blocked(int x, int y)
+{
+    if (!ensure_cell(x, y)) {
+        fprintf(stderr, "local_map: out of memory\n");
+        return;
+    }
+    g_map.blocked[index_at(x, y)] = true;
+}
+
+void local_map_mark_blocked_at_offset(int dx, int dy)
+{
+    local_map_mark_blocked(g_map.x + dx, g_map.y + dy);
+}
+
+void local_map_get_bounds(int *min_x, int *max_x, int *min_y, int *max_y)
+{
+    if (min_x != NULL) {
+        *min_x = g_map.min_x;
+    }
+    if (max_x != NULL) {
+        *max_x = g_map.max_x;
+    }
+    if (min_y != NULL) {
+        *min_y = g_map.min_y;
+    }
+    if (max_y != NULL) {
+        *max_y = g_map.max_y;
+    }
+}
+
+bool local_map_has_grid(void)
+{
+    return g_map.explored != NULL;
+}
+
+unsigned local_map_count_scanned(char terrain)
+{
+    unsigned n = 0;
+    int x;
+    int y;
+
+    if (g_map.scanned == NULL) {
+        return 0;
+    }
+
+    for (y = g_map.min_y; y <= g_map.max_y; y++) {
+        for (x = g_map.min_x; x <= g_map.max_x; x++) {
+            if (g_map.scanned[index_at(x, y)] == terrain) {
+                n++;
+            }
+        }
+    }
+    return n;
 }
 
 static void tally_bump(LocalMapTerrainCount *out,

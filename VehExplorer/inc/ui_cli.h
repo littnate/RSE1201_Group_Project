@@ -27,6 +27,6 @@ void ui_print_help(void);
  * Local explored/scanned maps update on successful moves/scans.
  * Move/scan issued vs success counters update on every move/scan attempt.
  * Observed energy deltas feed the Stage 3 summary report. */
-void ui_run_command_loop(VehDataType *vdt);
+void ui_run_command_loop(VehDataType *vdt, int mission_type);
 
 #endif /* UI_CLI_H */
