@@ -23,18 +23,18 @@ typedef struct {
     long energy_floor;
     unsigned long max_moves; /* 0 = disabled */
     unsigned long max_scans; /* 0 = disabled */
-} ApOptions;
+} AutopilotOptions;
 
 typedef enum {
-    AP_RUN_PAUSED = 0, /* back to manual loop */
-    AP_RUN_QUIT        /* leave Stage 2 */
-} ApRunResult;
+    AUTOPILOT_RUN_PAUSED = 0, /* back to manual loop */ /* was AP_RUN_PAUSED */
+    AUTOPILOT_RUN_QUIT        /* leave Stage 2 */ /* was AP_RUN_QUIT */
+} AutopilotRunResult;
 
-void ap_options_set_defaults(ApOptions *opt);
-bool ap_prompt_options(ApOptions *opt);
-void ap_print_options(const ApOptions *opt);
+void autopilot_options_set_defaults(AutopilotOptions *opt);
+bool autopilot_prompt_options(AutopilotOptions *opt);
+void autopilot_print_options(const AutopilotOptions *opt);
 
 /* Runs until pause/stop, `p`, `q`, destroy, or stuck. */
-ApRunResult ap_run(VehDataType *vdt, int mission_type, ApOptions *opt);
+AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, AutopilotOptions *opt); /* was vdt */
 
 #endif /* AUTOPILOT_H */

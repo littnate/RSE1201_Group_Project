@@ -59,21 +59,20 @@ bool ui_prompt_startup(UiStartupConfig *cfg)
     return true;
 }
 
-void ui_print_veh_data(const char *label, const VehDataType *vdt)
+void ui_print_veh_data(const VehDataType *vehicle) /* was vdt; removed unused label */
 {
-    if (vdt == NULL) {
+    if (vehicle == NULL) {
         return;
     }
 
-    /* Tutor one-liner (VehController_Print1LinerEnrgConsumption). */
-    (void)label;
+    /* Print the vehicle energy line. */
     printf("\nInitial Enrg : %ld, Tot Enrg Used : %ld, Tot Shld Enrg Used : %ld, "
            "Engy Left : %ld, Shld Enrg Left : %ld\n",
-           vdt->initialEnergy,
-           vdt->totEnergyUsed,
-           vdt->totShieldEnergyUsed,
-           vdt->currEnergy,
-           vdt->currShieldEnergy);
+           vehicle->initialEnergy,
+           vehicle->totEnergyUsed,
+           vehicle->totShieldEnergyUsed,
+           vehicle->currEnergy,
+           vehicle->currShieldEnergy);
 }
 
 static void ui_print_command_stats(void)
@@ -82,10 +81,10 @@ static void ui_print_command_stats(void)
 
     printf("Moves issued : %lu, Successful moves : %lu\n",
            s.moves_issued,
-           s.moves_ok);
+           s.moves_succeeded);
     printf("Scans issued : %lu, Successful scans : %lu\n",
            s.scans_issued,
-           s.scans_ok);
+           s.scans_succeeded);
 }
 
 void ui_print_help(void)
@@ -124,16 +123,16 @@ static void ui_wait_continue(void)
     }
 }
 
-static void handle_allocate_shield(VehDataType *vdt)
+static void handle_allocate_shield(VehDataType *vehicle) /* was vdt */
 {
     long amount;
     char prompt[128];
 
-    if (vdt == NULL) {
+    if (vehicle == NULL) {
         return;
     }
 
-    if (vdt->currEnergy < 1) {
+    if (vehicle->currEnergy < 1) {
         printf("Error: Insufficient energy reserves. Try reducing the "
                "quantity allocated to shield!\n");
         return;
@@ -143,27 +142,27 @@ static void handle_allocate_shield(VehDataType *vdt)
              sizeof prompt,
              "Enter amt. of energy to increase / allocate to shields "
              "(1 - %ld) : ",
-             vdt->currEnergy);
+             vehicle->currEnergy);
 
     if (!util_prompt_long(prompt, &amount)) {
         printf("Shield allocation cancelled (need a whole number).\n");
         return;
     }
 
-    (void)mc_allocate_shield(vdt, amount);
+    (void)mission_control_allocate_shield(vehicle, amount);
 }
 
 static void handle_toggle_scan_radius(void)
 {
-    int radius = mc_toggle_scan_radius();
+    int radius = mission_control_toggle_scan_radius();
     printf("Toggle Scan Radius => now set to %d terrain units!\n", radius);
 }
 
-void ui_run_command_loop(VehDataType *vdt, int mission_type)
+void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
 {
-    ApOptions ap_opt;
+    AutopilotOptions autopilot_options; /* was ap_opt */
 
-    ap_options_set_defaults(&ap_opt);
+    autopilot_options_set_defaults(&autopilot_options);
 
     ui_print_help();
     ui_wait_continue();
@@ -190,7 +189,7 @@ void ui_run_command_loop(VehDataType *vdt, int mission_type)
             break;
         case 'z':
             printf("\nVehicle Status / Statistics :\n");
-            ui_print_veh_data(NULL, vdt);
+            ui_print_veh_data(vehicle);
             ui_print_command_stats();
             break;
         case 'x':
@@ -202,59 +201,59 @@ void ui_run_command_loop(VehDataType *vdt, int mission_type)
             local_map_print_scanned();
             break;
         case 'i':
-            handle_allocate_shield(vdt);
+            handle_allocate_shield(vehicle);
             break;
         case 't':
             handle_toggle_scan_radius();
             break;
         case 'o':
-            (void)ap_prompt_options(&ap_opt);
+            (void)autopilot_prompt_options(&autopilot_options);
             break;
         case 'p':
-            if (!ap_opt.configured) {
-                if (!ap_prompt_options(&ap_opt)) {
+            if (!autopilot_options.configured) {
+                if (!autopilot_prompt_options(&autopilot_options)) {
                     break;
                 }
             }
-            if (ap_run(vdt, mission_type, &ap_opt) == AP_RUN_QUIT) {
+            if (autopilot_run(vehicle, mission_type, &autopilot_options) == AUTOPILOT_RUN_QUIT) {
                 return;
             }
             break;
         case 'w':
-            veh_action_move(vdt, mc_move_north, 0, -1, true, true);
+            veh_action_move(vehicle, mission_control_move_north, 0, -1, true, true);
             break;
         case 's':
-            veh_action_move(vdt, mc_move_south, 0, 1, true, true);
+            veh_action_move(vehicle, mission_control_move_south, 0, 1, true, true);
             break;
         case 'a':
-            veh_action_move(vdt, mc_move_west, -1, 0, true, true);
+            veh_action_move(vehicle, mission_control_move_west, -1, 0, true, true);
             break;
         case 'd':
-            veh_action_move(vdt, mc_move_east, 1, 0, true, true);
+            veh_action_move(vehicle, mission_control_move_east, 1, 0, true, true);
             break;
         case '7':
-            veh_action_scan(vdt, MC_DIR_NW, "NW", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_NORTHWEST, "NW", true, true);
             break;
         case '8':
-            veh_action_scan(vdt, MC_DIR_N, "N", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_NORTH, "N", true, true);
             break;
         case '9':
-            veh_action_scan(vdt, MC_DIR_NE, "NE", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_NORTHEAST, "NE", true, true);
             break;
         case '4':
-            veh_action_scan(vdt, MC_DIR_W, "W", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_WEST, "W", true, true);
             break;
         case '6':
-            veh_action_scan(vdt, MC_DIR_E, "E", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_EAST, "E", true, true);
             break;
         case '1':
-            veh_action_scan(vdt, MC_DIR_SW, "SW", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_SOUTHWEST, "SW", true, true);
             break;
         case '2':
-            veh_action_scan(vdt, MC_DIR_S, "S", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_SOUTH, "S", true, true);
             break;
         case '3':
-            veh_action_scan(vdt, MC_DIR_SE, "SE", true, true);
+            veh_action_scan(vehicle, MISSION_CONTROL_DIR_SOUTHEAST, "SE", true, true);
             break;
         case '5':
             printf("Invalid Command : '5', please try again!\n");
@@ -266,7 +265,7 @@ void ui_run_command_loop(VehDataType *vdt, int mission_type)
             break;
         }
 
-        if (mc_is_mission_over()) {
+        if (mission_control_is_mission_over()) {
             printf("\nLeaving manual control after mission end.\n");
             return;
         }

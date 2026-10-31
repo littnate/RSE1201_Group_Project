@@ -1,0 +1,52 @@
+
+(1)
+Assuming you have the following *.h header and *.c files :  
+
+stu-main.c, stu-util.c, stu-util.h
+
+-----------------------------------------------------------
+
+(2)
+Assuming you have been given a shared object (by SpaceXXX) and header file :
+
+SatComRelay.h, libsatcom.so
+
+-----------------------------------------------------------
+
+(3)
+Assuming in your various *.c files, you have already #include "..." all relevant *.h files 
+
+-----------------------------------------------------------
+
+(4)
+Place all files in (1) and (2) in the SAME UBUNTU [FOLDER]
+
+-----------------------------------------------------------
+
+(5)
+In your Ubuntu terminal, make sure you cd and navigate to [FOLDER]
+
+-----------------------------------------------------------
+
+(6)
+To compile =>	gcc stu-main.c stu-util.c ./libsatcom.so -o stu-prog.run
+
+
+Alternatively, you can try the following =>
+gcc stu-main.c stu-util.c ./libsatcom.so -o stu-prog.run -Wl,-rpath=.
+
+Note : don't add space char between "-Wl," and "-rpath=." !!
+
+-----------------------------------------------------------
+
+(7)
+To run =>	./stu-prog.run
+
+-----------------------------------------------------------
+
+NOTE : All files, compilation and running program, all must be performed in SAME FOLDER !!!
+
+
+
+
+

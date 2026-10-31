@@ -7,19 +7,19 @@
 #include <string.h>
 #include <unistd.h>
 
-static int g_scan_radius = 1;
-static bool g_mission_over = false;
+static int scan_radius = 1; /* was g_scan_radius */
+static bool vehicle_destroyed = false; /* was g_mission_over */
 
-bool mc_is_mission_over(void)
+bool mission_control_is_mission_over(void)
 {
-    return g_mission_over;
+    return vehicle_destroyed;
 }
 
-static bool message_means_destroyed(const char *msg)
+static bool library_text_says_destroyed(const char *library_text) /* was msg */
 {
-    return msg != NULL
-        && (strstr(msg, "DESTROYED") != NULL
-            || strstr(msg, "MISSION OVER") != NULL);
+    return library_text != NULL
+        && (strstr(library_text, "DESTROYED") != NULL
+            || strstr(library_text, "MISSION OVER") != NULL);
 }
 
 /*
@@ -30,20 +30,20 @@ static bool message_means_destroyed(const char *msg)
  * Success is ONLY "Vehicle moved" in the capture. Failed bumps may still
  * burn energy/shield, so energy deltas are not a reliable success signal.
  */
-static bool apply_move(VehDataType *vdt, VehDataType (*move_fn)(void))
+static bool capture_move_and_reprint(VehDataType *vehicle, VehDataType (*move_fn)(void)) /* was vdt */
 {
     int saved_stdout = -1;
-    FILE *tmp = NULL;
-    char buf[512];
+    FILE *captured_output = NULL; /* was tmp */
+    char read_chunk[512]; /* was buf */
     size_t n;
-    char msg[4096];
+    char library_text[4096]; /* was msg */
     size_t total = 0;
 
-    if (vdt == NULL || move_fn == NULL) {
+    if (vehicle == NULL || move_fn == NULL) {
         return false;
     }
 
-    if (g_mission_over) {
+    if (vehicle_destroyed) {
         printf("Mission already over — move ignored.\n");
         return false;
     }
@@ -53,23 +53,23 @@ static bool apply_move(VehDataType *vdt, VehDataType (*move_fn)(void))
      * DESTROY the vehicle and free its state; further API/Close calls
      * segfault. Refuse the call so the session stays stable (z/x/c/q).
      */
-    if (vdt->currShieldEnergy <= 0) {
+    if (vehicle->currShieldEnergy <= 0) {
         printf("Cannot move: shields are down (allocate with 'i' first). "
                "Moving onto damaging terrain would destroy the vehicle.\n");
         return false;
     }
 
     /* Totally depleted energy → library ends the mission and frees state. */
-    if (vdt->currEnergy <= 0) {
+    if (vehicle->currEnergy <= 0) {
         printf("Cannot move: energy reserves are depleted. "
                "Status/maps/quit still available.\n");
         return false;
     }
 
-    msg[0] = '\0';
-    tmp = tmpfile();
-    if (tmp == NULL) {
-        *vdt = move_fn();
+    library_text[0] = '\0';
+    captured_output = tmpfile();
+    if (captured_output == NULL) {
+        *vehicle = move_fn();
         /* Without a capture we cannot reliably tell success from a paid bump. */
         return false;
     }
@@ -77,77 +77,77 @@ static bool apply_move(VehDataType *vdt, VehDataType (*move_fn)(void))
     fflush(stdout);
     saved_stdout = dup(STDOUT_FILENO);
     if (saved_stdout < 0) {
-        fclose(tmp);
-        *vdt = move_fn();
+        fclose(captured_output);
+        *vehicle = move_fn();
         return false;
     }
 
-    if (dup2(fileno(tmp), STDOUT_FILENO) < 0) {
+    if (dup2(fileno(captured_output), STDOUT_FILENO) < 0) {
         close(saved_stdout);
-        fclose(tmp);
-        *vdt = move_fn();
+        fclose(captured_output);
+        *vehicle = move_fn();
         return false;
     }
 
-    *vdt = move_fn();
+    *vehicle = move_fn();
     fflush(stdout);
-    fflush(tmp);
+    fflush(captured_output);
 
     if (dup2(saved_stdout, STDOUT_FILENO) < 0) {
         /* Best-effort restore; still drain the temp capture. */
     }
     close(saved_stdout);
 
-    rewind(tmp);
-    while ((n = fread(buf, 1, sizeof buf, tmp)) > 0) {
-        if (total + n < sizeof msg) {
-            memcpy(msg + total, buf, n);
+    rewind(captured_output);
+    while ((n = fread(read_chunk, 1, sizeof read_chunk, captured_output)) > 0) {
+        if (total + n < sizeof library_text) {
+            memcpy(library_text + total, read_chunk, n);
             total += n;
-            msg[total] = '\0';
+            library_text[total] = '\0';
         }
     }
-    fclose(tmp);
+    fclose(captured_output);
 
     if (total > 0) {
-        fputs(msg, stdout);
+        fputs(library_text, stdout);
         fflush(stdout);
     }
 
-    if (message_means_destroyed(msg)) {
-        g_mission_over = true;
+    if (library_text_says_destroyed(library_text)) {
+        vehicle_destroyed = true;
         return false;
     }
 
-    return strstr(msg, "Vehicle moved") != NULL;
+    return strstr(library_text, "Vehicle moved") != NULL;
 }
 
-bool mc_move_north(VehDataType *vdt)
+bool mission_control_move_north(VehDataType *vehicle) /* was vdt */
 {
-    return apply_move(vdt, SCRelay_Signal_Veh_MoveUpNorth);
+    return capture_move_and_reprint(vehicle, SCRelay_Signal_Veh_MoveUpNorth);
 }
 
-bool mc_move_south(VehDataType *vdt)
+bool mission_control_move_south(VehDataType *vehicle) /* was vdt */
 {
-    return apply_move(vdt, SCRelay_Signal_Veh_MoveDownSouth);
+    return capture_move_and_reprint(vehicle, SCRelay_Signal_Veh_MoveDownSouth);
 }
 
-bool mc_move_east(VehDataType *vdt)
+bool mission_control_move_east(VehDataType *vehicle) /* was vdt */
 {
-    return apply_move(vdt, SCRelay_Signal_Veh_MoveRightEast);
+    return capture_move_and_reprint(vehicle, SCRelay_Signal_Veh_MoveRightEast);
 }
 
-bool mc_move_west(VehDataType *vdt)
+bool mission_control_move_west(VehDataType *vehicle) /* was vdt */
 {
-    return apply_move(vdt, SCRelay_Signal_Veh_MoveLeftWest);
+    return capture_move_and_reprint(vehicle, SCRelay_Signal_Veh_MoveLeftWest);
 }
 
-bool mc_allocate_shield(VehDataType *vdt, long amount)
+bool mission_control_allocate_shield(VehDataType *vehicle, long amount) /* was vdt */
 {
-    if (vdt == NULL) {
+    if (vehicle == NULL) {
         return false;
     }
 
-    if (g_mission_over) {
+    if (vehicle_destroyed) {
         printf("Mission already over — shield allocate ignored.\n");
         return false;
     }
@@ -158,40 +158,40 @@ bool mc_allocate_shield(VehDataType *vdt, long amount)
         return false;
     }
 
-    if (amount > vdt->currEnergy) {
+    if (amount > vehicle->currEnergy) {
         printf("Error: Insufficient energy reserves. Try reducing the "
                "quantity allocated to shield!\n");
         return false;
     }
 
-    *vdt = SCRelay_Signal_Veh_AllocateToShield(amount);
+    *vehicle = SCRelay_Signal_Veh_AllocateToShield(amount);
     return true;
 }
 
-int mc_get_scan_radius(void)
+int mission_control_get_scan_radius(void)
 {
-    return g_scan_radius;
+    return scan_radius;
 }
 
-int mc_toggle_scan_radius(void)
+int mission_control_toggle_scan_radius(void)
 {
-    g_scan_radius = (g_scan_radius == 1) ? 2 : 1;
-    return g_scan_radius;
+    scan_radius = (scan_radius == 1) ? 2 : 1;
+    return scan_radius;
 }
 
-int mc_set_scan_radius(int radius)
+int mission_control_set_scan_radius(int radius)
 {
     if (radius == 2) {
-        g_scan_radius = 2;
+        scan_radius = 2;
     } else {
-        g_scan_radius = 1;
+        scan_radius = 1;
     }
-    return g_scan_radius;
+    return scan_radius;
 }
 
-char mc_scan(VehDataType *vdt, McScanDir dir)
+char mission_control_scan(VehDataType *vehicle, MissionControlScanDir dir) /* was vdt */
 {
-    static const SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_r1[MC_DIR_COUNT] = {
+    static const SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_r1[MISSION_CONTROL_DIR_COUNT] = {
         SCRelay_Signal_Veh_ScanNorthWest,
         SCRelay_Signal_Veh_ScanNorth,
         SCRelay_Signal_Veh_ScanNorthEast,
@@ -201,7 +201,7 @@ char mc_scan(VehDataType *vdt, McScanDir dir)
         SCRelay_Signal_Veh_ScanSouth,
         SCRelay_Signal_Veh_ScanSouthEast,
     };
-    static const SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_r2[MC_DIR_COUNT] = {
+    static const SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_r2[MISSION_CONTROL_DIR_COUNT] = {
         SCRelay_Signal_Veh_ScanNorthWest2,
         SCRelay_Signal_Veh_ScanNorth2,
         SCRelay_Signal_Veh_ScanNorthEast2,
@@ -214,36 +214,36 @@ char mc_scan(VehDataType *vdt, McScanDir dir)
 
     SCRelay_Signal_Veh_SCAN_Fn_Ptr scan_fn;
 
-    if (vdt == NULL || dir < 0 || dir >= MC_DIR_COUNT) {
+    if (vehicle == NULL || dir < 0 || dir >= MISSION_CONTROL_DIR_COUNT) {
         return '\0';
     }
 
-    if (g_mission_over) {
+    if (vehicle_destroyed) {
         printf("Mission already over — scan ignored.\n");
         return '\0';
     }
 
-    if (vdt->currEnergy <= 0) {
+    if (vehicle->currEnergy <= 0) {
         printf("Cannot scan: energy reserves are depleted. "
                "Status/maps/quit still available.\n");
         return '\0';
     }
 
-    scan_fn = (g_scan_radius == 2) ? scan_r2[dir] : scan_r1[dir];
-    return scan_fn(vdt);
+    scan_fn = (scan_radius == 2) ? scan_r2[dir] : scan_r1[dir];
+    return scan_fn(vehicle);
 }
 
-void mc_scan_offset(McScanDir dir, int *dx, int *dy)
+void mission_control_scan_offset(MissionControlScanDir dir, int *dx, int *dy)
 {
-    static const int base_dx[MC_DIR_COUNT] = {
+    static const int base_dx[MISSION_CONTROL_DIR_COUNT] = {
         -1, 0, 1, -1, 1, -1, 0, 1,
     };
-    static const int base_dy[MC_DIR_COUNT] = {
+    static const int base_dy[MISSION_CONTROL_DIR_COUNT] = {
         -1, -1, -1, 0, 0, 1, 1, 1,
     };
-    int r = g_scan_radius;
+    int r = scan_radius;
 
-    if (dx == NULL || dy == NULL || dir < 0 || dir >= MC_DIR_COUNT) {
+    if (dx == NULL || dy == NULL || dir < 0 || dir >= MISSION_CONTROL_DIR_COUNT) {
         return;
     }
 

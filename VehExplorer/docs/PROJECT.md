@@ -15,25 +15,26 @@ Read with `SPEC.md`. Prefer this file for hard constraints that are easy to viol
 - **MS_1 manual control stays.** Do not regress keys, maps, stats, quit report, or Close behaviour.
 - Implement **Milestone 2 auto-pilot** as specified in `SPEC.md` (`o` config, `p` toggle, planner, stop criteria).
 - `SPEC.md` is **approved**. Implement MS_2 slices in `BUILD_ORDER.md` (C0 onward).
-- Keep UI / `mission_control` / `local_map` / `stats` separable; autopilot calls `mc_*` only.
+- Keep UI / `mission_control` / `local_map` / `stats` separable; autopilot calls `mission_control_*` only.
 
 ## Folder structure
 
 ```
 RSE1201_Group_Project/
-  MS_1_files/              # READ-ONLY: SatComRelay.h, provided *.o, MS_1 .dat + PDF
+  MS_1_files/              # READ-ONLY: SatComRelay.h, old *.o, original MS_1 .dat + PDF
   MS_2_files/              # READ-ONLY .dat/PDF: MS_2 brief + 2026_Test_Scenario_MS_2.dat
     pages/                 # derived PNG renders of the MS_2 PDF (OK to regenerate)
+  special-reveal/          # READ-ONLY: libsatcom.so, CompilationCommands.txt, new *.dat
   VehExplorer/
     docs/                  # SPEC.md, PROJECT.md, BUILD_ORDER.md
     src/  inc/  obj/  bin/
+    libsatcom.so           # symlink → ../special-reveal/libsatcom.so
     input-files/           # symlinks to scenario *.dat
-    makefile
 ```
 
-- Never edit course binaries or scenario payloads (`*.o`, `*.dat`, `SatComRelay.h` content, MS_2 `.dat` / PDF)
+- Never edit course binaries or scenario payloads (`*.o`, `libsatcom.so`, `*.dat`, `SatComRelay.h` content, MS_2 `.dat` / PDF)
 - Derived page PNGs are OK
-- Makefile links `../MS_1_files/*.o` + `SatComRelay.h`; MS_2 folder has **no** extra `.o`
+- Header stays `MS_1_files/SatComRelay.h`. Presentation links `./libsatcom.so`, not `MS_1_files/*.o`
 
 ## Rubric reference
 
@@ -49,11 +50,12 @@ RSE1201_Group_Project/
 
 - **Only** call the public API in `MS_1_files/SatComRelay.h` (`SCRelay_Signal_Veh_*`)
 - Auto-pilot goes through **`mission_control`**, not SatComRelay directly
-- Link **all** provided MS_1 `*.o` files
+- Link **`libsatcom.so`** (`gcc ... ./libsatcom.so -Wl,-rpath=.`). Do not link the eight `MS_1_files/*.o` files
+- Compile and run from `VehExplorer/` (the folder that contains `libsatcom.so`)
 - Pass encryption as `fileNeedsDecryption` to Init — **never** decrypt/edit `.dat` / `.txt`
 - **Do not use** password / “Do not use!” helpers: `PrintEntireMap`, `PrintScannedMap`, `PrintExploredMap`, `PrintReport`
-- Do not reverse-engineer, patch, or strip provided objects
-- Do not call undocumented symbols from other `.o` files unless SPEC is updated
+- Do not reverse-engineer, patch, or strip `libsatcom.so` or the old objects
+- Do not call undocumented symbols unless SPEC is updated
 
 ## Hardcoding ban
 
@@ -96,7 +98,7 @@ API `VehDataType` = energy fields only. We track:
 
 - `main` — stages
 - `ui_cli` — prompts, keys, printing (gate auto prints)
-- `mission_control` — key/auto → SatComRelay; `mc_set_scan_radius`
+- `mission_control` — key/auto → SatComRelay; `mission_control_set_scan_radius`
 - `local_map` — explored/scanned grids + planner queries
 - `stats` — counters + summary report
 - `util_input` — safe input
@@ -120,20 +122,33 @@ Handlers may use a `handle` prefix. Keep names boring.
 
 ## Build / run
 
+`bin/VehExplorer.run` is already built. Run it from `VehExplorer/` so the loader finds `./libsatcom.so`:
+
 ```bash
 cd VehExplorer
-make
-./bin/VehExplorer
+./bin/VehExplorer.run
 ```
 
-MS_2 sample path: `input-files/2026_Test_Scenario_MS_2.dat` (encrypted `y`).
+After a source change, rebuild from that same folder (`bin/` already exists):
+
+```bash
+gcc -std=c11 -Wall -Wextra -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
+```
+
+Presentation sample paths (encrypted `y`):
+
+- `input-files/New_2026_Basic_Scenario_MS_1.dat`
+- `input-files/New_2026_Test_Scenario_MS_2.dat`
+- `input-files/Scenario05.dat`
+
+The older `2026_Basic_Scenario_MS_1.dat` and `2026_Test_Scenario_MS_2.dat` files are still in `input-files/`. Under `libsatcom.so` both print Init done with energy 100000000, and a north scan on the old MS_1 file failed. Demo with the three reveal files.
 
 ## Testing strategy
 
-1. Regression: short MS_1 manual session on `2026_Basic_Scenario_MS_1.dat`
+1. Regression: short manual session on `New_2026_Basic_Scenario_MS_1.dat` (encrypted `y`)
 2. `o` skip-logic: option 1 = y must not ask 2–4; t4 > 0 must not ask t5–t7
 3. `p` on/off with type 1 (casual) and a low move cap
-4. Type 2 (find 1 end) and type 3 (reach 1 end) on MS_2 `.dat`
+4. Type 2 (find 1 end) and type 3 (reach 1 end) on `New_2026_Test_Scenario_MS_2.dat`
 5. Type 6 does not require stepping on danger
 6. Second scenario without code changes
 7. Transcript via external `script`/`tee` OK

@@ -1,0 +1,3990 @@
+Please enter the scenario file's name : Is the scenario file encrypted? (y/n) : Do you wish to randomize start position? (y/n) : Please select Mission Type :
+  1) Casual Explore
+  2) Find 1 End Point
+  3) Reach 1 End Point
+  4) Find ALL End Points
+  5) Reach ALL End Points
+  6) Find ALL Danger Points
+  7) Find Map Boundaries
+  8) Explore Everything
+Enter 1-8 : fileName : input-files/2026_Test_Scenario_MS_2.dat, isFileEncrypted : 1, randomizeStartPosition : 0
+
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 2047936, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 2047936, Shld Enrg Left : 0
+
+*** Welcome to VehExplorer ! ***
+
+[ Usage Instructions ]
+-------------------------------------
+Enter 'q' to Quit
+Enter 'v' to show this help
+'w', 's', 'a', 'd' keys to MOVE vehicle North, South, West & East
+'t' key = Toggle Scan Radius (betw. 1-2)
+NumPad keys to SCAN : SW (1), S (2), SE (3), W (4), E (6), NW (7), N (8), NE (9) respectively
+'i' = Increase / divert energy to shield
+'z' key = Info on Vehicle Status
+'c' key = Map of terrain scanned by Vehicle
+'x' key = Map of terrain travelled by Vehicle
+'o' key = Configure auto-pilot options
+'p' key = Toggle auto-pilot on / off
+In map display, '_' underline indicates curr. veh. location!
+
+Press 'y' key and hit Enter to continue! 
+Enter your command (q to quit) : 
+=== Configure Auto-Pilot ===
+(Press Enter to accept the default shown in [brackets].)
+1) After every action, show vehicle status / energy stats? (y/n) [n] : 5) After every scan, show scanned map? (y/n) [y] : 6) After every move, show travelled map? (y/n) [y] : 7) t1 secs delay after displaying energy stats [0] : 8) t2 secs delay after displaying scanned map [0] : 9) t3 secs delay after displaying travelled map [0] : 10) t4 secs delay after any auto-pilot action [0] : 11) t5 secs delay after each auto scan [0] : 12) t6 secs delay after each auto move [0] : 13) t7 secs delay after each auto shield [0] : a) Pause when current energy falls below N [1] : b) Pause when move actions exceed N (0 = no cap) [0] : c) Pause when scan actions exceed N (0 = no cap) [0] : 
+[ Auto-pilot options ]
+  Stats after every action : y
+  Map after scan / move : n / n
+  Delays t1..t7 (s) : 0 0 0 0 0 0 0
+  Stop if energy < 1, moves > 0 (0=off), scans > 0 (0=off)
+
+Enter your command (q to quit) : 
+Auto-pilot ON (mission type 8). Press p to pause, q to quit.
+Auto-pilot: allocate 204793 to shields.
+
+204793 energy units allocated to shields! 
+
+Initial Enrg : 2047936, Tot Enrg Used : 204793, Tot Shld Enrg Used : 0, Engy Left : 1843143, Shld Enrg Left : 204793
+Auto-pilot: scan N radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 204883, Tot Shld Enrg Used : 0, Engy Left : 1843053, Shld Enrg Left : 204793
+Auto-pilot: scan E radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 204973, Tot Shld Enrg Used : 0, Engy Left : 1842963, Shld Enrg Left : 204793
+Auto-pilot: scan S radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 205063, Tot Shld Enrg Used : 0, Engy Left : 1842873, Shld Enrg Left : 204793
+Auto-pilot: scan W radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 205153, Tot Shld Enrg Used : 0, Engy Left : 1842783, Shld Enrg Left : 204793
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 205513, Tot Shld Enrg Used : 0, Engy Left : 1842423, Shld Enrg Left : 204793
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 205873, Tot Shld Enrg Used : 0, Engy Left : 1842063, Shld Enrg Left : 204793
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 206233, Tot Shld Enrg Used : 0, Engy Left : 1841703, Shld Enrg Left : 204793
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 206593, Tot Shld Enrg Used : 0, Engy Left : 1841343, Shld Enrg Left : 204793
+Auto-pilot: scan N radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 206773, Tot Shld Enrg Used : 0, Engy Left : 1841163, Shld Enrg Left : 204793
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 206953, Tot Shld Enrg Used : 0, Engy Left : 1840983, Shld Enrg Left : 204793
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 207133, Tot Shld Enrg Used : 0, Engy Left : 1840803, Shld Enrg Left : 204793
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 207313, Tot Shld Enrg Used : 0, Engy Left : 1840623, Shld Enrg Left : 204793
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 208033, Tot Shld Enrg Used : 0, Engy Left : 1839903, Shld Enrg Left : 204793
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 208753, Tot Shld Enrg Used : 0, Engy Left : 1839183, Shld Enrg Left : 204793
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 209473, Tot Shld Enrg Used : 0, Engy Left : 1838463, Shld Enrg Left : 204793
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 210193, Tot Shld Enrg Used : 0, Engy Left : 1837743, Shld Enrg Left : 204793
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 210541, Tot Shld Enrg Used : 559, Engy Left : 1837395, Shld Enrg Left : 204234
+Auto-pilot: scan W radius 1.
+Returned (scanned) terrain symbol is : 'S'
+
+Initial Enrg : 2047936, Tot Enrg Used : 210631, Tot Shld Enrg Used : 559, Engy Left : 1837305, Shld Enrg Left : 204234
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 210991, Tot Shld Enrg Used : 559, Engy Left : 1836945, Shld Enrg Left : 204234
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 211351, Tot Shld Enrg Used : 559, Engy Left : 1836585, Shld Enrg Left : 204234
+Auto-pilot: scan N radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 211531, Tot Shld Enrg Used : 559, Engy Left : 1836405, Shld Enrg Left : 204234
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 211711, Tot Shld Enrg Used : 559, Engy Left : 1836225, Shld Enrg Left : 204234
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 211891, Tot Shld Enrg Used : 559, Engy Left : 1836045, Shld Enrg Left : 204234
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 212611, Tot Shld Enrg Used : 559, Engy Left : 1835325, Shld Enrg Left : 204234
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 213331, Tot Shld Enrg Used : 559, Engy Left : 1834605, Shld Enrg Left : 204234
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 214051, Tot Shld Enrg Used : 559, Engy Left : 1833885, Shld Enrg Left : 204234
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 214771, Tot Shld Enrg Used : 559, Engy Left : 1833165, Shld Enrg Left : 204234
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 215085, Tot Shld Enrg Used : 979, Engy Left : 1832851, Shld Enrg Left : 203814
+Auto-pilot: scan N radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 215265, Tot Shld Enrg Used : 979, Engy Left : 1832671, Shld Enrg Left : 203814
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 215445, Tot Shld Enrg Used : 979, Engy Left : 1832491, Shld Enrg Left : 203814
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 216165, Tot Shld Enrg Used : 979, Engy Left : 1831771, Shld Enrg Left : 203814
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 216885, Tot Shld Enrg Used : 979, Engy Left : 1831051, Shld Enrg Left : 203814
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 217605, Tot Shld Enrg Used : 979, Engy Left : 1830331, Shld Enrg Left : 203814
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 217953, Tot Shld Enrg Used : 1538, Engy Left : 1829983, Shld Enrg Left : 203255
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 218313, Tot Shld Enrg Used : 1538, Engy Left : 1829623, Shld Enrg Left : 203255
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 218673, Tot Shld Enrg Used : 1538, Engy Left : 1829263, Shld Enrg Left : 203255
+Auto-pilot: scan N radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan N (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 218853, Tot Shld Enrg Used : 1538, Engy Left : 1829083, Shld Enrg Left : 203255
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 219573, Tot Shld Enrg Used : 1538, Engy Left : 1828363, Shld Enrg Left : 203255
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 220293, Tot Shld Enrg Used : 1538, Engy Left : 1827643, Shld Enrg Left : 203255
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 220641, Tot Shld Enrg Used : 2097, Engy Left : 1827295, Shld Enrg Left : 202696
+Auto-pilot: scan N radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan N (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 220821, Tot Shld Enrg Used : 2097, Engy Left : 1827115, Shld Enrg Left : 202696
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 221001, Tot Shld Enrg Used : 2097, Engy Left : 1826935, Shld Enrg Left : 202696
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 221721, Tot Shld Enrg Used : 2097, Engy Left : 1826215, Shld Enrg Left : 202696
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 222441, Tot Shld Enrg Used : 2097, Engy Left : 1825495, Shld Enrg Left : 202696
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 223161, Tot Shld Enrg Used : 2097, Engy Left : 1824775, Shld Enrg Left : 202696
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 223509, Tot Shld Enrg Used : 2656, Engy Left : 1824427, Shld Enrg Left : 202137
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 223869, Tot Shld Enrg Used : 2656, Engy Left : 1824067, Shld Enrg Left : 202137
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 224229, Tot Shld Enrg Used : 2656, Engy Left : 1823707, Shld Enrg Left : 202137
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 224409, Tot Shld Enrg Used : 2656, Engy Left : 1823527, Shld Enrg Left : 202137
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 225129, Tot Shld Enrg Used : 2656, Engy Left : 1822807, Shld Enrg Left : 202137
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 225849, Tot Shld Enrg Used : 2656, Engy Left : 1822087, Shld Enrg Left : 202137
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 226197, Tot Shld Enrg Used : 3215, Engy Left : 1821739, Shld Enrg Left : 201578
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 226557, Tot Shld Enrg Used : 3215, Engy Left : 1821379, Shld Enrg Left : 201578
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 226917, Tot Shld Enrg Used : 3215, Engy Left : 1821019, Shld Enrg Left : 201578
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 227097, Tot Shld Enrg Used : 3215, Engy Left : 1820839, Shld Enrg Left : 201578
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 227817, Tot Shld Enrg Used : 3215, Engy Left : 1820119, Shld Enrg Left : 201578
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 228537, Tot Shld Enrg Used : 3215, Engy Left : 1819399, Shld Enrg Left : 201578
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 228851, Tot Shld Enrg Used : 3635, Engy Left : 1819085, Shld Enrg Left : 201158
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 229211, Tot Shld Enrg Used : 3635, Engy Left : 1818725, Shld Enrg Left : 201158
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 229571, Tot Shld Enrg Used : 3635, Engy Left : 1818365, Shld Enrg Left : 201158
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 229751, Tot Shld Enrg Used : 3635, Engy Left : 1818185, Shld Enrg Left : 201158
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 230471, Tot Shld Enrg Used : 3635, Engy Left : 1817465, Shld Enrg Left : 201158
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 231191, Tot Shld Enrg Used : 3635, Engy Left : 1816745, Shld Enrg Left : 201158
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 231505, Tot Shld Enrg Used : 4055, Engy Left : 1816431, Shld Enrg Left : 200738
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 231865, Tot Shld Enrg Used : 4055, Engy Left : 1816071, Shld Enrg Left : 200738
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 232225, Tot Shld Enrg Used : 4055, Engy Left : 1815711, Shld Enrg Left : 200738
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 232405, Tot Shld Enrg Used : 4055, Engy Left : 1815531, Shld Enrg Left : 200738
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 233125, Tot Shld Enrg Used : 4055, Engy Left : 1814811, Shld Enrg Left : 200738
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 233845, Tot Shld Enrg Used : 4055, Engy Left : 1814091, Shld Enrg Left : 200738
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 234159, Tot Shld Enrg Used : 4475, Engy Left : 1813777, Shld Enrg Left : 200318
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 234519, Tot Shld Enrg Used : 4475, Engy Left : 1813417, Shld Enrg Left : 200318
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 234879, Tot Shld Enrg Used : 4475, Engy Left : 1813057, Shld Enrg Left : 200318
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 235059, Tot Shld Enrg Used : 4475, Engy Left : 1812877, Shld Enrg Left : 200318
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 235779, Tot Shld Enrg Used : 4475, Engy Left : 1812157, Shld Enrg Left : 200318
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 236499, Tot Shld Enrg Used : 4475, Engy Left : 1811437, Shld Enrg Left : 200318
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 236813, Tot Shld Enrg Used : 4895, Engy Left : 1811123, Shld Enrg Left : 199898
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 237173, Tot Shld Enrg Used : 4895, Engy Left : 1810763, Shld Enrg Left : 199898
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 237533, Tot Shld Enrg Used : 4895, Engy Left : 1810403, Shld Enrg Left : 199898
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 237713, Tot Shld Enrg Used : 4895, Engy Left : 1810223, Shld Enrg Left : 199898
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 238433, Tot Shld Enrg Used : 4895, Engy Left : 1809503, Shld Enrg Left : 199898
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 239153, Tot Shld Enrg Used : 4895, Engy Left : 1808783, Shld Enrg Left : 199898
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 239501, Tot Shld Enrg Used : 5454, Engy Left : 1808435, Shld Enrg Left : 199339
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 239861, Tot Shld Enrg Used : 5454, Engy Left : 1808075, Shld Enrg Left : 199339
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 240221, Tot Shld Enrg Used : 5454, Engy Left : 1807715, Shld Enrg Left : 199339
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 240401, Tot Shld Enrg Used : 5454, Engy Left : 1807535, Shld Enrg Left : 199339
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 241121, Tot Shld Enrg Used : 5454, Engy Left : 1806815, Shld Enrg Left : 199339
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 241841, Tot Shld Enrg Used : 5454, Engy Left : 1806095, Shld Enrg Left : 199339
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 242189, Tot Shld Enrg Used : 6013, Engy Left : 1805747, Shld Enrg Left : 198780
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 242549, Tot Shld Enrg Used : 6013, Engy Left : 1805387, Shld Enrg Left : 198780
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 242909, Tot Shld Enrg Used : 6013, Engy Left : 1805027, Shld Enrg Left : 198780
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 243089, Tot Shld Enrg Used : 6013, Engy Left : 1804847, Shld Enrg Left : 198780
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 243809, Tot Shld Enrg Used : 6013, Engy Left : 1804127, Shld Enrg Left : 198780
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 244529, Tot Shld Enrg Used : 6013, Engy Left : 1803407, Shld Enrg Left : 198780
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 244877, Tot Shld Enrg Used : 6572, Engy Left : 1803059, Shld Enrg Left : 198221
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 245237, Tot Shld Enrg Used : 6572, Engy Left : 1802699, Shld Enrg Left : 198221
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 245597, Tot Shld Enrg Used : 6572, Engy Left : 1802339, Shld Enrg Left : 198221
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 245777, Tot Shld Enrg Used : 6572, Engy Left : 1802159, Shld Enrg Left : 198221
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 246497, Tot Shld Enrg Used : 6572, Engy Left : 1801439, Shld Enrg Left : 198221
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 247217, Tot Shld Enrg Used : 6572, Engy Left : 1800719, Shld Enrg Left : 198221
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 247565, Tot Shld Enrg Used : 7131, Engy Left : 1800371, Shld Enrg Left : 197662
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 247925, Tot Shld Enrg Used : 7131, Engy Left : 1800011, Shld Enrg Left : 197662
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 248285, Tot Shld Enrg Used : 7131, Engy Left : 1799651, Shld Enrg Left : 197662
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 248465, Tot Shld Enrg Used : 7131, Engy Left : 1799471, Shld Enrg Left : 197662
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 249185, Tot Shld Enrg Used : 7131, Engy Left : 1798751, Shld Enrg Left : 197662
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 249905, Tot Shld Enrg Used : 7131, Engy Left : 1798031, Shld Enrg Left : 197662
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 250253, Tot Shld Enrg Used : 7690, Engy Left : 1797683, Shld Enrg Left : 197103
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 250613, Tot Shld Enrg Used : 7690, Engy Left : 1797323, Shld Enrg Left : 197103
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 250973, Tot Shld Enrg Used : 7690, Engy Left : 1796963, Shld Enrg Left : 197103
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 251153, Tot Shld Enrg Used : 7690, Engy Left : 1796783, Shld Enrg Left : 197103
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 251873, Tot Shld Enrg Used : 7690, Engy Left : 1796063, Shld Enrg Left : 197103
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 252593, Tot Shld Enrg Used : 7690, Engy Left : 1795343, Shld Enrg Left : 197103
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 252933, Tot Shld Enrg Used : 8204, Engy Left : 1795003, Shld Enrg Left : 196589
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 253293, Tot Shld Enrg Used : 8204, Engy Left : 1794643, Shld Enrg Left : 196589
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 253653, Tot Shld Enrg Used : 8204, Engy Left : 1794283, Shld Enrg Left : 196589
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 253833, Tot Shld Enrg Used : 8204, Engy Left : 1794103, Shld Enrg Left : 196589
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 254553, Tot Shld Enrg Used : 8204, Engy Left : 1793383, Shld Enrg Left : 196589
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 255273, Tot Shld Enrg Used : 8204, Engy Left : 1792663, Shld Enrg Left : 196589
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 255611, Tot Shld Enrg Used : 8743, Engy Left : 1792325, Shld Enrg Left : 196050
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 255971, Tot Shld Enrg Used : 8743, Engy Left : 1791965, Shld Enrg Left : 196050
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 256331, Tot Shld Enrg Used : 8743, Engy Left : 1791605, Shld Enrg Left : 196050
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 256511, Tot Shld Enrg Used : 8743, Engy Left : 1791425, Shld Enrg Left : 196050
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 257231, Tot Shld Enrg Used : 8743, Engy Left : 1790705, Shld Enrg Left : 196050
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 257951, Tot Shld Enrg Used : 8743, Engy Left : 1789985, Shld Enrg Left : 196050
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 258265, Tot Shld Enrg Used : 9163, Engy Left : 1789671, Shld Enrg Left : 195630
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 258625, Tot Shld Enrg Used : 9163, Engy Left : 1789311, Shld Enrg Left : 195630
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 258985, Tot Shld Enrg Used : 9163, Engy Left : 1788951, Shld Enrg Left : 195630
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 259165, Tot Shld Enrg Used : 9163, Engy Left : 1788771, Shld Enrg Left : 195630
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 259885, Tot Shld Enrg Used : 9163, Engy Left : 1788051, Shld Enrg Left : 195630
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 260605, Tot Shld Enrg Used : 9163, Engy Left : 1787331, Shld Enrg Left : 195630
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 261002, Tot Shld Enrg Used : 9683, Engy Left : 1786934, Shld Enrg Left : 195110
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 261362, Tot Shld Enrg Used : 9683, Engy Left : 1786574, Shld Enrg Left : 195110
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 261722, Tot Shld Enrg Used : 9683, Engy Left : 1786214, Shld Enrg Left : 195110
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 261902, Tot Shld Enrg Used : 9683, Engy Left : 1786034, Shld Enrg Left : 195110
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 262622, Tot Shld Enrg Used : 9683, Engy Left : 1785314, Shld Enrg Left : 195110
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 263342, Tot Shld Enrg Used : 9683, Engy Left : 1784594, Shld Enrg Left : 195110
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 263680, Tot Shld Enrg Used : 10222, Engy Left : 1784256, Shld Enrg Left : 194571
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 264040, Tot Shld Enrg Used : 10222, Engy Left : 1783896, Shld Enrg Left : 194571
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 264400, Tot Shld Enrg Used : 10222, Engy Left : 1783536, Shld Enrg Left : 194571
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 264580, Tot Shld Enrg Used : 10222, Engy Left : 1783356, Shld Enrg Left : 194571
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 265300, Tot Shld Enrg Used : 10222, Engy Left : 1782636, Shld Enrg Left : 194571
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'S'
+
+Initial Enrg : 2047936, Tot Enrg Used : 266020, Tot Shld Enrg Used : 10222, Engy Left : 1781916, Shld Enrg Left : 194571
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 266358, Tot Shld Enrg Used : 10761, Engy Left : 1781578, Shld Enrg Left : 194032
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 266718, Tot Shld Enrg Used : 10761, Engy Left : 1781218, Shld Enrg Left : 194032
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 267078, Tot Shld Enrg Used : 10761, Engy Left : 1780858, Shld Enrg Left : 194032
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 267258, Tot Shld Enrg Used : 10761, Engy Left : 1780678, Shld Enrg Left : 194032
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 267978, Tot Shld Enrg Used : 10761, Engy Left : 1779958, Shld Enrg Left : 194032
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 268698, Tot Shld Enrg Used : 10761, Engy Left : 1779238, Shld Enrg Left : 194032
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 269036, Tot Shld Enrg Used : 11300, Engy Left : 1778900, Shld Enrg Left : 193493
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 269374, Tot Shld Enrg Used : 11839, Engy Left : 1778562, Shld Enrg Left : 192954
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 269554, Tot Shld Enrg Used : 11839, Engy Left : 1778382, Shld Enrg Left : 192954
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 270274, Tot Shld Enrg Used : 11839, Engy Left : 1777662, Shld Enrg Left : 192954
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 270994, Tot Shld Enrg Used : 11839, Engy Left : 1776942, Shld Enrg Left : 192954
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 271342, Tot Shld Enrg Used : 12398, Engy Left : 1776594, Shld Enrg Left : 192395
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 271702, Tot Shld Enrg Used : 12398, Engy Left : 1776234, Shld Enrg Left : 192395
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 272062, Tot Shld Enrg Used : 12398, Engy Left : 1775874, Shld Enrg Left : 192395
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 272242, Tot Shld Enrg Used : 12398, Engy Left : 1775694, Shld Enrg Left : 192395
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 272962, Tot Shld Enrg Used : 12398, Engy Left : 1774974, Shld Enrg Left : 192395
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 273682, Tot Shld Enrg Used : 12398, Engy Left : 1774254, Shld Enrg Left : 192395
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 274022, Tot Shld Enrg Used : 12912, Engy Left : 1773914, Shld Enrg Left : 191881
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 274202, Tot Shld Enrg Used : 12912, Engy Left : 1773734, Shld Enrg Left : 191881
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 274922, Tot Shld Enrg Used : 12912, Engy Left : 1773014, Shld Enrg Left : 191881
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 275642, Tot Shld Enrg Used : 12912, Engy Left : 1772294, Shld Enrg Left : 191881
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 276036, Tot Shld Enrg Used : 13306, Engy Left : 1771900, Shld Enrg Left : 191487
+Auto-pilot: scan NE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 276396, Tot Shld Enrg Used : 13306, Engy Left : 1771540, Shld Enrg Left : 191487
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 276756, Tot Shld Enrg Used : 13306, Engy Left : 1771180, Shld Enrg Left : 191487
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 276936, Tot Shld Enrg Used : 13306, Engy Left : 1771000, Shld Enrg Left : 191487
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 277656, Tot Shld Enrg Used : 13306, Engy Left : 1770280, Shld Enrg Left : 191487
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 278376, Tot Shld Enrg Used : 13306, Engy Left : 1769560, Shld Enrg Left : 191487
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 278690, Tot Shld Enrg Used : 13726, Engy Left : 1769246, Shld Enrg Left : 191067
+Auto-pilot: scan E radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 278870, Tot Shld Enrg Used : 13726, Engy Left : 1769066, Shld Enrg Left : 191067
+Auto-pilot: scan NE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 279590, Tot Shld Enrg Used : 13726, Engy Left : 1768346, Shld Enrg Left : 191067
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 280310, Tot Shld Enrg Used : 13726, Engy Left : 1767626, Shld Enrg Left : 191067
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 280624, Tot Shld Enrg Used : 14146, Engy Left : 1767312, Shld Enrg Left : 190647
+Auto-pilot: scan N radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 280804, Tot Shld Enrg Used : 14146, Engy Left : 1767132, Shld Enrg Left : 190647
+Auto-pilot: scan E radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan E (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 280984, Tot Shld Enrg Used : 14146, Engy Left : 1766952, Shld Enrg Left : 190647
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 281704, Tot Shld Enrg Used : 14146, Engy Left : 1766232, Shld Enrg Left : 190647
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 282424, Tot Shld Enrg Used : 14146, Engy Left : 1765512, Shld Enrg Left : 190647
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 282762, Tot Shld Enrg Used : 14685, Engy Left : 1765174, Shld Enrg Left : 190108
+Auto-pilot: scan E radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan E (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 282942, Tot Shld Enrg Used : 14685, Engy Left : 1764994, Shld Enrg Left : 190108
+Auto-pilot: scan NE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 283662, Tot Shld Enrg Used : 14685, Engy Left : 1764274, Shld Enrg Left : 190108
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 284382, Tot Shld Enrg Used : 14685, Engy Left : 1763554, Shld Enrg Left : 190108
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 284696, Tot Shld Enrg Used : 15105, Engy Left : 1763240, Shld Enrg Left : 189688
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 285010, Tot Shld Enrg Used : 15525, Engy Left : 1762926, Shld Enrg Left : 189268
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 285730, Tot Shld Enrg Used : 15525, Engy Left : 1762206, Shld Enrg Left : 189268
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 286044, Tot Shld Enrg Used : 15945, Engy Left : 1761892, Shld Enrg Left : 188848
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 286224, Tot Shld Enrg Used : 15945, Engy Left : 1761712, Shld Enrg Left : 188848
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 286944, Tot Shld Enrg Used : 15945, Engy Left : 1760992, Shld Enrg Left : 188848
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 287664, Tot Shld Enrg Used : 15945, Engy Left : 1760272, Shld Enrg Left : 188848
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 288061, Tot Shld Enrg Used : 16465, Engy Left : 1759875, Shld Enrg Left : 188328
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 288421, Tot Shld Enrg Used : 16465, Engy Left : 1759515, Shld Enrg Left : 188328
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 288781, Tot Shld Enrg Used : 16465, Engy Left : 1759155, Shld Enrg Left : 188328
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 288961, Tot Shld Enrg Used : 16465, Engy Left : 1758975, Shld Enrg Left : 188328
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 289681, Tot Shld Enrg Used : 16465, Engy Left : 1758255, Shld Enrg Left : 188328
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 290401, Tot Shld Enrg Used : 16465, Engy Left : 1757535, Shld Enrg Left : 188328
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 290749, Tot Shld Enrg Used : 17024, Engy Left : 1757187, Shld Enrg Left : 187769
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 291109, Tot Shld Enrg Used : 17024, Engy Left : 1756827, Shld Enrg Left : 187769
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 291469, Tot Shld Enrg Used : 17024, Engy Left : 1756467, Shld Enrg Left : 187769
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 291649, Tot Shld Enrg Used : 17024, Engy Left : 1756287, Shld Enrg Left : 187769
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 292369, Tot Shld Enrg Used : 17024, Engy Left : 1755567, Shld Enrg Left : 187769
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 293089, Tot Shld Enrg Used : 17024, Engy Left : 1754847, Shld Enrg Left : 187769
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 293403, Tot Shld Enrg Used : 17444, Engy Left : 1754533, Shld Enrg Left : 187349
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 293763, Tot Shld Enrg Used : 17444, Engy Left : 1754173, Shld Enrg Left : 187349
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 294123, Tot Shld Enrg Used : 17444, Engy Left : 1753813, Shld Enrg Left : 187349
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 294303, Tot Shld Enrg Used : 17444, Engy Left : 1753633, Shld Enrg Left : 187349
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 295023, Tot Shld Enrg Used : 17444, Engy Left : 1752913, Shld Enrg Left : 187349
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 295743, Tot Shld Enrg Used : 17444, Engy Left : 1752193, Shld Enrg Left : 187349
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 296083, Tot Shld Enrg Used : 17958, Engy Left : 1751853, Shld Enrg Left : 186835
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 296443, Tot Shld Enrg Used : 17958, Engy Left : 1751493, Shld Enrg Left : 186835
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 296803, Tot Shld Enrg Used : 17958, Engy Left : 1751133, Shld Enrg Left : 186835
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 296983, Tot Shld Enrg Used : 17958, Engy Left : 1750953, Shld Enrg Left : 186835
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 297703, Tot Shld Enrg Used : 17958, Engy Left : 1750233, Shld Enrg Left : 186835
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 298423, Tot Shld Enrg Used : 17958, Engy Left : 1749513, Shld Enrg Left : 186835
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 298763, Tot Shld Enrg Used : 18472, Engy Left : 1749173, Shld Enrg Left : 186321
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 299123, Tot Shld Enrg Used : 18472, Engy Left : 1748813, Shld Enrg Left : 186321
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 299483, Tot Shld Enrg Used : 18472, Engy Left : 1748453, Shld Enrg Left : 186321
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 299663, Tot Shld Enrg Used : 18472, Engy Left : 1748273, Shld Enrg Left : 186321
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 300383, Tot Shld Enrg Used : 18472, Engy Left : 1747553, Shld Enrg Left : 186321
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 301103, Tot Shld Enrg Used : 18472, Engy Left : 1746833, Shld Enrg Left : 186321
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 301451, Tot Shld Enrg Used : 19031, Engy Left : 1746485, Shld Enrg Left : 185762
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 301811, Tot Shld Enrg Used : 19031, Engy Left : 1746125, Shld Enrg Left : 185762
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 302171, Tot Shld Enrg Used : 19031, Engy Left : 1745765, Shld Enrg Left : 185762
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 302351, Tot Shld Enrg Used : 19031, Engy Left : 1745585, Shld Enrg Left : 185762
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 303071, Tot Shld Enrg Used : 19031, Engy Left : 1744865, Shld Enrg Left : 185762
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 303791, Tot Shld Enrg Used : 19031, Engy Left : 1744145, Shld Enrg Left : 185762
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 304129, Tot Shld Enrg Used : 19570, Engy Left : 1743807, Shld Enrg Left : 185223
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 304489, Tot Shld Enrg Used : 19570, Engy Left : 1743447, Shld Enrg Left : 185223
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 304849, Tot Shld Enrg Used : 19570, Engy Left : 1743087, Shld Enrg Left : 185223
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 305029, Tot Shld Enrg Used : 19570, Engy Left : 1742907, Shld Enrg Left : 185223
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 305749, Tot Shld Enrg Used : 19570, Engy Left : 1742187, Shld Enrg Left : 185223
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 306469, Tot Shld Enrg Used : 19570, Engy Left : 1741467, Shld Enrg Left : 185223
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 306809, Tot Shld Enrg Used : 20084, Engy Left : 1741127, Shld Enrg Left : 184709
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'S'
+
+Initial Enrg : 2047936, Tot Enrg Used : 306989, Tot Shld Enrg Used : 20084, Engy Left : 1740947, Shld Enrg Left : 184709
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 307169, Tot Shld Enrg Used : 20084, Engy Left : 1740767, Shld Enrg Left : 184709
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 307889, Tot Shld Enrg Used : 20084, Engy Left : 1740047, Shld Enrg Left : 184709
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 308609, Tot Shld Enrg Used : 20084, Engy Left : 1739327, Shld Enrg Left : 184709
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 309329, Tot Shld Enrg Used : 20084, Engy Left : 1738607, Shld Enrg Left : 184709
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 309667, Tot Shld Enrg Used : 20623, Engy Left : 1738269, Shld Enrg Left : 184170
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 309847, Tot Shld Enrg Used : 20623, Engy Left : 1738089, Shld Enrg Left : 184170
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 310567, Tot Shld Enrg Used : 20623, Engy Left : 1737369, Shld Enrg Left : 184170
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 311287, Tot Shld Enrg Used : 20623, Engy Left : 1736649, Shld Enrg Left : 184170
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 311601, Tot Shld Enrg Used : 21043, Engy Left : 1736335, Shld Enrg Left : 183750
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 312321, Tot Shld Enrg Used : 21043, Engy Left : 1735615, Shld Enrg Left : 183750
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 312659, Tot Shld Enrg Used : 21582, Engy Left : 1735277, Shld Enrg Left : 183211
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 313379, Tot Shld Enrg Used : 21582, Engy Left : 1734557, Shld Enrg Left : 183211
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 313717, Tot Shld Enrg Used : 22121, Engy Left : 1734219, Shld Enrg Left : 182672
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 314065, Tot Shld Enrg Used : 22680, Engy Left : 1733871, Shld Enrg Left : 182113
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 314403, Tot Shld Enrg Used : 23219, Engy Left : 1733533, Shld Enrg Left : 181574
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 314743, Tot Shld Enrg Used : 23733, Engy Left : 1733193, Shld Enrg Left : 181060
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 315463, Tot Shld Enrg Used : 23733, Engy Left : 1732473, Shld Enrg Left : 181060
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 315777, Tot Shld Enrg Used : 24153, Engy Left : 1732159, Shld Enrg Left : 180640
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 316497, Tot Shld Enrg Used : 24153, Engy Left : 1731439, Shld Enrg Left : 180640
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 316835, Tot Shld Enrg Used : 24692, Engy Left : 1731101, Shld Enrg Left : 180101
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 317555, Tot Shld Enrg Used : 24692, Engy Left : 1730381, Shld Enrg Left : 180101
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 317893, Tot Shld Enrg Used : 25231, Engy Left : 1730043, Shld Enrg Left : 179562
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 318613, Tot Shld Enrg Used : 25231, Engy Left : 1729323, Shld Enrg Left : 179562
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 318961, Tot Shld Enrg Used : 25790, Engy Left : 1728975, Shld Enrg Left : 179003
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 319681, Tot Shld Enrg Used : 25790, Engy Left : 1728255, Shld Enrg Left : 179003
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 320021, Tot Shld Enrg Used : 26304, Engy Left : 1727915, Shld Enrg Left : 178489
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 320741, Tot Shld Enrg Used : 26304, Engy Left : 1727195, Shld Enrg Left : 178489
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 321089, Tot Shld Enrg Used : 26863, Engy Left : 1726847, Shld Enrg Left : 177930
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 321437, Tot Shld Enrg Used : 27422, Engy Left : 1726499, Shld Enrg Left : 177371
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 322157, Tot Shld Enrg Used : 27422, Engy Left : 1725779, Shld Enrg Left : 177371
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 322495, Tot Shld Enrg Used : 27961, Engy Left : 1725441, Shld Enrg Left : 176832
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 322855, Tot Shld Enrg Used : 27961, Engy Left : 1725081, Shld Enrg Left : 176832
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 323575, Tot Shld Enrg Used : 27961, Engy Left : 1724361, Shld Enrg Left : 176832
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 323915, Tot Shld Enrg Used : 28475, Engy Left : 1724021, Shld Enrg Left : 176318
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 324635, Tot Shld Enrg Used : 28475, Engy Left : 1723301, Shld Enrg Left : 176318
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 324973, Tot Shld Enrg Used : 29014, Engy Left : 1722963, Shld Enrg Left : 175779
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 325287, Tot Shld Enrg Used : 29434, Engy Left : 1722649, Shld Enrg Left : 175359
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 325467, Tot Shld Enrg Used : 29434, Engy Left : 1722469, Shld Enrg Left : 175359
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'E'
+
+Initial Enrg : 2047936, Tot Enrg Used : 326187, Tot Shld Enrg Used : 29434, Engy Left : 1721749, Shld Enrg Left : 175359
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 326907, Tot Shld Enrg Used : 29434, Engy Left : 1721029, Shld Enrg Left : 175359
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 327221, Tot Shld Enrg Used : 29854, Engy Left : 1720715, Shld Enrg Left : 174939
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 327401, Tot Shld Enrg Used : 29854, Engy Left : 1720535, Shld Enrg Left : 174939
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 328121, Tot Shld Enrg Used : 29854, Engy Left : 1719815, Shld Enrg Left : 174939
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 328841, Tot Shld Enrg Used : 29854, Engy Left : 1719095, Shld Enrg Left : 174939
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 329181, Tot Shld Enrg Used : 30368, Engy Left : 1718755, Shld Enrg Left : 174425
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 329901, Tot Shld Enrg Used : 30368, Engy Left : 1718035, Shld Enrg Left : 174425
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 330249, Tot Shld Enrg Used : 30927, Engy Left : 1717687, Shld Enrg Left : 173866
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 330429, Tot Shld Enrg Used : 30927, Engy Left : 1717507, Shld Enrg Left : 173866
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 331149, Tot Shld Enrg Used : 30927, Engy Left : 1716787, Shld Enrg Left : 173866
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 331869, Tot Shld Enrg Used : 30927, Engy Left : 1716067, Shld Enrg Left : 173866
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 332183, Tot Shld Enrg Used : 31347, Engy Left : 1715753, Shld Enrg Left : 173446
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 332363, Tot Shld Enrg Used : 31347, Engy Left : 1715573, Shld Enrg Left : 173446
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 333083, Tot Shld Enrg Used : 31347, Engy Left : 1714853, Shld Enrg Left : 173446
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 333421, Tot Shld Enrg Used : 31886, Engy Left : 1714515, Shld Enrg Left : 172907
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 333761, Tot Shld Enrg Used : 32400, Engy Left : 1714175, Shld Enrg Left : 172393
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 334075, Tot Shld Enrg Used : 32820, Engy Left : 1713861, Shld Enrg Left : 171973
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 334795, Tot Shld Enrg Used : 32820, Engy Left : 1713141, Shld Enrg Left : 171973
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 335109, Tot Shld Enrg Used : 33240, Engy Left : 1712827, Shld Enrg Left : 171553
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 335829, Tot Shld Enrg Used : 33240, Engy Left : 1712107, Shld Enrg Left : 171553
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 336169, Tot Shld Enrg Used : 33754, Engy Left : 1711767, Shld Enrg Left : 171039
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 336889, Tot Shld Enrg Used : 33754, Engy Left : 1711047, Shld Enrg Left : 171039
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 337286, Tot Shld Enrg Used : 34274, Engy Left : 1710650, Shld Enrg Left : 170519
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 338006, Tot Shld Enrg Used : 34274, Engy Left : 1709930, Shld Enrg Left : 170519
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 338354, Tot Shld Enrg Used : 34833, Engy Left : 1709582, Shld Enrg Left : 169960
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 339074, Tot Shld Enrg Used : 34833, Engy Left : 1708862, Shld Enrg Left : 169960
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 339414, Tot Shld Enrg Used : 35347, Engy Left : 1708522, Shld Enrg Left : 169446
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 340134, Tot Shld Enrg Used : 35347, Engy Left : 1707802, Shld Enrg Left : 169446
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 340531, Tot Shld Enrg Used : 35867, Engy Left : 1707405, Shld Enrg Left : 168926
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 341251, Tot Shld Enrg Used : 35867, Engy Left : 1706685, Shld Enrg Left : 168926
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 341645, Tot Shld Enrg Used : 36261, Engy Left : 1706291, Shld Enrg Left : 168532
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 342365, Tot Shld Enrg Used : 36261, Engy Left : 1705571, Shld Enrg Left : 168532
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 342762, Tot Shld Enrg Used : 36781, Engy Left : 1705174, Shld Enrg Left : 168012
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 343482, Tot Shld Enrg Used : 36781, Engy Left : 1704454, Shld Enrg Left : 168012
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 343830, Tot Shld Enrg Used : 37340, Engy Left : 1704106, Shld Enrg Left : 167453
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 344550, Tot Shld Enrg Used : 37340, Engy Left : 1703386, Shld Enrg Left : 167453
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 344947, Tot Shld Enrg Used : 37860, Engy Left : 1702989, Shld Enrg Left : 166933
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 345261, Tot Shld Enrg Used : 38280, Engy Left : 1702675, Shld Enrg Left : 166513
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 345981, Tot Shld Enrg Used : 38280, Engy Left : 1701955, Shld Enrg Left : 166513
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 346295, Tot Shld Enrg Used : 38700, Engy Left : 1701641, Shld Enrg Left : 166093
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 346475, Tot Shld Enrg Used : 38700, Engy Left : 1701461, Shld Enrg Left : 166093
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 346655, Tot Shld Enrg Used : 38700, Engy Left : 1701281, Shld Enrg Left : 166093
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 347375, Tot Shld Enrg Used : 38700, Engy Left : 1700561, Shld Enrg Left : 166093
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 347723, Tot Shld Enrg Used : 39259, Engy Left : 1700213, Shld Enrg Left : 165534
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 348083, Tot Shld Enrg Used : 39259, Engy Left : 1699853, Shld Enrg Left : 165534
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 348443, Tot Shld Enrg Used : 39259, Engy Left : 1699493, Shld Enrg Left : 165534
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 348623, Tot Shld Enrg Used : 39259, Engy Left : 1699313, Shld Enrg Left : 165534
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 349343, Tot Shld Enrg Used : 39259, Engy Left : 1698593, Shld Enrg Left : 165534
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 350063, Tot Shld Enrg Used : 39259, Engy Left : 1697873, Shld Enrg Left : 165534
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 350401, Tot Shld Enrg Used : 39798, Engy Left : 1697535, Shld Enrg Left : 164995
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 350581, Tot Shld Enrg Used : 39798, Engy Left : 1697355, Shld Enrg Left : 164995
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 351301, Tot Shld Enrg Used : 39798, Engy Left : 1696635, Shld Enrg Left : 164995
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 352021, Tot Shld Enrg Used : 39798, Engy Left : 1695915, Shld Enrg Left : 164995
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 352418, Tot Shld Enrg Used : 40318, Engy Left : 1695518, Shld Enrg Left : 164475
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 353138, Tot Shld Enrg Used : 40318, Engy Left : 1694798, Shld Enrg Left : 164475
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 353486, Tot Shld Enrg Used : 40877, Engy Left : 1694450, Shld Enrg Left : 163916
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 353826, Tot Shld Enrg Used : 41391, Engy Left : 1694110, Shld Enrg Left : 163402
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 354174, Tot Shld Enrg Used : 41950, Engy Left : 1693762, Shld Enrg Left : 162843
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 354354, Tot Shld Enrg Used : 41950, Engy Left : 1693582, Shld Enrg Left : 162843
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 355074, Tot Shld Enrg Used : 41950, Engy Left : 1692862, Shld Enrg Left : 162843
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 355471, Tot Shld Enrg Used : 42470, Engy Left : 1692465, Shld Enrg Left : 162323
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 356191, Tot Shld Enrg Used : 42470, Engy Left : 1691745, Shld Enrg Left : 162323
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 356529, Tot Shld Enrg Used : 43009, Engy Left : 1691407, Shld Enrg Left : 161784
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 356877, Tot Shld Enrg Used : 43568, Engy Left : 1691059, Shld Enrg Left : 161225
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 357215, Tot Shld Enrg Used : 44107, Engy Left : 1690721, Shld Enrg Left : 160686
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 357555, Tot Shld Enrg Used : 44621, Engy Left : 1690381, Shld Enrg Left : 160172
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 358275, Tot Shld Enrg Used : 44621, Engy Left : 1689661, Shld Enrg Left : 160172
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 358623, Tot Shld Enrg Used : 45180, Engy Left : 1689313, Shld Enrg Left : 159613
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 359343, Tot Shld Enrg Used : 45180, Engy Left : 1688593, Shld Enrg Left : 159613
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 359683, Tot Shld Enrg Used : 45694, Engy Left : 1688253, Shld Enrg Left : 159099
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 360403, Tot Shld Enrg Used : 45694, Engy Left : 1687533, Shld Enrg Left : 159099
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 360741, Tot Shld Enrg Used : 46233, Engy Left : 1687195, Shld Enrg Left : 158560
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 361461, Tot Shld Enrg Used : 46233, Engy Left : 1686475, Shld Enrg Left : 158560
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 361809, Tot Shld Enrg Used : 46792, Engy Left : 1686127, Shld Enrg Left : 158001
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 362529, Tot Shld Enrg Used : 46792, Engy Left : 1685407, Shld Enrg Left : 158001
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 362867, Tot Shld Enrg Used : 47331, Engy Left : 1685069, Shld Enrg Left : 157462
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 363587, Tot Shld Enrg Used : 47331, Engy Left : 1684349, Shld Enrg Left : 157462
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 363901, Tot Shld Enrg Used : 47751, Engy Left : 1684035, Shld Enrg Left : 157042
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 364621, Tot Shld Enrg Used : 47751, Engy Left : 1683315, Shld Enrg Left : 157042
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 364959, Tot Shld Enrg Used : 48290, Engy Left : 1682977, Shld Enrg Left : 156503
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'E'
+
+Initial Enrg : 2047936, Tot Enrg Used : 365679, Tot Shld Enrg Used : 48290, Engy Left : 1682257, Shld Enrg Left : 156503
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 366019, Tot Shld Enrg Used : 48804, Engy Left : 1681917, Shld Enrg Left : 155989
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 366199, Tot Shld Enrg Used : 48804, Engy Left : 1681737, Shld Enrg Left : 155989
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 366919, Tot Shld Enrg Used : 48804, Engy Left : 1681017, Shld Enrg Left : 155989
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 367639, Tot Shld Enrg Used : 48804, Engy Left : 1680297, Shld Enrg Left : 155989
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 367979, Tot Shld Enrg Used : 49318, Engy Left : 1679957, Shld Enrg Left : 155475
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 368159, Tot Shld Enrg Used : 49318, Engy Left : 1679777, Shld Enrg Left : 155475
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 368879, Tot Shld Enrg Used : 49318, Engy Left : 1679057, Shld Enrg Left : 155475
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 369599, Tot Shld Enrg Used : 49318, Engy Left : 1678337, Shld Enrg Left : 155475
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 369939, Tot Shld Enrg Used : 49832, Engy Left : 1677997, Shld Enrg Left : 154961
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 370119, Tot Shld Enrg Used : 49832, Engy Left : 1677817, Shld Enrg Left : 154961
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 370839, Tot Shld Enrg Used : 49832, Engy Left : 1677097, Shld Enrg Left : 154961
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 371559, Tot Shld Enrg Used : 49832, Engy Left : 1676377, Shld Enrg Left : 154961
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 371873, Tot Shld Enrg Used : 50252, Engy Left : 1676063, Shld Enrg Left : 154541
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 372053, Tot Shld Enrg Used : 50252, Engy Left : 1675883, Shld Enrg Left : 154541
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 372773, Tot Shld Enrg Used : 50252, Engy Left : 1675163, Shld Enrg Left : 154541
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 373493, Tot Shld Enrg Used : 50252, Engy Left : 1674443, Shld Enrg Left : 154541
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 373841, Tot Shld Enrg Used : 50811, Engy Left : 1674095, Shld Enrg Left : 153982
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 374201, Tot Shld Enrg Used : 50811, Engy Left : 1673735, Shld Enrg Left : 153982
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 374921, Tot Shld Enrg Used : 50811, Engy Left : 1673015, Shld Enrg Left : 153982
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 375261, Tot Shld Enrg Used : 51325, Engy Left : 1672675, Shld Enrg Left : 153468
+Auto-pilot: scan SE radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 375621, Tot Shld Enrg Used : 51325, Engy Left : 1672315, Shld Enrg Left : 153468
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 375969, Tot Shld Enrg Used : 51884, Engy Left : 1671967, Shld Enrg Left : 152909
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 376309, Tot Shld Enrg Used : 52398, Engy Left : 1671627, Shld Enrg Left : 152395
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 376649, Tot Shld Enrg Used : 52912, Engy Left : 1671287, Shld Enrg Left : 151881
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 376997, Tot Shld Enrg Used : 53471, Engy Left : 1670939, Shld Enrg Left : 151322
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 377311, Tot Shld Enrg Used : 53891, Engy Left : 1670625, Shld Enrg Left : 150902
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 377659, Tot Shld Enrg Used : 54450, Engy Left : 1670277, Shld Enrg Left : 150343
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 378379, Tot Shld Enrg Used : 54450, Engy Left : 1669557, Shld Enrg Left : 150343
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 378776, Tot Shld Enrg Used : 54970, Engy Left : 1669160, Shld Enrg Left : 149823
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 378956, Tot Shld Enrg Used : 54970, Engy Left : 1668980, Shld Enrg Left : 149823
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 379676, Tot Shld Enrg Used : 54970, Engy Left : 1668260, Shld Enrg Left : 149823
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 380396, Tot Shld Enrg Used : 54970, Engy Left : 1667540, Shld Enrg Left : 149823
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 380744, Tot Shld Enrg Used : 55529, Engy Left : 1667192, Shld Enrg Left : 149264
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 380924, Tot Shld Enrg Used : 55529, Engy Left : 1667012, Shld Enrg Left : 149264
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 381644, Tot Shld Enrg Used : 55529, Engy Left : 1666292, Shld Enrg Left : 149264
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 382364, Tot Shld Enrg Used : 55529, Engy Left : 1665572, Shld Enrg Left : 149264
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 382758, Tot Shld Enrg Used : 55923, Engy Left : 1665178, Shld Enrg Left : 148870
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 382938, Tot Shld Enrg Used : 55923, Engy Left : 1664998, Shld Enrg Left : 148870
+Auto-pilot: scan SE radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 383658, Tot Shld Enrg Used : 55923, Engy Left : 1664278, Shld Enrg Left : 148870
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 384378, Tot Shld Enrg Used : 55923, Engy Left : 1663558, Shld Enrg Left : 148870
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 384718, Tot Shld Enrg Used : 56437, Engy Left : 1663218, Shld Enrg Left : 148356
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 384898, Tot Shld Enrg Used : 56437, Engy Left : 1663038, Shld Enrg Left : 148356
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 385618, Tot Shld Enrg Used : 56437, Engy Left : 1662318, Shld Enrg Left : 148356
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 386338, Tot Shld Enrg Used : 56437, Engy Left : 1661598, Shld Enrg Left : 148356
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 386678, Tot Shld Enrg Used : 56951, Engy Left : 1661258, Shld Enrg Left : 147842
+Auto-pilot: scan E radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan E (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 386858, Tot Shld Enrg Used : 56951, Engy Left : 1661078, Shld Enrg Left : 147842
+Auto-pilot: scan S radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan S (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 387038, Tot Shld Enrg Used : 56951, Engy Left : 1660898, Shld Enrg Left : 147842
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 387758, Tot Shld Enrg Used : 56951, Engy Left : 1660178, Shld Enrg Left : 147842
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 388478, Tot Shld Enrg Used : 56951, Engy Left : 1659458, Shld Enrg Left : 147842
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 388818, Tot Shld Enrg Used : 57465, Engy Left : 1659118, Shld Enrg Left : 147328
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 389212, Tot Shld Enrg Used : 57859, Engy Left : 1658724, Shld Enrg Left : 146934
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 389609, Tot Shld Enrg Used : 58379, Engy Left : 1658327, Shld Enrg Left : 146414
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 390329, Tot Shld Enrg Used : 58379, Engy Left : 1657607, Shld Enrg Left : 146414
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 390677, Tot Shld Enrg Used : 58938, Engy Left : 1657259, Shld Enrg Left : 145855
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 391397, Tot Shld Enrg Used : 58938, Engy Left : 1656539, Shld Enrg Left : 145855
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 391794, Tot Shld Enrg Used : 59458, Engy Left : 1656142, Shld Enrg Left : 145335
+Auto-pilot: scan S radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan S (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 391974, Tot Shld Enrg Used : 59458, Engy Left : 1655962, Shld Enrg Left : 145335
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 392154, Tot Shld Enrg Used : 59458, Engy Left : 1655782, Shld Enrg Left : 145335
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 392874, Tot Shld Enrg Used : 59458, Engy Left : 1655062, Shld Enrg Left : 145335
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 393594, Tot Shld Enrg Used : 59458, Engy Left : 1654342, Shld Enrg Left : 145335
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 393934, Tot Shld Enrg Used : 59972, Engy Left : 1654002, Shld Enrg Left : 144821
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 394114, Tot Shld Enrg Used : 59972, Engy Left : 1653822, Shld Enrg Left : 144821
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 394834, Tot Shld Enrg Used : 59972, Engy Left : 1653102, Shld Enrg Left : 144821
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 395182, Tot Shld Enrg Used : 60531, Engy Left : 1652754, Shld Enrg Left : 144262
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 395579, Tot Shld Enrg Used : 61051, Engy Left : 1652357, Shld Enrg Left : 143742
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 395893, Tot Shld Enrg Used : 61471, Engy Left : 1652043, Shld Enrg Left : 143322
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 396613, Tot Shld Enrg Used : 61471, Engy Left : 1651323, Shld Enrg Left : 143322
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 396951, Tot Shld Enrg Used : 62010, Engy Left : 1650985, Shld Enrg Left : 142783
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 397671, Tot Shld Enrg Used : 62010, Engy Left : 1650265, Shld Enrg Left : 142783
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 398009, Tot Shld Enrg Used : 62549, Engy Left : 1649927, Shld Enrg Left : 142244
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 398729, Tot Shld Enrg Used : 62549, Engy Left : 1649207, Shld Enrg Left : 142244
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 399069, Tot Shld Enrg Used : 63063, Engy Left : 1648867, Shld Enrg Left : 141730
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 399249, Tot Shld Enrg Used : 63063, Engy Left : 1648687, Shld Enrg Left : 141730
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 399969, Tot Shld Enrg Used : 63063, Engy Left : 1647967, Shld Enrg Left : 141730
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 400317, Tot Shld Enrg Used : 63622, Engy Left : 1647619, Shld Enrg Left : 141171
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 401037, Tot Shld Enrg Used : 63622, Engy Left : 1646899, Shld Enrg Left : 141171
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 401375, Tot Shld Enrg Used : 64161, Engy Left : 1646561, Shld Enrg Left : 140632
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 401713, Tot Shld Enrg Used : 64700, Engy Left : 1646223, Shld Enrg Left : 140093
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 402433, Tot Shld Enrg Used : 64700, Engy Left : 1645503, Shld Enrg Left : 140093
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 402781, Tot Shld Enrg Used : 65259, Engy Left : 1645155, Shld Enrg Left : 139534
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 403501, Tot Shld Enrg Used : 65259, Engy Left : 1644435, Shld Enrg Left : 139534
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 403815, Tot Shld Enrg Used : 65679, Engy Left : 1644121, Shld Enrg Left : 139114
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 404535, Tot Shld Enrg Used : 65679, Engy Left : 1643401, Shld Enrg Left : 139114
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 404883, Tot Shld Enrg Used : 66238, Engy Left : 1643053, Shld Enrg Left : 138555
+Auto-pilot: scan S radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan S (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 405063, Tot Shld Enrg Used : 66238, Engy Left : 1642873, Shld Enrg Left : 138555
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 405783, Tot Shld Enrg Used : 66238, Engy Left : 1642153, Shld Enrg Left : 138555
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 406180, Tot Shld Enrg Used : 66758, Engy Left : 1641756, Shld Enrg Left : 138035
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 406900, Tot Shld Enrg Used : 66758, Engy Left : 1641036, Shld Enrg Left : 138035
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 407248, Tot Shld Enrg Used : 67317, Engy Left : 1640688, Shld Enrg Left : 137476
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 407645, Tot Shld Enrg Used : 67837, Engy Left : 1640291, Shld Enrg Left : 136956
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 407825, Tot Shld Enrg Used : 67837, Engy Left : 1640111, Shld Enrg Left : 136956
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 408545, Tot Shld Enrg Used : 67837, Engy Left : 1639391, Shld Enrg Left : 136956
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 408885, Tot Shld Enrg Used : 68351, Engy Left : 1639051, Shld Enrg Left : 136442
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 409065, Tot Shld Enrg Used : 68351, Engy Left : 1638871, Shld Enrg Left : 136442
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 409785, Tot Shld Enrg Used : 68351, Engy Left : 1638151, Shld Enrg Left : 136442
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 410123, Tot Shld Enrg Used : 68890, Engy Left : 1637813, Shld Enrg Left : 135903
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 410437, Tot Shld Enrg Used : 69310, Engy Left : 1637499, Shld Enrg Left : 135483
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 410751, Tot Shld Enrg Used : 69730, Engy Left : 1637185, Shld Enrg Left : 135063
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 411471, Tot Shld Enrg Used : 69730, Engy Left : 1636465, Shld Enrg Left : 135063
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 411811, Tot Shld Enrg Used : 70244, Engy Left : 1636125, Shld Enrg Left : 134549
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 412531, Tot Shld Enrg Used : 70244, Engy Left : 1635405, Shld Enrg Left : 134549
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 412845, Tot Shld Enrg Used : 70664, Engy Left : 1635091, Shld Enrg Left : 134129
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 413565, Tot Shld Enrg Used : 70664, Engy Left : 1634371, Shld Enrg Left : 134129
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 413905, Tot Shld Enrg Used : 71178, Engy Left : 1634031, Shld Enrg Left : 133615
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 414625, Tot Shld Enrg Used : 71178, Engy Left : 1633311, Shld Enrg Left : 133615
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 414939, Tot Shld Enrg Used : 71598, Engy Left : 1632997, Shld Enrg Left : 133195
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 415279, Tot Shld Enrg Used : 72112, Engy Left : 1632657, Shld Enrg Left : 132681
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 415459, Tot Shld Enrg Used : 72112, Engy Left : 1632477, Shld Enrg Left : 132681
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 416179, Tot Shld Enrg Used : 72112, Engy Left : 1631757, Shld Enrg Left : 132681
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 416519, Tot Shld Enrg Used : 72626, Engy Left : 1631417, Shld Enrg Left : 132167
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 416699, Tot Shld Enrg Used : 72626, Engy Left : 1631237, Shld Enrg Left : 132167
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 417419, Tot Shld Enrg Used : 72626, Engy Left : 1630517, Shld Enrg Left : 132167
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 417733, Tot Shld Enrg Used : 73046, Engy Left : 1630203, Shld Enrg Left : 131747
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 418071, Tot Shld Enrg Used : 73585, Engy Left : 1629865, Shld Enrg Left : 131208
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 418409, Tot Shld Enrg Used : 74124, Engy Left : 1629527, Shld Enrg Left : 130669
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 418589, Tot Shld Enrg Used : 74124, Engy Left : 1629347, Shld Enrg Left : 130669
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 419309, Tot Shld Enrg Used : 74124, Engy Left : 1628627, Shld Enrg Left : 130669
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 420029, Tot Shld Enrg Used : 74124, Engy Left : 1627907, Shld Enrg Left : 130669
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 420343, Tot Shld Enrg Used : 74544, Engy Left : 1627593, Shld Enrg Left : 130249
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 420523, Tot Shld Enrg Used : 74544, Engy Left : 1627413, Shld Enrg Left : 130249
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 421243, Tot Shld Enrg Used : 74544, Engy Left : 1626693, Shld Enrg Left : 130249
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 421963, Tot Shld Enrg Used : 74544, Engy Left : 1625973, Shld Enrg Left : 130249
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 422301, Tot Shld Enrg Used : 75083, Engy Left : 1625635, Shld Enrg Left : 129710
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 422695, Tot Shld Enrg Used : 75477, Engy Left : 1625241, Shld Enrg Left : 129316
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 422875, Tot Shld Enrg Used : 75477, Engy Left : 1625061, Shld Enrg Left : 129316
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 423595, Tot Shld Enrg Used : 75477, Engy Left : 1624341, Shld Enrg Left : 129316
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 424315, Tot Shld Enrg Used : 75477, Engy Left : 1623621, Shld Enrg Left : 129316
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 424712, Tot Shld Enrg Used : 75997, Engy Left : 1623224, Shld Enrg Left : 128796
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 425072, Tot Shld Enrg Used : 75997, Engy Left : 1622864, Shld Enrg Left : 128796
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 425432, Tot Shld Enrg Used : 75997, Engy Left : 1622504, Shld Enrg Left : 128796
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 425612, Tot Shld Enrg Used : 75997, Engy Left : 1622324, Shld Enrg Left : 128796
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 426332, Tot Shld Enrg Used : 75997, Engy Left : 1621604, Shld Enrg Left : 128796
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 427052, Tot Shld Enrg Used : 75997, Engy Left : 1620884, Shld Enrg Left : 128796
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 427390, Tot Shld Enrg Used : 76536, Engy Left : 1620546, Shld Enrg Left : 128257
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 427570, Tot Shld Enrg Used : 76536, Engy Left : 1620366, Shld Enrg Left : 128257
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 428290, Tot Shld Enrg Used : 76536, Engy Left : 1619646, Shld Enrg Left : 128257
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 429010, Tot Shld Enrg Used : 76536, Engy Left : 1618926, Shld Enrg Left : 128257
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 429358, Tot Shld Enrg Used : 77095, Engy Left : 1618578, Shld Enrg Left : 127698
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 429718, Tot Shld Enrg Used : 77095, Engy Left : 1618218, Shld Enrg Left : 127698
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 430438, Tot Shld Enrg Used : 77095, Engy Left : 1617498, Shld Enrg Left : 127698
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 430786, Tot Shld Enrg Used : 77654, Engy Left : 1617150, Shld Enrg Left : 127139
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 431506, Tot Shld Enrg Used : 77654, Engy Left : 1616430, Shld Enrg Left : 127139
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 431820, Tot Shld Enrg Used : 78074, Engy Left : 1616116, Shld Enrg Left : 126719
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 432540, Tot Shld Enrg Used : 78074, Engy Left : 1615396, Shld Enrg Left : 126719
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 432888, Tot Shld Enrg Used : 78633, Engy Left : 1615048, Shld Enrg Left : 126160
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 433608, Tot Shld Enrg Used : 78633, Engy Left : 1614328, Shld Enrg Left : 126160
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 433948, Tot Shld Enrg Used : 79147, Engy Left : 1613988, Shld Enrg Left : 125646
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 434345, Tot Shld Enrg Used : 79667, Engy Left : 1613591, Shld Enrg Left : 125126
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 434685, Tot Shld Enrg Used : 80181, Engy Left : 1613251, Shld Enrg Left : 124612
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 435033, Tot Shld Enrg Used : 80740, Engy Left : 1612903, Shld Enrg Left : 124053
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 435753, Tot Shld Enrg Used : 80740, Engy Left : 1612183, Shld Enrg Left : 124053
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 436093, Tot Shld Enrg Used : 81254, Engy Left : 1611843, Shld Enrg Left : 123539
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 436813, Tot Shld Enrg Used : 81254, Engy Left : 1611123, Shld Enrg Left : 123539
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 437127, Tot Shld Enrg Used : 81674, Engy Left : 1610809, Shld Enrg Left : 123119
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 437847, Tot Shld Enrg Used : 81674, Engy Left : 1610089, Shld Enrg Left : 123119
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 438195, Tot Shld Enrg Used : 82233, Engy Left : 1609741, Shld Enrg Left : 122560
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 438915, Tot Shld Enrg Used : 82233, Engy Left : 1609021, Shld Enrg Left : 122560
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 439253, Tot Shld Enrg Used : 82772, Engy Left : 1608683, Shld Enrg Left : 122021
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 439973, Tot Shld Enrg Used : 82772, Engy Left : 1607963, Shld Enrg Left : 122021
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 440370, Tot Shld Enrg Used : 83292, Engy Left : 1607566, Shld Enrg Left : 121501
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 440708, Tot Shld Enrg Used : 83831, Engy Left : 1607228, Shld Enrg Left : 120962
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 441105, Tot Shld Enrg Used : 84351, Engy Left : 1606831, Shld Enrg Left : 120442
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 441825, Tot Shld Enrg Used : 84351, Engy Left : 1606111, Shld Enrg Left : 120442
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 442173, Tot Shld Enrg Used : 84910, Engy Left : 1605763, Shld Enrg Left : 119883
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 442893, Tot Shld Enrg Used : 84910, Engy Left : 1605043, Shld Enrg Left : 119883
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 443233, Tot Shld Enrg Used : 85424, Engy Left : 1604703, Shld Enrg Left : 119369
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 443581, Tot Shld Enrg Used : 85983, Engy Left : 1604355, Shld Enrg Left : 118810
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 443919, Tot Shld Enrg Used : 86522, Engy Left : 1604017, Shld Enrg Left : 118271
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 444259, Tot Shld Enrg Used : 87036, Engy Left : 1603677, Shld Enrg Left : 117757
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 444599, Tot Shld Enrg Used : 87550, Engy Left : 1603337, Shld Enrg Left : 117243
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 444947, Tot Shld Enrg Used : 88109, Engy Left : 1602989, Shld Enrg Left : 116684
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 445295, Tot Shld Enrg Used : 88668, Engy Left : 1602641, Shld Enrg Left : 116125
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 445692, Tot Shld Enrg Used : 89188, Engy Left : 1602244, Shld Enrg Left : 115605
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 446412, Tot Shld Enrg Used : 89188, Engy Left : 1601524, Shld Enrg Left : 115605
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 446726, Tot Shld Enrg Used : 89608, Engy Left : 1601210, Shld Enrg Left : 115185
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 447446, Tot Shld Enrg Used : 89608, Engy Left : 1600490, Shld Enrg Left : 115185
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 447786, Tot Shld Enrg Used : 90122, Engy Left : 1600150, Shld Enrg Left : 114671
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 447966, Tot Shld Enrg Used : 90122, Engy Left : 1599970, Shld Enrg Left : 114671
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 448686, Tot Shld Enrg Used : 90122, Engy Left : 1599250, Shld Enrg Left : 114671
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 449406, Tot Shld Enrg Used : 90122, Engy Left : 1598530, Shld Enrg Left : 114671
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 449720, Tot Shld Enrg Used : 90542, Engy Left : 1598216, Shld Enrg Left : 114251
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 449900, Tot Shld Enrg Used : 90542, Engy Left : 1598036, Shld Enrg Left : 114251
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'E'
+
+Initial Enrg : 2047936, Tot Enrg Used : 450620, Tot Shld Enrg Used : 90542, Engy Left : 1597316, Shld Enrg Left : 114251
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 451340, Tot Shld Enrg Used : 90542, Engy Left : 1596596, Shld Enrg Left : 114251
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 451737, Tot Shld Enrg Used : 91062, Engy Left : 1596199, Shld Enrg Left : 113731
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 452457, Tot Shld Enrg Used : 91062, Engy Left : 1595479, Shld Enrg Left : 113731
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 452805, Tot Shld Enrg Used : 91621, Engy Left : 1595131, Shld Enrg Left : 113172
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 453525, Tot Shld Enrg Used : 91621, Engy Left : 1594411, Shld Enrg Left : 113172
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 453863, Tot Shld Enrg Used : 92160, Engy Left : 1594073, Shld Enrg Left : 112633
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 454583, Tot Shld Enrg Used : 92160, Engy Left : 1593353, Shld Enrg Left : 112633
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 454980, Tot Shld Enrg Used : 92680, Engy Left : 1592956, Shld Enrg Left : 112113
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 455160, Tot Shld Enrg Used : 92680, Engy Left : 1592776, Shld Enrg Left : 112113
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 455880, Tot Shld Enrg Used : 92680, Engy Left : 1592056, Shld Enrg Left : 112113
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 456228, Tot Shld Enrg Used : 93239, Engy Left : 1591708, Shld Enrg Left : 111554
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 456948, Tot Shld Enrg Used : 93239, Engy Left : 1590988, Shld Enrg Left : 111554
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 457288, Tot Shld Enrg Used : 93753, Engy Left : 1590648, Shld Enrg Left : 111040
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 457468, Tot Shld Enrg Used : 93753, Engy Left : 1590468, Shld Enrg Left : 111040
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 458188, Tot Shld Enrg Used : 93753, Engy Left : 1589748, Shld Enrg Left : 111040
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 458585, Tot Shld Enrg Used : 94273, Engy Left : 1589351, Shld Enrg Left : 110520
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 458945, Tot Shld Enrg Used : 94273, Engy Left : 1588991, Shld Enrg Left : 110520
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 459125, Tot Shld Enrg Used : 94273, Engy Left : 1588811, Shld Enrg Left : 110520
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 459845, Tot Shld Enrg Used : 94273, Engy Left : 1588091, Shld Enrg Left : 110520
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 460242, Tot Shld Enrg Used : 94793, Engy Left : 1587694, Shld Enrg Left : 110000
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 460962, Tot Shld Enrg Used : 94793, Engy Left : 1586974, Shld Enrg Left : 110000
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 461359, Tot Shld Enrg Used : 95313, Engy Left : 1586577, Shld Enrg Left : 109480
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 461673, Tot Shld Enrg Used : 95733, Engy Left : 1586263, Shld Enrg Left : 109060
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 462393, Tot Shld Enrg Used : 95733, Engy Left : 1585543, Shld Enrg Left : 109060
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 462790, Tot Shld Enrg Used : 96253, Engy Left : 1585146, Shld Enrg Left : 108540
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 463187, Tot Shld Enrg Used : 96773, Engy Left : 1584749, Shld Enrg Left : 108020
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 463584, Tot Shld Enrg Used : 97293, Engy Left : 1584352, Shld Enrg Left : 107500
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 463981, Tot Shld Enrg Used : 97813, Engy Left : 1583955, Shld Enrg Left : 106980
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 464701, Tot Shld Enrg Used : 97813, Engy Left : 1583235, Shld Enrg Left : 106980
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 465098, Tot Shld Enrg Used : 98333, Engy Left : 1582838, Shld Enrg Left : 106460
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 465495, Tot Shld Enrg Used : 98853, Engy Left : 1582441, Shld Enrg Left : 105940
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 466215, Tot Shld Enrg Used : 98853, Engy Left : 1581721, Shld Enrg Left : 105940
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 466529, Tot Shld Enrg Used : 99273, Engy Left : 1581407, Shld Enrg Left : 105520
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 466889, Tot Shld Enrg Used : 99273, Engy Left : 1581047, Shld Enrg Left : 105520
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 467069, Tot Shld Enrg Used : 99273, Engy Left : 1580867, Shld Enrg Left : 105520
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 467789, Tot Shld Enrg Used : 99273, Engy Left : 1580147, Shld Enrg Left : 105520
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 468186, Tot Shld Enrg Used : 99793, Engy Left : 1579750, Shld Enrg Left : 105000
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 468366, Tot Shld Enrg Used : 99793, Engy Left : 1579570, Shld Enrg Left : 105000
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 469086, Tot Shld Enrg Used : 99793, Engy Left : 1578850, Shld Enrg Left : 105000
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 469483, Tot Shld Enrg Used : 100313, Engy Left : 1578453, Shld Enrg Left : 104480
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 469823, Tot Shld Enrg Used : 100827, Engy Left : 1578113, Shld Enrg Left : 103966
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 470161, Tot Shld Enrg Used : 101366, Engy Left : 1577775, Shld Enrg Left : 103427
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 470341, Tot Shld Enrg Used : 101366, Engy Left : 1577595, Shld Enrg Left : 103427
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 471061, Tot Shld Enrg Used : 101366, Engy Left : 1576875, Shld Enrg Left : 103427
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 471781, Tot Shld Enrg Used : 101366, Engy Left : 1576155, Shld Enrg Left : 103427
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 472095, Tot Shld Enrg Used : 101786, Engy Left : 1575841, Shld Enrg Left : 103007
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 472275, Tot Shld Enrg Used : 101786, Engy Left : 1575661, Shld Enrg Left : 103007
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 472995, Tot Shld Enrg Used : 101786, Engy Left : 1574941, Shld Enrg Left : 103007
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 473715, Tot Shld Enrg Used : 101786, Engy Left : 1574221, Shld Enrg Left : 103007
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 474112, Tot Shld Enrg Used : 102306, Engy Left : 1573824, Shld Enrg Left : 102487
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 474832, Tot Shld Enrg Used : 102306, Engy Left : 1573104, Shld Enrg Left : 102487
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 475170, Tot Shld Enrg Used : 102845, Engy Left : 1572766, Shld Enrg Left : 101948
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 475890, Tot Shld Enrg Used : 102845, Engy Left : 1572046, Shld Enrg Left : 101948
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 476287, Tot Shld Enrg Used : 103365, Engy Left : 1571649, Shld Enrg Left : 101428
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 477007, Tot Shld Enrg Used : 103365, Engy Left : 1570929, Shld Enrg Left : 101428
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 477321, Tot Shld Enrg Used : 103785, Engy Left : 1570615, Shld Enrg Left : 101008
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 477681, Tot Shld Enrg Used : 103785, Engy Left : 1570255, Shld Enrg Left : 101008
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 478021, Tot Shld Enrg Used : 104299, Engy Left : 1569915, Shld Enrg Left : 100494
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 478335, Tot Shld Enrg Used : 104719, Engy Left : 1569601, Shld Enrg Left : 100074
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 478683, Tot Shld Enrg Used : 105278, Engy Left : 1569253, Shld Enrg Left : 99515
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 479023, Tot Shld Enrg Used : 105792, Engy Left : 1568913, Shld Enrg Left : 99001
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 479361, Tot Shld Enrg Used : 106331, Engy Left : 1568575, Shld Enrg Left : 98462
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 479758, Tot Shld Enrg Used : 106851, Engy Left : 1568178, Shld Enrg Left : 97942
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 480155, Tot Shld Enrg Used : 107371, Engy Left : 1567781, Shld Enrg Left : 97422
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 480495, Tot Shld Enrg Used : 107885, Engy Left : 1567441, Shld Enrg Left : 96908
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 481215, Tot Shld Enrg Used : 107885, Engy Left : 1566721, Shld Enrg Left : 96908
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 481553, Tot Shld Enrg Used : 108424, Engy Left : 1566383, Shld Enrg Left : 96369
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 482273, Tot Shld Enrg Used : 108424, Engy Left : 1565663, Shld Enrg Left : 96369
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 482667, Tot Shld Enrg Used : 108818, Engy Left : 1565269, Shld Enrg Left : 95975
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 483387, Tot Shld Enrg Used : 108818, Engy Left : 1564549, Shld Enrg Left : 95975
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 483784, Tot Shld Enrg Used : 109338, Engy Left : 1564152, Shld Enrg Left : 95455
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 484504, Tot Shld Enrg Used : 109338, Engy Left : 1563432, Shld Enrg Left : 95455
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 484898, Tot Shld Enrg Used : 109732, Engy Left : 1563038, Shld Enrg Left : 95061
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 485246, Tot Shld Enrg Used : 110291, Engy Left : 1562690, Shld Enrg Left : 94502
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 485426, Tot Shld Enrg Used : 110291, Engy Left : 1562510, Shld Enrg Left : 94502
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 486146, Tot Shld Enrg Used : 110291, Engy Left : 1561790, Shld Enrg Left : 94502
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 486460, Tot Shld Enrg Used : 110711, Engy Left : 1561476, Shld Enrg Left : 94082
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 486820, Tot Shld Enrg Used : 110711, Engy Left : 1561116, Shld Enrg Left : 94082
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 487000, Tot Shld Enrg Used : 110711, Engy Left : 1560936, Shld Enrg Left : 94082
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 487720, Tot Shld Enrg Used : 110711, Engy Left : 1560216, Shld Enrg Left : 94082
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 488034, Tot Shld Enrg Used : 111131, Engy Left : 1559902, Shld Enrg Left : 93662
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 488754, Tot Shld Enrg Used : 111131, Engy Left : 1559182, Shld Enrg Left : 93662
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 489151, Tot Shld Enrg Used : 111651, Engy Left : 1558785, Shld Enrg Left : 93142
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 489548, Tot Shld Enrg Used : 112171, Engy Left : 1558388, Shld Enrg Left : 92622
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 489888, Tot Shld Enrg Used : 112685, Engy Left : 1558048, Shld Enrg Left : 92108
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 490226, Tot Shld Enrg Used : 113224, Engy Left : 1557710, Shld Enrg Left : 91569
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 490566, Tot Shld Enrg Used : 113738, Engy Left : 1557370, Shld Enrg Left : 91055
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 490880, Tot Shld Enrg Used : 114158, Engy Left : 1557056, Shld Enrg Left : 90635
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 491277, Tot Shld Enrg Used : 114678, Engy Left : 1556659, Shld Enrg Left : 90115
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 491591, Tot Shld Enrg Used : 115098, Engy Left : 1556345, Shld Enrg Left : 89695
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 492311, Tot Shld Enrg Used : 115098, Engy Left : 1555625, Shld Enrg Left : 89695
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 492708, Tot Shld Enrg Used : 115618, Engy Left : 1555228, Shld Enrg Left : 89175
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 493046, Tot Shld Enrg Used : 116157, Engy Left : 1554890, Shld Enrg Left : 88636
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 493394, Tot Shld Enrg Used : 116716, Engy Left : 1554542, Shld Enrg Left : 88077
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 493742, Tot Shld Enrg Used : 117275, Engy Left : 1554194, Shld Enrg Left : 87518
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 494080, Tot Shld Enrg Used : 117814, Engy Left : 1553856, Shld Enrg Left : 86979
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 494800, Tot Shld Enrg Used : 117814, Engy Left : 1553136, Shld Enrg Left : 86979
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 495138, Tot Shld Enrg Used : 118353, Engy Left : 1552798, Shld Enrg Left : 86440
+Auto-pilot: scan NW radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 495498, Tot Shld Enrg Used : 118353, Engy Left : 1552438, Shld Enrg Left : 86440
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 495858, Tot Shld Enrg Used : 118353, Engy Left : 1552078, Shld Enrg Left : 86440
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 496038, Tot Shld Enrg Used : 118353, Engy Left : 1551898, Shld Enrg Left : 86440
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 496758, Tot Shld Enrg Used : 118353, Engy Left : 1551178, Shld Enrg Left : 86440
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 497478, Tot Shld Enrg Used : 118353, Engy Left : 1550458, Shld Enrg Left : 86440
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 497792, Tot Shld Enrg Used : 118773, Engy Left : 1550144, Shld Enrg Left : 86020
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 497972, Tot Shld Enrg Used : 118773, Engy Left : 1549964, Shld Enrg Left : 86020
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 498692, Tot Shld Enrg Used : 118773, Engy Left : 1549244, Shld Enrg Left : 86020
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 499412, Tot Shld Enrg Used : 118773, Engy Left : 1548524, Shld Enrg Left : 86020
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 499726, Tot Shld Enrg Used : 119193, Engy Left : 1548210, Shld Enrg Left : 85600
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 500086, Tot Shld Enrg Used : 119193, Engy Left : 1547850, Shld Enrg Left : 85600
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 500806, Tot Shld Enrg Used : 119193, Engy Left : 1547130, Shld Enrg Left : 85600
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 501203, Tot Shld Enrg Used : 119713, Engy Left : 1546733, Shld Enrg Left : 85080
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 501383, Tot Shld Enrg Used : 119713, Engy Left : 1546553, Shld Enrg Left : 85080
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 502103, Tot Shld Enrg Used : 119713, Engy Left : 1545833, Shld Enrg Left : 85080
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 502443, Tot Shld Enrg Used : 120227, Engy Left : 1545493, Shld Enrg Left : 84566
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 503163, Tot Shld Enrg Used : 120227, Engy Left : 1544773, Shld Enrg Left : 84566
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 503560, Tot Shld Enrg Used : 120747, Engy Left : 1544376, Shld Enrg Left : 84046
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 503898, Tot Shld Enrg Used : 121286, Engy Left : 1544038, Shld Enrg Left : 83507
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 504618, Tot Shld Enrg Used : 121286, Engy Left : 1543318, Shld Enrg Left : 83507
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 504956, Tot Shld Enrg Used : 121825, Engy Left : 1542980, Shld Enrg Left : 82968
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 505676, Tot Shld Enrg Used : 121825, Engy Left : 1542260, Shld Enrg Left : 82968
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 506073, Tot Shld Enrg Used : 122345, Engy Left : 1541863, Shld Enrg Left : 82448
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 506793, Tot Shld Enrg Used : 122345, Engy Left : 1541143, Shld Enrg Left : 82448
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 507107, Tot Shld Enrg Used : 122765, Engy Left : 1540829, Shld Enrg Left : 82028
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 507287, Tot Shld Enrg Used : 122765, Engy Left : 1540649, Shld Enrg Left : 82028
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 508007, Tot Shld Enrg Used : 122765, Engy Left : 1539929, Shld Enrg Left : 82028
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 508347, Tot Shld Enrg Used : 123279, Engy Left : 1539589, Shld Enrg Left : 81514
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 509067, Tot Shld Enrg Used : 123279, Engy Left : 1538869, Shld Enrg Left : 81514
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 509405, Tot Shld Enrg Used : 123818, Engy Left : 1538531, Shld Enrg Left : 80975
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 509585, Tot Shld Enrg Used : 123818, Engy Left : 1538351, Shld Enrg Left : 80975
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 510305, Tot Shld Enrg Used : 123818, Engy Left : 1537631, Shld Enrg Left : 80975
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 510619, Tot Shld Enrg Used : 124238, Engy Left : 1537317, Shld Enrg Left : 80555
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 511339, Tot Shld Enrg Used : 124238, Engy Left : 1536597, Shld Enrg Left : 80555
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 511736, Tot Shld Enrg Used : 124758, Engy Left : 1536200, Shld Enrg Left : 80035
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 512456, Tot Shld Enrg Used : 124758, Engy Left : 1535480, Shld Enrg Left : 80035
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 512853, Tot Shld Enrg Used : 125278, Engy Left : 1535083, Shld Enrg Left : 79515
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 513033, Tot Shld Enrg Used : 125278, Engy Left : 1534903, Shld Enrg Left : 79515
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 513753, Tot Shld Enrg Used : 125278, Engy Left : 1534183, Shld Enrg Left : 79515
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 514091, Tot Shld Enrg Used : 125817, Engy Left : 1533845, Shld Enrg Left : 78976
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 514271, Tot Shld Enrg Used : 125817, Engy Left : 1533665, Shld Enrg Left : 78976
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 514991, Tot Shld Enrg Used : 125817, Engy Left : 1532945, Shld Enrg Left : 78976
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 515339, Tot Shld Enrg Used : 126376, Engy Left : 1532597, Shld Enrg Left : 78417
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 515699, Tot Shld Enrg Used : 126376, Engy Left : 1532237, Shld Enrg Left : 78417
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 515879, Tot Shld Enrg Used : 126376, Engy Left : 1532057, Shld Enrg Left : 78417
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 516599, Tot Shld Enrg Used : 126376, Engy Left : 1531337, Shld Enrg Left : 78417
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 516913, Tot Shld Enrg Used : 126796, Engy Left : 1531023, Shld Enrg Left : 77997
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 517093, Tot Shld Enrg Used : 126796, Engy Left : 1530843, Shld Enrg Left : 77997
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 517813, Tot Shld Enrg Used : 126796, Engy Left : 1530123, Shld Enrg Left : 77997
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 518210, Tot Shld Enrg Used : 127316, Engy Left : 1529726, Shld Enrg Left : 77477
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 518550, Tot Shld Enrg Used : 127830, Engy Left : 1529386, Shld Enrg Left : 76963
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 518888, Tot Shld Enrg Used : 128369, Engy Left : 1529048, Shld Enrg Left : 76424
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 519202, Tot Shld Enrg Used : 128789, Engy Left : 1528734, Shld Enrg Left : 76004
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 519599, Tot Shld Enrg Used : 129309, Engy Left : 1528337, Shld Enrg Left : 75484
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 520319, Tot Shld Enrg Used : 129309, Engy Left : 1527617, Shld Enrg Left : 75484
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 520657, Tot Shld Enrg Used : 129848, Engy Left : 1527279, Shld Enrg Left : 74945
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 521377, Tot Shld Enrg Used : 129848, Engy Left : 1526559, Shld Enrg Left : 74945
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 521691, Tot Shld Enrg Used : 130268, Engy Left : 1526245, Shld Enrg Left : 74525
+Auto-pilot: scan S radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan S (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 521871, Tot Shld Enrg Used : 130268, Engy Left : 1526065, Shld Enrg Left : 74525
+Auto-pilot: scan SE radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SE (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 522591, Tot Shld Enrg Used : 130268, Engy Left : 1525345, Shld Enrg Left : 74525
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 523311, Tot Shld Enrg Used : 130268, Engy Left : 1524625, Shld Enrg Left : 74525
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 523651, Tot Shld Enrg Used : 130782, Engy Left : 1524285, Shld Enrg Left : 74011
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 524371, Tot Shld Enrg Used : 130782, Engy Left : 1523565, Shld Enrg Left : 74011
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 524685, Tot Shld Enrg Used : 131202, Engy Left : 1523251, Shld Enrg Left : 73591
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 525033, Tot Shld Enrg Used : 131761, Engy Left : 1522903, Shld Enrg Left : 73032
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 525213, Tot Shld Enrg Used : 131761, Engy Left : 1522723, Shld Enrg Left : 73032
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 525933, Tot Shld Enrg Used : 131761, Engy Left : 1522003, Shld Enrg Left : 73032
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 526330, Tot Shld Enrg Used : 132281, Engy Left : 1521606, Shld Enrg Left : 72512
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 526690, Tot Shld Enrg Used : 132281, Engy Left : 1521246, Shld Enrg Left : 72512
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 526870, Tot Shld Enrg Used : 132281, Engy Left : 1521066, Shld Enrg Left : 72512
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 527590, Tot Shld Enrg Used : 132281, Engy Left : 1520346, Shld Enrg Left : 72512
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 527987, Tot Shld Enrg Used : 132801, Engy Left : 1519949, Shld Enrg Left : 71992
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 528707, Tot Shld Enrg Used : 132801, Engy Left : 1519229, Shld Enrg Left : 71992
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 529104, Tot Shld Enrg Used : 133321, Engy Left : 1518832, Shld Enrg Left : 71472
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 529824, Tot Shld Enrg Used : 133321, Engy Left : 1518112, Shld Enrg Left : 71472
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 530221, Tot Shld Enrg Used : 133841, Engy Left : 1517715, Shld Enrg Left : 70952
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 530401, Tot Shld Enrg Used : 133841, Engy Left : 1517535, Shld Enrg Left : 70952
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 531121, Tot Shld Enrg Used : 133841, Engy Left : 1516815, Shld Enrg Left : 70952
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 531435, Tot Shld Enrg Used : 134261, Engy Left : 1516501, Shld Enrg Left : 70532
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 531615, Tot Shld Enrg Used : 134261, Engy Left : 1516321, Shld Enrg Left : 70532
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 532335, Tot Shld Enrg Used : 134261, Engy Left : 1515601, Shld Enrg Left : 70532
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 533055, Tot Shld Enrg Used : 134261, Engy Left : 1514881, Shld Enrg Left : 70532
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 533393, Tot Shld Enrg Used : 134800, Engy Left : 1514543, Shld Enrg Left : 69993
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'S'
+
+Initial Enrg : 2047936, Tot Enrg Used : 533573, Tot Shld Enrg Used : 134800, Engy Left : 1514363, Shld Enrg Left : 69993
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 534293, Tot Shld Enrg Used : 134800, Engy Left : 1513643, Shld Enrg Left : 69993
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 535013, Tot Shld Enrg Used : 134800, Engy Left : 1512923, Shld Enrg Left : 69993
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 535351, Tot Shld Enrg Used : 135339, Engy Left : 1512585, Shld Enrg Left : 69454
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 536071, Tot Shld Enrg Used : 135339, Engy Left : 1511865, Shld Enrg Left : 69454
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 536409, Tot Shld Enrg Used : 135878, Engy Left : 1511527, Shld Enrg Left : 68915
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 536806, Tot Shld Enrg Used : 136398, Engy Left : 1511130, Shld Enrg Left : 68395
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 537146, Tot Shld Enrg Used : 136912, Engy Left : 1510790, Shld Enrg Left : 67881
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 537543, Tot Shld Enrg Used : 137432, Engy Left : 1510393, Shld Enrg Left : 67361
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 537891, Tot Shld Enrg Used : 137991, Engy Left : 1510045, Shld Enrg Left : 66802
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 538071, Tot Shld Enrg Used : 137991, Engy Left : 1509865, Shld Enrg Left : 66802
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 538791, Tot Shld Enrg Used : 137991, Engy Left : 1509145, Shld Enrg Left : 66802
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 539131, Tot Shld Enrg Used : 138505, Engy Left : 1508805, Shld Enrg Left : 66288
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 539851, Tot Shld Enrg Used : 138505, Engy Left : 1508085, Shld Enrg Left : 66288
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 540199, Tot Shld Enrg Used : 139064, Engy Left : 1507737, Shld Enrg Left : 65729
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 540596, Tot Shld Enrg Used : 139584, Engy Left : 1507340, Shld Enrg Left : 65209
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 541316, Tot Shld Enrg Used : 139584, Engy Left : 1506620, Shld Enrg Left : 65209
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 541664, Tot Shld Enrg Used : 140143, Engy Left : 1506272, Shld Enrg Left : 64650
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 541844, Tot Shld Enrg Used : 140143, Engy Left : 1506092, Shld Enrg Left : 64650
+Auto-pilot: scan NW radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 542564, Tot Shld Enrg Used : 140143, Engy Left : 1505372, Shld Enrg Left : 64650
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 543284, Tot Shld Enrg Used : 140143, Engy Left : 1504652, Shld Enrg Left : 64650
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 543598, Tot Shld Enrg Used : 140563, Engy Left : 1504338, Shld Enrg Left : 64230
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 543778, Tot Shld Enrg Used : 140563, Engy Left : 1504158, Shld Enrg Left : 64230
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 544498, Tot Shld Enrg Used : 140563, Engy Left : 1503438, Shld Enrg Left : 64230
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 544812, Tot Shld Enrg Used : 140983, Engy Left : 1503124, Shld Enrg Left : 63810
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 544992, Tot Shld Enrg Used : 140983, Engy Left : 1502944, Shld Enrg Left : 63810
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 545712, Tot Shld Enrg Used : 140983, Engy Left : 1502224, Shld Enrg Left : 63810
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 546060, Tot Shld Enrg Used : 141542, Engy Left : 1501876, Shld Enrg Left : 63251
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 546240, Tot Shld Enrg Used : 141542, Engy Left : 1501696, Shld Enrg Left : 63251
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 546960, Tot Shld Enrg Used : 141542, Engy Left : 1500976, Shld Enrg Left : 63251
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 547357, Tot Shld Enrg Used : 142062, Engy Left : 1500579, Shld Enrg Left : 62731
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 547705, Tot Shld Enrg Used : 142621, Engy Left : 1500231, Shld Enrg Left : 62172
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 548053, Tot Shld Enrg Used : 143180, Engy Left : 1499883, Shld Enrg Left : 61613
+Auto-pilot: scan W radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan W (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 548233, Tot Shld Enrg Used : 143180, Engy Left : 1499703, Shld Enrg Left : 61613
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 548953, Tot Shld Enrg Used : 143180, Engy Left : 1498983, Shld Enrg Left : 61613
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 549673, Tot Shld Enrg Used : 143180, Engy Left : 1498263, Shld Enrg Left : 61613
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 550070, Tot Shld Enrg Used : 143700, Engy Left : 1497866, Shld Enrg Left : 61093
+Auto-pilot: scan W radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan W (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 550250, Tot Shld Enrg Used : 143700, Engy Left : 1497686, Shld Enrg Left : 61093
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 550970, Tot Shld Enrg Used : 143700, Engy Left : 1496966, Shld Enrg Left : 61093
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 551690, Tot Shld Enrg Used : 143700, Engy Left : 1496246, Shld Enrg Left : 61093
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 552038, Tot Shld Enrg Used : 144259, Engy Left : 1495898, Shld Enrg Left : 60534
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 552758, Tot Shld Enrg Used : 144259, Engy Left : 1495178, Shld Enrg Left : 60534
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 553155, Tot Shld Enrg Used : 144779, Engy Left : 1494781, Shld Enrg Left : 60014
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 553552, Tot Shld Enrg Used : 145299, Engy Left : 1494384, Shld Enrg Left : 59494
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 553890, Tot Shld Enrg Used : 145838, Engy Left : 1494046, Shld Enrg Left : 58955
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 554287, Tot Shld Enrg Used : 146358, Engy Left : 1493649, Shld Enrg Left : 58435
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 554635, Tot Shld Enrg Used : 146917, Engy Left : 1493301, Shld Enrg Left : 57876
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 554949, Tot Shld Enrg Used : 147337, Engy Left : 1492987, Shld Enrg Left : 57456
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 555287, Tot Shld Enrg Used : 147876, Engy Left : 1492649, Shld Enrg Left : 56917
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 556007, Tot Shld Enrg Used : 147876, Engy Left : 1491929, Shld Enrg Left : 56917
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 556347, Tot Shld Enrg Used : 148390, Engy Left : 1491589, Shld Enrg Left : 56403
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'f'
+
+Initial Enrg : 2047936, Tot Enrg Used : 556527, Tot Shld Enrg Used : 148390, Engy Left : 1491409, Shld Enrg Left : 56403
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 557247, Tot Shld Enrg Used : 148390, Engy Left : 1490689, Shld Enrg Left : 56403
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 557595, Tot Shld Enrg Used : 148949, Engy Left : 1490341, Shld Enrg Left : 55844
+Auto-pilot: scan SW radius 1.
+Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 557955, Tot Shld Enrg Used : 148949, Engy Left : 1489981, Shld Enrg Left : 55844
+Auto-pilot: scan S radius 2.
+Returned (scanned) terrain symbol is : 'w'
+
+Initial Enrg : 2047936, Tot Enrg Used : 558135, Tot Shld Enrg Used : 148949, Engy Left : 1489801, Shld Enrg Left : 55844
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 558855, Tot Shld Enrg Used : 148949, Engy Left : 1489081, Shld Enrg Left : 55844
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 559203, Tot Shld Enrg Used : 149508, Engy Left : 1488733, Shld Enrg Left : 55285
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 559923, Tot Shld Enrg Used : 149508, Engy Left : 1488013, Shld Enrg Left : 55285
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 560237, Tot Shld Enrg Used : 149928, Engy Left : 1487699, Shld Enrg Left : 54865
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 560551, Tot Shld Enrg Used : 150348, Engy Left : 1487385, Shld Enrg Left : 54445
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : 'j'
+
+Initial Enrg : 2047936, Tot Enrg Used : 561271, Tot Shld Enrg Used : 150348, Engy Left : 1486665, Shld Enrg Left : 54445
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 561609, Tot Shld Enrg Used : 150887, Engy Left : 1486327, Shld Enrg Left : 53906
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 562329, Tot Shld Enrg Used : 150887, Engy Left : 1485607, Shld Enrg Left : 53906
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 562669, Tot Shld Enrg Used : 151401, Engy Left : 1485267, Shld Enrg Left : 53392
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 563389, Tot Shld Enrg Used : 151401, Engy Left : 1484547, Shld Enrg Left : 53392
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 563737, Tot Shld Enrg Used : 151960, Engy Left : 1484199, Shld Enrg Left : 52833
+Auto-pilot: scan W radius 2.
+Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 563917, Tot Shld Enrg Used : 151960, Engy Left : 1484019, Shld Enrg Left : 52833
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 564637, Tot Shld Enrg Used : 151960, Engy Left : 1483299, Shld Enrg Left : 52833
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 565031, Tot Shld Enrg Used : 152354, Engy Left : 1482905, Shld Enrg Left : 52439
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 565751, Tot Shld Enrg Used : 152354, Engy Left : 1482185, Shld Enrg Left : 52439
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 566091, Tot Shld Enrg Used : 152868, Engy Left : 1481845, Shld Enrg Left : 51925
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 566439, Tot Shld Enrg Used : 153427, Engy Left : 1481497, Shld Enrg Left : 51366
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 567159, Tot Shld Enrg Used : 153427, Engy Left : 1480777, Shld Enrg Left : 51366
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 567499, Tot Shld Enrg Used : 153941, Engy Left : 1480437, Shld Enrg Left : 50852
+Auto-pilot: scan SW radius 2.
+Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 568219, Tot Shld Enrg Used : 153941, Engy Left : 1479717, Shld Enrg Left : 50852
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 568616, Tot Shld Enrg Used : 154461, Engy Left : 1479320, Shld Enrg Left : 50332
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 569336, Tot Shld Enrg Used : 154461, Engy Left : 1478600, Shld Enrg Left : 50332
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 569676, Tot Shld Enrg Used : 154975, Engy Left : 1478260, Shld Enrg Left : 49818
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 570024, Tot Shld Enrg Used : 155534, Engy Left : 1477912, Shld Enrg Left : 49259
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 570362, Tot Shld Enrg Used : 156073, Engy Left : 1477574, Shld Enrg Left : 48720
+Auto-pilot: scan W radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan W (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 570542, Tot Shld Enrg Used : 156073, Engy Left : 1477394, Shld Enrg Left : 48720
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 571262, Tot Shld Enrg Used : 156073, Engy Left : 1476674, Shld Enrg Left : 48720
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 571982, Tot Shld Enrg Used : 156073, Engy Left : 1475954, Shld Enrg Left : 48720
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 572320, Tot Shld Enrg Used : 156612, Engy Left : 1475616, Shld Enrg Left : 48181
+Auto-pilot: scan W radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan W (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 572500, Tot Shld Enrg Used : 156612, Engy Left : 1475436, Shld Enrg Left : 48181
+Auto-pilot: scan SW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan SW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 573220, Tot Shld Enrg Used : 156612, Engy Left : 1474716, Shld Enrg Left : 48181
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 573560, Tot Shld Enrg Used : 157126, Engy Left : 1474376, Shld Enrg Left : 47667
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 573900, Tot Shld Enrg Used : 157640, Engy Left : 1474036, Shld Enrg Left : 47153
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 574238, Tot Shld Enrg Used : 158179, Engy Left : 1473698, Shld Enrg Left : 46614
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 574552, Tot Shld Enrg Used : 158599, Engy Left : 1473384, Shld Enrg Left : 46194
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 574900, Tot Shld Enrg Used : 159158, Engy Left : 1473036, Shld Enrg Left : 45635
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 575297, Tot Shld Enrg Used : 159678, Engy Left : 1472639, Shld Enrg Left : 45115
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 575645, Tot Shld Enrg Used : 160237, Engy Left : 1472291, Shld Enrg Left : 44556
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 576042, Tot Shld Enrg Used : 160757, Engy Left : 1471894, Shld Enrg Left : 44036
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 576356, Tot Shld Enrg Used : 161177, Engy Left : 1471580, Shld Enrg Left : 43616
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 576694, Tot Shld Enrg Used : 161716, Engy Left : 1471242, Shld Enrg Left : 43077
+Auto-pilot: scan NW radius 2.
+
+Error! Scanning location is BEYOND map range!
+Scan NW (radius 2) failed.
+
+Initial Enrg : 2047936, Tot Enrg Used : 577414, Tot Shld Enrg Used : 161716, Engy Left : 1470522, Shld Enrg Left : 43077
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 577728, Tot Shld Enrg Used : 162136, Engy Left : 1470208, Shld Enrg Left : 42657
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 578122, Tot Shld Enrg Used : 162530, Engy Left : 1469814, Shld Enrg Left : 42263
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 578470, Tot Shld Enrg Used : 163089, Engy Left : 1469466, Shld Enrg Left : 41704
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 578867, Tot Shld Enrg Used : 163609, Engy Left : 1469069, Shld Enrg Left : 41184
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 579264, Tot Shld Enrg Used : 164129, Engy Left : 1468672, Shld Enrg Left : 40664
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 579604, Tot Shld Enrg Used : 164643, Engy Left : 1468332, Shld Enrg Left : 40150
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 580001, Tot Shld Enrg Used : 165163, Engy Left : 1467935, Shld Enrg Left : 39630
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 580341, Tot Shld Enrg Used : 165677, Engy Left : 1467595, Shld Enrg Left : 39116
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 580679, Tot Shld Enrg Used : 166216, Engy Left : 1467257, Shld Enrg Left : 38577
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 580993, Tot Shld Enrg Used : 166636, Engy Left : 1466943, Shld Enrg Left : 38157
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 581333, Tot Shld Enrg Used : 167150, Engy Left : 1466603, Shld Enrg Left : 37643
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 581730, Tot Shld Enrg Used : 167670, Engy Left : 1466206, Shld Enrg Left : 37123
+Auto-pilot: move dx=0 dy=1.
+
+Vehicle moved 'Down / South' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 582078, Tot Shld Enrg Used : 168229, Engy Left : 1465858, Shld Enrg Left : 36564
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 582418, Tot Shld Enrg Used : 168743, Engy Left : 1465518, Shld Enrg Left : 36050
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 582766, Tot Shld Enrg Used : 169302, Engy Left : 1465170, Shld Enrg Left : 35491
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 583104, Tot Shld Enrg Used : 169841, Engy Left : 1464832, Shld Enrg Left : 34952
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 583442, Tot Shld Enrg Used : 170380, Engy Left : 1464494, Shld Enrg Left : 34413
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 583839, Tot Shld Enrg Used : 170900, Engy Left : 1464097, Shld Enrg Left : 33893
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 584177, Tot Shld Enrg Used : 171439, Engy Left : 1463759, Shld Enrg Left : 33354
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 584571, Tot Shld Enrg Used : 171833, Engy Left : 1463365, Shld Enrg Left : 32960
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 584968, Tot Shld Enrg Used : 172353, Engy Left : 1462968, Shld Enrg Left : 32440
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 585308, Tot Shld Enrg Used : 172867, Engy Left : 1462628, Shld Enrg Left : 31926
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 585646, Tot Shld Enrg Used : 173406, Engy Left : 1462290, Shld Enrg Left : 31387
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 586043, Tot Shld Enrg Used : 173926, Engy Left : 1461893, Shld Enrg Left : 30867
+Auto-pilot: move dx=1 dy=0.
+
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 586381, Tot Shld Enrg Used : 174465, Engy Left : 1461555, Shld Enrg Left : 30328
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 586729, Tot Shld Enrg Used : 175024, Engy Left : 1461207, Shld Enrg Left : 29769
+Auto-pilot: move dx=0 dy=-1.
+
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 587067, Tot Shld Enrg Used : 175563, Engy Left : 1460869, Shld Enrg Left : 29230
+Auto-pilot: move dx=-1 dy=0.
+
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 587415, Tot Shld Enrg Used : 176122, Engy Left : 1460521, Shld Enrg Left : 28671
+Auto-pilot stopped: mission objective achieved.
+
+Enter your command (q to quit) : 
+-------------------------------------
+-- Exploration Report --
+-------------------------------------
+
+Total no. of scans taken : 416
+Total no. of movements (steps) taken : 346
+
+[ Energy Report ]
+Initial Energy : 2047936
+Total Energy Used : 587415
+Total Shield Energy Used : 176122
+Energy Left : 1460521
+Shield Energy Left : 28671
+
+[ Command Counters ]
+Moves issued : 346, Successful moves : 346
+Scans issued : 496, Successful scans : 416
+
+[ Terrain Types Scanned / Explored ]
+Terrain     Scanned   Explored
+  '#'            80          0
+  'X'            54          0
+  '~'            53         53
+  'f'            58         58
+  ' '            55         55
+  'w'            56         56
+  'j'            53         53
+  'S'             4          4
+  'E'             3          3
+
+[ Move / Shield Energy by Destination Terrain ]
+Terrain      MoveEnrg     ShldEnrg  Samples
+  'f'           25752        41366       74
+  ' '           19782        26460       63
+  'w'           21420        32382       63
+  '~'           22308        35574       66
+  'j'           27790        36400       70
+  'S'            1970         1970        5
+  'E'            1970         1970        5
+
+[ Scan Energy by Direction / Radius ]
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+N         1           90            0        1
+E         1           90            0        1
+S         1           90            0        1
+W         1          180            0        2
+NE        1         7560            0       21
+NW        1         2520            0        7
+SE        1        10800            0       30
+SW        1         7200            0       20
+N         2         1080            0        6
+E         2         4680            0       26
+S         2         7020            0       39
+W         2         8640            0       48
+NE        2        18720            0       26
+NW        2        30960            0       43
+SE        2        36000            0       50
+SW        2       126000            0      175
+
+-------------------------------------
+-- End of Exploration Report --
+-------------------------------------
+Vehicle closed. Goodbye.

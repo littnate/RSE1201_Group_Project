@@ -7,49 +7,50 @@ This is **not** a Node/Python app. There is no `npm install`.
 ## Prerequisites
 
 - **OS:** Linux **x86-64** (Ubuntu / WSL2 Ubuntu recommended; matches course VM)
-- **Toolchain:** `gcc` and `make` (`build-essential` on Ubuntu)
+- **Toolchain:** `gcc` (`build-essential` on Ubuntu)
 
 ```bash
 sudo apt update
 sudo apt install build-essential
 ```
 
-The course-provided `../MS_1_files/*.o` files are **ELF 64-bit x86-64**. They will not link on macOS, native Windows, or ARM (e.g. Apple Silicon without an x86-64 Linux environment).
+The presentation library `../special-reveal/libsatcom.so` is **ELF 64-bit x86-64**. It will not link on macOS, native Windows, or ARM (e.g. Apple Silicon without an x86-64 Linux environment).
 
-This folder lives in the group repo. From the repo root:
+This folder lives in the group repo. `bin/VehExplorer.run` is already built. From the repo root, run it from `VehExplorer/` so the loader finds `./libsatcom.so`:
 
 ```bash
 cd VehExplorer
-make
-./bin/VehExplorer
+./bin/VehExplorer.run
 ```
 
-At the startup prompts, a typical sample path is:
+`libsatcom.so` in this folder is a symlink to `../special-reveal/libsatcom.so`.
+
+After a source change, rebuild with this one command from `VehExplorer/` (`bin/` already exists):
+
+```bash
+gcc -std=c11 -Wall -Wextra -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
+```
+
+At the startup prompts, presentation sample paths are:
 
 ```text
-input-files/2026_Basic_Scenario_MS_1.dat
+input-files/New_2026_Basic_Scenario_MS_1.dat
+input-files/New_2026_Test_Scenario_MS_2.dat
+input-files/Scenario05.dat
 ```
 
-Encrypted: `y` (for the sample scenario). Then choose randomize / mission type as usual.
+Encrypted: `y`. Then choose randomize / mission type as usual.
 
-### Useful make targets
-
-| Command   | What it does                          |
-|-----------|----------------------------------------|
-| `make`    | Build `bin/VehExplorer`                |
-| `make clean` | Remove `obj/` and `bin/VehExplorer` |
-
-`bin/` and `obj/` are build outputs (gitignored). Every clone must run `make`.
+`bin/VehExplorer.run` is a build output (`*.run` is gitignored). A fresh clone does not contain that binary, so run the `gcc` command above once, then `./bin/VehExplorer.run`.
 
 ## What must be in the repo
 
 For someone else to build after clone, these must be present (committed):
 
-- `VehExplorer/src/`, `inc/`, `makefile`
-- `MS_1_files/*.o` and `MS_1_files/SatComRelay.h` (course library — one level up)
-- Scenario samples under `VehExplorer/input-files/`
-
-The group `.gitignore` already keeps `MS_1_files/*.o` (it ignores other `*.o` build junk).
+- `VehExplorer/src/`, `inc/`, `libsatcom.so` symlink
+- `special-reveal/libsatcom.so` (course shared library)
+- `MS_1_files/SatComRelay.h` (same header; the old `*.o` files are no longer linked)
+- Scenario samples under `VehExplorer/input-files/` and `special-reveal/*.dat`
 
 ## What you do *not* need
 

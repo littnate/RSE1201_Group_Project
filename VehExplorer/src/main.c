@@ -7,9 +7,9 @@
 #include <stdio.h>
 
 /* Heuristic: Init failure typically yields all-zero / non-positive energy. */
-static bool init_looks_ok(const VehDataType *vdt)
+static bool vehicle_init_has_energy(const VehDataType *vehicle) /* was vdt */
 {
-    return vdt->initialEnergy > 0 || vdt->currEnergy > 0;
+    return vehicle->initialEnergy > 0 || vehicle->currEnergy > 0;
 }
 
 /* Library can segfault after printing an open error; refuse missing paths first. */
@@ -26,7 +26,7 @@ static bool scenario_file_readable(const char *path)
 int main(void)
 {
     UiStartupConfig cfg;
-    VehDataType vdt;
+    VehDataType vehicle; /* was vdt */
 
     if (!ui_prompt_startup(&cfg)) {
         return 1;
@@ -37,13 +37,13 @@ int main(void)
         return 1;
     }
 
-    vdt = SCRelay_Signal_Veh_Init(
+    vehicle = SCRelay_Signal_Veh_Init(
         cfg.scenario_path,
         cfg.file_needs_decryption,
         cfg.randomize_start,
         cfg.mission_type);
 
-    if (!init_looks_ok(&vdt)) {
+    if (!vehicle_init_has_energy(&vehicle)) {
         fprintf(stderr,
                 "Init failed — check scenario path and encryption flag "
                 "(\"%s\", encrypted=%s).\n",
@@ -57,12 +57,12 @@ int main(void)
     local_map_mark_explored_here();
     stats_reset();
 
-    ui_run_command_loop(&vdt, cfg.mission_type);
+    ui_run_command_loop(&vehicle, cfg.mission_type);
 
-    stats_print_summary(&vdt);
+    stats_print_summary(&vehicle);
 
     /* Destroy path already freed library state — Close would segfault. */
-    if (mc_is_mission_over()) {
+    if (mission_control_is_mission_over()) {
         printf("Vehicle already shut down by mission-over. Goodbye.\n");
     } else {
         SCRelay_Signal_Veh_Close();

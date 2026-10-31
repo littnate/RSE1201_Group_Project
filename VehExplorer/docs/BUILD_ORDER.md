@@ -1,7 +1,32 @@
 # BUILD_ORDER.md — Independently testable build slices
 
-MS_1 (B0–B19) is complete. Current scope: **SPEC.md Milestone 2**.  
+MS_1 (B0–B20) and MS_2 (M2-0 through C16) are complete.  
+Current scope: **presentation link** — `libsatcom.so` and the reveal `.dat` files.  
 Check off when verification passes. No implementation design here — order and proof only.
+
+---
+
+## Progress (presentation link)
+
+- [x] P0 — Link `libsatcom.so`; smoke-test the reveal scenarios
+
+### P0 — Shared library link
+
+- **Objective:** Produce `bin/VehExplorer.run` linked to `special-reveal/libsatcom.so`, and show the new scenarios Init, move or scan, and quit.
+- **Dependencies:** MS_2 complete. Read-only drop in `special-reveal/`.
+- **Deliverable:** One `gcc` line from `VehExplorer/` links `./libsatcom.so` with `-Wl,-rpath=.` and writes `bin/VehExplorer.run`. The line is in `README.md` and `TESTING.md`. No makefile. New `.dat` symlinks in `input-files/`. The eight `MS_1_files/*.o` files stay on disk and are not on the link line. Student sources unchanged.
+- **Verification:** The `gcc` line succeeds. `ldd bin/VehExplorer.run` resolves `libsatcom.so`. From `VehExplorer/`: `./bin/VehExplorer.run`, then a manual session on `New_2026_Basic_Scenario_MS_1.dat` (allocate, one move, one scan, quit); type 1 auto with move cap 3 on `New_2026_Test_Scenario_MS_2.dat` and `Scenario05.dat`. One Init attempt on each older `.dat`.
+
+Verified 2026-10-31 on WSL. The `gcc` line in `README.md` produced `bin/VehExplorer.run` with no warnings. `readelf -d` NEEDED is `./libsatcom.so` and `libc.so.6` only. Run `./bin/VehExplorer.run` from `VehExplorer/` (encrypted `y`, randomize `n`, mission 1). Quiet auto options: maps `n`, delays `0`, move cap `3`. The makefile was removed after that check; the same `gcc` line was run again.
+
+| Check | Result |
+|-------|--------|
+| `ldd bin/VehExplorer.run` from `VehExplorer/` | Resolves `./libsatcom.so` |
+| Same binary started from `/tmp` | Exit 127, `cannot open shared object file` |
+| `New_2026_Basic_Scenario_MS_1.dat` | Init energy 210761; allocate 10000; move north succeeded; scan north returned `'w'`; `Vehicle closed` |
+| `New_2026_Test_Scenario_MS_2.dat` | Init energy 255992; auto stopped `move limit reached`; 3 successful moves, 31 successful scans |
+| `Scenario05.dat` | Init energy 20000; auto stopped `move limit reached`; 3 successful moves, 24 successful scans of 31 issued |
+| `2026_Basic_Scenario_MS_1.dat` and `2026_Test_Scenario_MS_2.dat` | Both print `Initializing Vehicle Controller ... done!` with energy 100000000. A north scan on the old MS_1 file failed. Use the `New_*` files and `Scenario05.dat` for the demo. |
 
 ---
 
@@ -25,6 +50,31 @@ Check off when verification passes. No implementation design here — order and 
 - [x] C13 — `p`/`q` interrupt; stuck/exhausted stop; Close rules
 - [x] C14 — MS_1 regression + second-scenario auto smoke
 - [x] C15 — Help text + evidence notes
+- [x] C16 — MS2 scenario terrain workbook
+
+Verified 2026-10-24 on WSL (`make` already up to date; `./bin/VehExplorer`). Quiet `o` (maps n, delays 0) unless noted. Scenario `input-files/2026_Test_Scenario_MS_2.dat` except the MS1 rows.
+
+| Check | Result |
+|-------|--------|
+| `o` option 1 = y | Prompts 2–4 skipped |
+| `o` t4 = 1 | Prompts 11–13 skipped; one scan cap slept ~2s (allocate + scan) |
+| Bad y/n | Re-prompted |
+| `p` before `o` | Options, then auto, move cap 3 |
+| Type 1 move cap 5 / scan cap 3 | `move limit reached` / `scan limit reached` |
+| Type 1 move cap 80 | Saw 2 `'E'`, explored 0, still stopped for the cap |
+| Type 2 | Objective stop; `'E'` scanned 1, explored 0 |
+| Type 3 | Objective stop; `'E'` explored 1 |
+| Type 4 | Objective stop; `'E'` scanned 3 (did not stop at the first) |
+| Type 5 | Objective stop; `'E'` scanned 3, explored 3 |
+| Type 6 | Objective stop; `'X'` scanned 54, explored 0 |
+| Type 7 | Objective stop; `'#'` scanned 80, explored 0; fewer moves than type 8 |
+| Type 8 | Objective stop; every passable symbol explored == scanned; `'X'` and `'#'` explored 0 |
+| Energy floor above starting energy | `energy below limit` before any move or scan |
+| Maps n | No scanned/explored map dump during auto |
+| `p` off and `q` during auto | Terminal session: `toggled off` returns to the prompt; `q` prints the report and `Vehicle closed` |
+| MS1 manual | Shield allocate, one successful move, one scan, both map keys, quit |
+| MS1 auto | Move cap 3, `Vehicle closed` |
+| Missing file | Exit 1, `Cannot open scenario file` |
 
 ---
 
@@ -51,6 +101,7 @@ Check off when verification passes. No implementation design here — order and 
 - [x] B17 — Session transcript artifact
 - [x] B18 — Rubric PDF pages + compliance audit
 - [x] B19 — Tutor UI alignment (PDF p.5+ flow)
+- [x] B20 — MS1 scenario terrain workbook
 
 ---
 
@@ -260,7 +311,7 @@ B6 may proceed in parallel with B5 after B4. B16/B17 are documentation/artifact 
 
 - **Objective:** One generic explorer: allocate shield if needed, scan unknown neighbours, move onto known passable, treat impassable as walls.
 - **Dependencies:** C5, C0 (for not dying on first hazard).
-- **Deliverable:** `autopilot` next-action; uses `mc_*` only.
+- **Deliverable:** `autopilot` next-action; uses `mission_control_*` only.
 - **Verification:** Short auto run on MS_2 `.dat` moves/scans without destroy; `#` (or equivalent) not entered after a failed bump is known.
 
 ### C7 — Type 1 casual
@@ -318,6 +369,13 @@ B6 may proceed in parallel with B5 after B4. B16/B17 are documentation/artifact 
 - **Deliverable:** Help text; `docs/evidence/` auto transcript.
 - **Verification:** Help mentions configure + toggle; log contains `o` and `p`.
 
+### C16 — MS2 scenario terrain workbook
+
+- **Objective:** Same terrain-characteristics workbook as B20, measured on `2026_Test_Scenario_MS_2.dat`.
+- **Dependencies:** C0, C12.
+- **Deliverable:** `docs/evidence/MS2-scenario-terrain-report.xlsx`, plus session logs `M2-session-A-type8.txt`, `M2-session-B-probes.txt`, `M2-session-C-repeat.txt`. Not hard-coded into the program.
+- **Verification:** Sheets Source, Terrain, Scan, Edge cases, Findings. Terrain `f` is 348 move / 559 shield, 74 samples, all from session A. Failed `#` move in session B: energy delta 394 and shield delta 1599 (repeat in session C matches). Session A scan totals: 416 successful + 80 out-of-range = 496 issued. Out-of-range radius-2 scans cost 180 cardinal and 720 diagonal, the same as a successful scan.
+
 ## Suggested MS_2 dependency graph
 
 ```
@@ -345,3 +403,10 @@ M2-0 → M2-S → C1 → C2 → C4
 - **Dependencies:** B18.
 - **Deliverable:** Updated `ui_cli` / map banners / shield errors / Exploration Report; `docs/evidence/tutor-replay-input.txt`, `tutor-replay-actual.txt`, `B19-tutor-alignment.md`.
 - **Verification:** Replay script exits 0; checklist patterns in `B19-tutor-alignment.md` PASS; second-scenario smoke still Inits + quits cleanly.
+
+### B20 — MS1 scenario terrain workbook
+
+- **Objective:** Put the default-scenario terrain measurements into the Excel report the course asks for (PDF page 4, Appendix B: scan cost, move/shield cost, whether a symbol’s cost stays constant, impassable moves).
+- **Dependencies:** B16.
+- **Deliverable:** `docs/evidence/MS1-scenario-terrain-report.xlsx` — not hard-coded into the program.
+- **Verification:** Workbook opens with sheets Source, Terrain, Scan, Edge cases, Findings. Terrain `f` is 645 move / 954 shield, 9 samples. Session C failed `#` move: totEnergyUsed 51553 → 52247 (694) and totShieldEnergyUsed 1863 → 3798 (1935). Session A scans sum to 5400, and 100000 allocate + 5400 = final totEnergyUsed 105400. Out-of-range scan left blank: those transcripts never failed a scan.

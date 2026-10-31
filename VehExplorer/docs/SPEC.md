@@ -37,7 +37,7 @@ You still do **not** reimplement physics, map loading, encryption, or scanning. 
 | G8 | Configurable **output filters and pauses** so the terminal stays followable (Agent T) |
 | G9 | Configurable **stop/pause**: energy floor, max moves, max scans, plus mission-objective stop (page 3) |
 | G10 | Same binary works on **unseen** scenario `.dat` files (including `MS_2_files/2026_Test_Scenario_MS_2.dat`) |
-| G11 | Still `gcc` + link **all** provided `MS_1_files/*.o`; do not decrypt `.dat` or patch binaries |
+| G11 | `gcc` + link `special-reveal/libsatcom.so` into `bin/VehExplorer.run`; do not link the old `MS_1_files/*.o`; do not decrypt `.dat` or patch the library |
 
 ### Non-goals
 
@@ -57,9 +57,9 @@ You still do **not** reimplement physics, map loading, encryption, or scanning. 
 |---|------------|
 | A1 | Solo development unless told otherwise. |
 | A2 | Primary env: **WSL2 Ubuntu x86-64**; later demo on Ubuntu 22.04 VM. |
-| A3 | MS_2 uses the **same** `SatComRelay.h` + `MS_1_files/*.o`. No new course objects were provided. |
+| A3 | Header stays `MS_1_files/SatComRelay.h`. From the 2026-10-31 reveal onward, link `special-reveal/libsatcom.so` instead of the eight `MS_1_files/*.o` files. Public `SCRelay_Signal_Veh_*` names are unchanged. |
 | A4 | Mission type is still chosen at **Init** (MS_1 Stage 1). Auto-pilot does not re-prompt mission type. |
-| A5 | Auto-pilot must call the same `mc_*` actions as the keyboard so maps/stats/report stay consistent. |
+| A5 | Auto-pilot must call the same `mission_control_*` actions as the keyboard so maps/stats/report stay consistent. |
 | A6 | CLI keys `o` and `p` match the MS_2 PDF examples; other MS_1 keys unchanged. |
 | A7 | `'E'` (end), `'X'` (danger), `'#'` (perimeter / impassable) in the PDF are **examples**. Roles are discovered from scans + move failures; do not assume every map uses only those letters, and do not assume MS_1’s passable `'X'` is danger on every file. |
 | A8 | “Believes it has found ALL …” means: local knowledge + exploration of remaining unknown frontier is exhausted (or a library mission-over message), not a tutor-only progress API. |
@@ -150,7 +150,7 @@ When auto-pilot is **on**:
 6. If shields would be too low to survive a damaging move, **allocate** before moving (never move with `currShieldEnergy <= 0` — MS_1 already DESTROYs the vehicle).
 7. Prefer **scan-before-move** onto unknown cells. Do not knowingly step onto impassable cells.
 8. For “find danger” missions, do **not** occupy a known danger cell.
-9. Scan radius: choose 1 or 2 via `mc_set_scan_radius` (to be added); do not require the user to press `t`.
+9. Scan radius: choose 1 or 2 via `mission_control_set_scan_radius`; do not require the user to press `t`.
 10. Stop the loop when any §4.5 condition is true; leave the operator in the **manual** command loop (auto off), unless `q` or library mission-over already ended Stage 2.
 
 ### 4.5 Mission-objective stop (page 3)
@@ -189,10 +189,10 @@ Print a clear reason when auto-pilot pauses or stops, e.g. `Auto-pilot stopped: 
 ### 5.1 Ecosystem (unchanged)
 
 ```
-[ src/*.c ]  +  [ MS_1_files/SatComRelay.h + *.o ]  →  bin/VehExplorer
+[ src/*.c ]  +  [ MS_1_files/SatComRelay.h + special-reveal/libsatcom.so ]  →  bin/VehExplorer.run
 ```
 
-MS_2 adds **student** modules only.
+MS_2 adds **student** modules only. The presentation drop replaces the eight course `.o` files with one shared library. It does not add student modules.
 
 ### 5.2 Module split
 
@@ -200,7 +200,7 @@ MS_2 adds **student** modules only.
 |--------|----------------|
 | `main.c` | Stages unchanged |
 | `ui_cli` | Prompts, keys, help, `o`/`p`, print gating for auto output |
-| `mission_control` | SatComRelay wrappers; add `mc_set_scan_radius` |
+| `mission_control` | SatComRelay wrappers; `mission_control_set_scan_radius` |
 | `local_map` | Explored/scanned grids; extra queries for planner (bounds, peek, frontier) |
 | `stats` | Counters + quit report (unchanged contract) |
 | `util_input` | Safe input |
@@ -227,7 +227,7 @@ Terrain **roles** (end / danger / wall) start from PDF examples and **discovery 
 
 ### 5.4 Build
 
-Same makefile: `wildcard src/*.c` already picks up new files. Link all `MS_1_files/*.o`. Flags: `-std=c11 -Wall -Wextra`.
+From `VehExplorer/`, one `gcc` command compiles every `src/*.c` and links `./libsatcom.so` with `-Wl,-rpath,.`. Flags: `-std=c11 -Wall -Wextra`. Output: `bin/VehExplorer.run`. Run `./bin/VehExplorer.run` from `VehExplorer/`. The exact line is in `README.md` and `TESTING.md`.
 
 ---
 
@@ -275,13 +275,14 @@ Unchanged: local Linux x86-64 executable. Sample MS_2 path: `input-files/2026_Te
 
 ```
 RSE1201_Group_Project/
-  MS_1_files/              # SatComRelay.h, *.o, MS_1 .dat + PDF  (read-only)
-  MS_2_files/              # MS_2 PDF, test .dat, page PNGs       (read-only .dat/PDF)
+  MS_1_files/              # SatComRelay.h, old *.o, MS_1 .dat + PDF  (read-only)
+  MS_2_files/              # MS_2 PDF, test .dat, page PNGs            (read-only .dat/PDF)
+  special-reveal/          # libsatcom.so, CompilationCommands.txt, new *.dat (read-only)
   VehExplorer/
     docs/                  # SPEC.md, PROJECT.md, BUILD_ORDER.md
-    src/  inc/  obj/  bin/
+    src/  inc/  obj/  bin/ # binary is bin/VehExplorer.run
+    libsatcom.so           # symlink to ../special-reveal/libsatcom.so
     input-files/           # symlinks to scenario .dat files
-    makefile
 ```
 
 ---
@@ -297,7 +298,7 @@ RSE1201_Group_Project/
 | Type 1 (casual) | Never stop for “mission complete”; only a–c, `p`, `q`, or destroy |
 | Unknown terrain char | Store and display; classify as wall only after impassable failure |
 | `'X'` on MS_1 vs MS_2 | Do not globally hardcode `'X'` as danger from MS_1 costs; use MS_2 discovery + PDF roles |
-| Destroy | `mc_is_mission_over`; leave auto; skip Close |
+| Destroy | `mission_control_is_mission_over`; leave auto; skip Close |
 | No frontier left but goal unmet | Stop with “stuck / map exhausted” rather than infinite loop |
 | Delay while demoing | `sleep` is OK; keep it interruptible later only if easy (U13) |
 
@@ -307,7 +308,7 @@ RSE1201_Group_Project/
 
 | Decision | Choice | Why |
 |----------|--------|-----|
-| Auto uses `mc_*` only | Yes | One success/fail/map path |
+| Auto uses `mission_control_*` only | Yes | One success/fail/map path |
 | Interrupt keys during auto | `p` and `q` | Brief: runs until stop; operator can still abort |
 | “ALL” completion | Frontier exhaustion + classified symbols | No public mission-% API (MS_1 B18) |
 | Cost-aware routing | Prefer empirically cheaper known cells when choosing among equals | Meets “energy cost effective”; no baked-in table required — use observed deltas already in `stats` if available, else treat unknown as scan-first |
@@ -317,7 +318,7 @@ RSE1201_Group_Project/
 
 ## 13. Deliverables awareness
 
-Course still expects program + makefile, reports, Excel discovery, demo slides at packaging time. This spec does not schedule Word/PPT.
+Presentation build is the single `gcc` line in `README.md` (no makefile). Course reports, Excel discovery, and demo slides stay for packaging time. This spec does not schedule Word/PPT.
 
 ---
 
@@ -330,7 +331,7 @@ Course still expects program + makefile, reports, Excel discovery, demo slides a
 5. Radius 2 is a decision, not only the `t` key.  
 6. Display suppression: auto-pilot must **not** always print maps like current manual `handle_move` / `handle_scan`. Factor print vs act.  
 7. `sleep` after prints so Agent T can read.  
-8. Link all MS_1 `.o`; MS_2 folder has **no** extra objects.  
+8. Link `libsatcom.so`, not the eight MS_1 `.o` files. The four password `Print*` functions are still exported. Do not call them.  
 
 ---
 
@@ -345,7 +346,7 @@ Course still expects program + makefile, reports, Excel discovery, demo slides a
 | U12 | Must auto-pilot be interruptible **during** `sleep`? | Best-effort: sleep full seconds first; non-blocking stdin later if needed |
 | U13 | How to classify end/danger if a new map uses different letters? | End = `'E'` only (PDF example). Danger = `'X'`. Walls = `'#'` plus impassable failures. Do **not** treat spawn or `'S'` as an end. |
 | U14 | Energy-aware path: use live `stats` averages per scanned symbol vs simple BFS? | **Scan-first + BFS** first; add cheapest-known-cell tie-break if time |
-| U15 | Should auto print the same tutor one-liner as manual when stats=y? | **Yes** (`ui_print_veh_data`) |
+| U15 | Should auto print the same energy line as manual when stats=y? | **Yes** (`ui_print_veh_data`) |
 
 MS_1 U1–U7 remain: executable `VehExplorer`, external `script`/`tee` OK, grow map from (0,0), `-std=c11`.
 
@@ -353,7 +354,7 @@ MS_1 U1–U7 remain: executable `VehExplorer`, external `script`/`tee` OK, grow 
 
 ## 16. Success definition (MS_2)
 
-On WSL Ubuntu, after `make`:
+On WSL Ubuntu, after the `gcc` line in `README.md`:
 
 1. MS_1 manual session still works on both sample `.dat` files.  
 2. `o` prompts follow Appendix A skip rules (1 overrides 2–4; t4>0 overrides t5–t7).  
@@ -361,6 +362,8 @@ On WSL Ubuntu, after `make`:
 4. Auto-pilot performs scans/moves/shields without those keys, updates maps/stats, and stops for a–c and the matching mission objective.  
 5. Type 2 stops after scanning one end; type 3 after occupying one; type 6 locates dangers without requiring visits.  
 6. No decrypt, no forbidden Print*, no crash on shield-0 / missing file.  
+
+Presentation check (2026-10-31): the `gcc` line writes `bin/VehExplorer.run` linked to `libsatcom.so` only. From `VehExplorer/`, `./bin/VehExplorer.run` and the three reveal `.dat` files Init with encrypted `y`.
 
 ---
 

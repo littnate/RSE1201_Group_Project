@@ -14,108 +14,108 @@ typedef struct {
 } TerrainEnergyRow;
 
 typedef struct {
-    McScanDir dir;
+    MissionControlScanDir dir;
     int radius;
     long scan_energy;
     long shield_energy;
     unsigned long samples;
 } ScanEnergyRow;
 
-static StatsCounters g_stats;
-static TerrainEnergyRow *g_terrain_energy;
-static size_t g_terrain_energy_n;
-static size_t g_terrain_energy_cap;
-static ScanEnergyRow *g_scan_energy;
-static size_t g_scan_energy_n;
-static size_t g_scan_energy_cap;
+static StatsCounters move_scan_counts; /* was g_stats */
+static TerrainEnergyRow *terrain_energy_rows; /* was g_terrain_energy */
+static size_t terrain_energy_count; /* was g_terrain_energy_n */
+static size_t terrain_energy_capacity; /* was g_terrain_energy_cap */
+static ScanEnergyRow *scan_energy_rows; /* was g_scan_energy */
+static size_t scan_energy_count; /* was g_scan_energy_n */
+static size_t scan_energy_capacity; /* was g_scan_energy_cap */
 
-static const char *dir_name(McScanDir dir)
+static const char *scan_direction_name(MissionControlScanDir dir)
 {
-    static const char *names[MC_DIR_COUNT] = {
+    static const char *names[MISSION_CONTROL_DIR_COUNT] = {
         "NW", "N", "NE", "W", "E", "SW", "S", "SE",
     };
 
-    if (dir < 0 || dir >= MC_DIR_COUNT) {
+    if (dir < 0 || dir >= MISSION_CONTROL_DIR_COUNT) {
         return "?";
     }
     return names[dir];
 }
 
-static void free_tables(void)
+static void free_energy_tables(void)
 {
-    free(g_terrain_energy);
-    free(g_scan_energy);
-    g_terrain_energy = NULL;
-    g_scan_energy = NULL;
-    g_terrain_energy_n = 0;
-    g_terrain_energy_cap = 0;
-    g_scan_energy_n = 0;
-    g_scan_energy_cap = 0;
+    free(terrain_energy_rows);
+    free(scan_energy_rows);
+    terrain_energy_rows = NULL;
+    scan_energy_rows = NULL;
+    terrain_energy_count = 0;
+    terrain_energy_capacity = 0;
+    scan_energy_count = 0;
+    scan_energy_capacity = 0;
 }
 
 void stats_reset(void)
 {
-    free_tables();
-    g_stats.moves_issued = 0;
-    g_stats.moves_ok = 0;
-    g_stats.scans_issued = 0;
-    g_stats.scans_ok = 0;
+    free_energy_tables();
+    move_scan_counts.moves_issued = 0;
+    move_scan_counts.moves_succeeded = 0;
+    move_scan_counts.scans_issued = 0;
+    move_scan_counts.scans_succeeded = 0;
 }
 
-void stats_note_move(bool success)
+void stats_count_move(bool success)
 {
-    g_stats.moves_issued++;
+    move_scan_counts.moves_issued++;
     if (success) {
-        g_stats.moves_ok++;
+        move_scan_counts.moves_succeeded++;
     }
 }
 
-void stats_note_scan(bool success)
+void stats_count_scan(bool success)
 {
-    g_stats.scans_issued++;
+    move_scan_counts.scans_issued++;
     if (success) {
-        g_stats.scans_ok++;
+        move_scan_counts.scans_succeeded++;
     }
 }
 
-void stats_note_move_energy(char terrain, long move_energy, long shield_energy)
+void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
 {
     size_t i;
     TerrainEnergyRow *row;
 
     if (terrain == '\0') {
-        terrain = LM_TERRAIN_UNKNOWN;
+        terrain = LOCAL_MAP_TERRAIN_UNKNOWN;
     }
 
-    for (i = 0; i < g_terrain_energy_n; i++) {
-        if (g_terrain_energy[i].terrain == terrain) {
-            g_terrain_energy[i].move_energy += move_energy;
-            g_terrain_energy[i].shield_energy += shield_energy;
-            g_terrain_energy[i].samples++;
+    for (i = 0; i < terrain_energy_count; i++) {
+        if (terrain_energy_rows[i].terrain == terrain) {
+            terrain_energy_rows[i].move_energy += move_energy;
+            terrain_energy_rows[i].shield_energy += shield_energy;
+            terrain_energy_rows[i].samples++;
             return;
         }
     }
 
-    if (g_terrain_energy_n >= g_terrain_energy_cap) {
-        size_t new_cap = (g_terrain_energy_cap == 0) ? 8 : g_terrain_energy_cap * 2;
+    if (terrain_energy_count >= terrain_energy_capacity) {
+        size_t new_cap = (terrain_energy_capacity == 0) ? 8 : terrain_energy_capacity * 2;
         TerrainEnergyRow *grown =
-            realloc(g_terrain_energy, new_cap * sizeof *grown);
+            realloc(terrain_energy_rows, new_cap * sizeof *grown);
         if (grown == NULL) {
             fprintf(stderr, "stats: out of memory\n");
             return;
         }
-        g_terrain_energy = grown;
-        g_terrain_energy_cap = new_cap;
+        terrain_energy_rows = grown;
+        terrain_energy_capacity = new_cap;
     }
 
-    row = &g_terrain_energy[g_terrain_energy_n++];
+    row = &terrain_energy_rows[terrain_energy_count++];
     row->terrain = terrain;
     row->move_energy = move_energy;
     row->shield_energy = shield_energy;
     row->samples = 1;
 }
 
-void stats_note_scan_energy(McScanDir dir,
+void stats_add_scan_energy(MissionControlScanDir dir,
                             int radius,
                             long scan_energy,
                             long shield_energy)
@@ -123,34 +123,34 @@ void stats_note_scan_energy(McScanDir dir,
     size_t i;
     ScanEnergyRow *row;
 
-    if (dir < 0 || dir >= MC_DIR_COUNT) {
+    if (dir < 0 || dir >= MISSION_CONTROL_DIR_COUNT) {
         return;
     }
     if (radius != 1 && radius != 2) {
         return;
     }
 
-    for (i = 0; i < g_scan_energy_n; i++) {
-        if (g_scan_energy[i].dir == dir && g_scan_energy[i].radius == radius) {
-            g_scan_energy[i].scan_energy += scan_energy;
-            g_scan_energy[i].shield_energy += shield_energy;
-            g_scan_energy[i].samples++;
+    for (i = 0; i < scan_energy_count; i++) {
+        if (scan_energy_rows[i].dir == dir && scan_energy_rows[i].radius == radius) {
+            scan_energy_rows[i].scan_energy += scan_energy;
+            scan_energy_rows[i].shield_energy += shield_energy;
+            scan_energy_rows[i].samples++;
             return;
         }
     }
 
-    if (g_scan_energy_n >= g_scan_energy_cap) {
-        size_t new_cap = (g_scan_energy_cap == 0) ? 8 : g_scan_energy_cap * 2;
-        ScanEnergyRow *grown = realloc(g_scan_energy, new_cap * sizeof *grown);
+    if (scan_energy_count >= scan_energy_capacity) {
+        size_t new_cap = (scan_energy_capacity == 0) ? 8 : scan_energy_capacity * 2;
+        ScanEnergyRow *grown = realloc(scan_energy_rows, new_cap * sizeof *grown);
         if (grown == NULL) {
             fprintf(stderr, "stats: out of memory\n");
             return;
         }
-        g_scan_energy = grown;
-        g_scan_energy_cap = new_cap;
+        scan_energy_rows = grown;
+        scan_energy_capacity = new_cap;
     }
 
-    row = &g_scan_energy[g_scan_energy_n++];
+    row = &scan_energy_rows[scan_energy_count++];
     row->dir = dir;
     row->radius = radius;
     row->scan_energy = scan_energy;
@@ -160,17 +160,17 @@ void stats_note_scan_energy(McScanDir dir,
 
 StatsCounters stats_get(void)
 {
-    return g_stats;
+    return move_scan_counts;
 }
 
 static void print_command_stats(void)
 {
     printf("Moves issued : %lu, Successful moves : %lu\n",
-           g_stats.moves_issued,
-           g_stats.moves_ok);
+           move_scan_counts.moves_issued,
+           move_scan_counts.moves_succeeded);
     printf("Scans issued : %lu, Successful scans : %lu\n",
-           g_stats.scans_issued,
-           g_stats.scans_ok);
+           move_scan_counts.scans_issued,
+           move_scan_counts.scans_succeeded);
 }
 
 static void print_terrain_counts(void)
@@ -201,7 +201,7 @@ static void print_move_energy_by_terrain(void)
     size_t i;
 
     printf("\n[ Move / Shield Energy by Destination Terrain ]\n");
-    if (g_terrain_energy_n == 0) {
+    if (terrain_energy_count == 0) {
         printf("(none recorded — need successful moves)\n");
         return;
     }
@@ -211,12 +211,12 @@ static void print_move_energy_by_terrain(void)
            "MoveEnrg",
            "ShldEnrg",
            "Samples");
-    for (i = 0; i < g_terrain_energy_n; i++) {
+    for (i = 0; i < terrain_energy_count; i++) {
         printf("  '%c'    %12ld %12ld %8lu\n",
-               g_terrain_energy[i].terrain,
-               g_terrain_energy[i].move_energy,
-               g_terrain_energy[i].shield_energy,
-               g_terrain_energy[i].samples);
+               terrain_energy_rows[i].terrain,
+               terrain_energy_rows[i].move_energy,
+               terrain_energy_rows[i].shield_energy,
+               terrain_energy_rows[i].samples);
     }
 }
 
@@ -225,7 +225,7 @@ static void print_scan_energy(void)
     size_t i;
 
     printf("\n[ Scan Energy by Direction / Radius ]\n");
-    if (g_scan_energy_n == 0) {
+    if (scan_energy_count == 0) {
         printf("(none recorded — need scans that consumed energy)\n");
         return;
     }
@@ -236,33 +236,33 @@ static void print_scan_energy(void)
            "ScanEnrg",
            "ShldEnrg",
            "Samples");
-    for (i = 0; i < g_scan_energy_n; i++) {
+    for (i = 0; i < scan_energy_count; i++) {
         printf("%-4s %6d %12ld %12ld %8lu\n",
-               dir_name(g_scan_energy[i].dir),
-               g_scan_energy[i].radius,
-               g_scan_energy[i].scan_energy,
-               g_scan_energy[i].shield_energy,
-               g_scan_energy[i].samples);
+               scan_direction_name(scan_energy_rows[i].dir),
+               scan_energy_rows[i].radius,
+               scan_energy_rows[i].scan_energy,
+               scan_energy_rows[i].shield_energy,
+               scan_energy_rows[i].samples);
     }
 }
 
-void stats_print_summary(const VehDataType *vdt)
+void stats_print_summary(const VehDataType *vehicle) /* was vdt */
 {
     printf("\n");
     printf("-------------------------------------\n");
     printf("-- Exploration Report --\n");
     printf("-------------------------------------\n");
 
-    printf("\nTotal no. of scans taken : %lu\n", g_stats.scans_ok);
-    printf("Total no. of movements (steps) taken : %lu\n", g_stats.moves_ok);
+    printf("\nTotal no. of scans taken : %lu\n", move_scan_counts.scans_succeeded);
+    printf("Total no. of movements (steps) taken : %lu\n", move_scan_counts.moves_succeeded);
 
-    if (vdt != NULL) {
+    if (vehicle != NULL) {
         printf("\n[ Energy Report ]\n");
-        printf("Initial Energy : %ld\n", vdt->initialEnergy);
-        printf("Total Energy Used : %ld\n", vdt->totEnergyUsed);
-        printf("Total Shield Energy Used : %ld\n", vdt->totShieldEnergyUsed);
-        printf("Energy Left : %ld\n", vdt->currEnergy);
-        printf("Shield Energy Left : %ld\n", vdt->currShieldEnergy);
+        printf("Initial Energy : %ld\n", vehicle->initialEnergy);
+        printf("Total Energy Used : %ld\n", vehicle->totEnergyUsed);
+        printf("Total Shield Energy Used : %ld\n", vehicle->totShieldEnergyUsed);
+        printf("Energy Left : %ld\n", vehicle->currEnergy);
+        printf("Shield Energy Left : %ld\n", vehicle->currShieldEnergy);
     }
 
     printf("\n[ Command Counters ]\n");

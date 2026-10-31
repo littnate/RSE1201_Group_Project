@@ -1,0 +1,254 @@
+Please enter the scenario file's name : Is the scenario file encrypted? (y/n) : Do you wish to randomize start position? (y/n) : Please select Mission Type :
+  1) Casual Explore
+  2) Find 1 End Point
+  3) Reach 1 End Point
+  4) Find ALL End Points
+  5) Reach ALL End Points
+  6) Find ALL Danger Points
+  7) Find Map Boundaries
+  8) Explore Everything
+Enter 1-8 : fileName : input-files/2026_Test_Scenario_MS_2.dat, isFileEncrypted : 1, randomizeStartPosition : 0
+
+Initializing Vehicle Controller ... done! 
+
+Initial Enrg : 2047936, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 2047936, Shld Enrg Left : 0
+
+*** Welcome to VehExplorer ! ***
+
+[ Usage Instructions ]
+-------------------------------------
+Enter 'q' to Quit
+Enter 'v' to show this help
+'w', 's', 'a', 'd' keys to MOVE vehicle North, South, West & East
+'t' key = Toggle Scan Radius (betw. 1-2)
+NumPad keys to SCAN : SW (1), S (2), SE (3), W (4), E (6), NW (7), N (8), NE (9) respectively
+'i' = Increase / divert energy to shield
+'z' key = Info on Vehicle Status
+'c' key = Map of terrain scanned by Vehicle
+'x' key = Map of terrain travelled by Vehicle
+'o' key = Configure auto-pilot options
+'p' key = Toggle auto-pilot on / off
+In map display, '_' underline indicates curr. veh. location!
+
+Press 'y' key and hit Enter to continue! 
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 2047936, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 2047936, Shld Enrg Left : 0
+Moves issued : 0, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : Cannot move: shields are down (allocate with 'i' first). Moving onto damaging terrain would destroy the vehicle.
+
+Initial Enrg : 2047936, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 2047936, Shld Enrg Left : 0
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     _
+
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 2047936, Tot Enrg Used : 0, Tot Shld Enrg Used : 0, Engy Left : 2047936, Shld Enrg Left : 0
+Moves issued : 1, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : Enter amt. of energy to increase / allocate to shields (1 - 2047936) : 
+400000 energy units allocated to shields! 
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 2047936, Tot Enrg Used : 400000, Tot Shld Enrg Used : 0, Engy Left : 1647936, Shld Enrg Left : 400000
+Moves issued : 1, Successful moves : 0
+Scans issued : 0, Successful scans : 0
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : ' '
+
+Initial Enrg : 2047936, Tot Enrg Used : 400090, Tot Shld Enrg Used : 0, Engy Left : 1647846, Shld Enrg Left : 400000
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+        _
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 400404, Tot Shld Enrg Used : 420, Engy Left : 1647532, Shld Enrg Left : 399580
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     _  .
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : '~'
+
+Initial Enrg : 2047936, Tot Enrg Used : 400494, Tot Shld Enrg Used : 420, Engy Left : 1647442, Shld Enrg Left : 399580
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     ~  _
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Left / West' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 400832, Tot Shld Enrg Used : 959, Engy Left : 1647104, Shld Enrg Left : 399041
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     ~     .
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : '#'
+
+Initial Enrg : 2047936, Tot Enrg Used : 400922, Tot Shld Enrg Used : 959, Engy Left : 1647014, Shld Enrg Left : 399041
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+     #  ~   
+
+
+Enter your command (q to quit) : 
+INVALID / IMPASSABLE LOCATION! Unable to move WEST!
+
+Initial Enrg : 2047936, Tot Enrg Used : 401316, Tot Shld Enrg Used : 2558, Engy Left : 1646620, Shld Enrg Left : 397442
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     ~     .
+
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 2047936, Tot Enrg Used : 401316, Tot Shld Enrg Used : 2558, Engy Left : 1646620, Shld Enrg Left : 397442
+Moves issued : 4, Successful moves : 2
+Scans issued : 3, Successful scans : 3
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 401630, Tot Shld Enrg Used : 2978, Engy Left : 1646306, Shld Enrg Left : 397022
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     ~  _  .
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Right / East' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 402024, Tot Shld Enrg Used : 3372, Engy Left : 1645912, Shld Enrg Left : 396628
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+     ~     _
+
+
+Enter your command (q to quit) : Returned (scanned) terrain symbol is : 'X'
+
+Initial Enrg : 2047936, Tot Enrg Used : 402114, Tot Shld Enrg Used : 3372, Engy Left : 1645822, Shld Enrg Left : 396628
+
+-------------------------------------
+-- Print Scanned Map --
+-------------------------------------
+
+
+              X
+     #  ~     _
+
+
+Enter your command (q to quit) : 
+Vehicle moved 'Up / North' by 1 terrain unit. 
+
+Initial Enrg : 2047936, Tot Enrg Used : 402508, Tot Shld Enrg Used : 4971, Engy Left : 1645428, Shld Enrg Left : 395029
+
+-------------------------------------
+-- Print Explored Map --
+-------------------------------------
+
+
+           X
+     ~     .
+
+
+Enter your command (q to quit) : 
+Vehicle Status / Statistics :
+
+Initial Enrg : 2047936, Tot Enrg Used : 402508, Tot Shld Enrg Used : 4971, Engy Left : 1645428, Shld Enrg Left : 395029
+Moves issued : 7, Successful moves : 5
+Scans issued : 4, Successful scans : 4
+
+Enter your command (q to quit) : 
+-------------------------------------
+-- Exploration Report --
+-------------------------------------
+
+Total no. of scans taken : 4
+Total no. of movements (steps) taken : 5
+
+[ Energy Report ]
+Initial Energy : 2047936
+Total Energy Used : 402508
+Total Shield Energy Used : 4971
+Energy Left : 1645428
+Shield Energy Left : 395029
+
+[ Command Counters ]
+Moves issued : 7, Successful moves : 5
+Scans issued : 4, Successful scans : 4
+
+[ Terrain Types Scanned / Explored ]
+Terrain     Scanned   Explored
+  'X'             1          1
+  '#'             1          0
+  '~'             1          1
+  ' '             1          1
+  '?'             0          1
+
+[ Move / Shield Energy by Destination Terrain ]
+Terrain      MoveEnrg     ShldEnrg  Samples
+  ' '             628          840        2
+  '~'             338          539        1
+  '?'             394          394        1
+  'X'             394         1599        1
+
+[ Scan Energy by Direction / Radius ]
+Dir  Radius     ScanEnrg     ShldEnrg  Samples
+W         1          270            0        3
+N         1           90            0        1
+
+-------------------------------------
+-- End of Exploration Report --
+-------------------------------------
+Vehicle closed. Goodbye.
