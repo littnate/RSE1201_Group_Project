@@ -85,6 +85,7 @@ For someone else to build after clone, these must be present (committed):
 | `docs/SPEC.md` | Product / MS_2 requirements (MS_1 remains) |
 | `docs/PROJECT.md` | Hard constraints for implementers |
 | `docs/BUILD_ORDER.md` | Build slices & progress |
+| `docs/NAME_CHANGES.md` | Old-to-new variable and function names, by file |
 | `TESTING.md` | Short manual test reminder |
 
 ## Scope note
