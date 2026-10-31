@@ -227,7 +227,7 @@ Terrain **roles** (end / danger / wall) start from PDF examples and **discovery 
 
 ### 5.4 Build
 
-From `VehExplorer/`, one `gcc` command compiles every `src/*.c` and links `./libsatcom.so` with `-Wl,-rpath,.`. Flags: `-std=c11 -Wall -Wextra`. Output: `bin/VehExplorer.run`. The exact line is in `README.md` and `TESTING.md`.
+From `VehExplorer/`, one `gcc` command compiles every `src/*.c` and links `./libsatcom.so` with `-Iinc -I../MS_1_files` and `-Wl,-rpath,.`. Output: `bin/VehExplorer.run`. The exact line is in `README.md` and `TESTING.md`.
 
 **Run constraint:** `-Wl,-rpath=.` sets the runtime library search path to the current directory. The binary’s needed library is the relative path `./libsatcom.so`, so the loader opens it from wherever the process was started. `./bin/VehExplorer.run` works only when that directory is `VehExplorer/` (the folder with the `libsatcom.so` symlink). Starting the same binary from any other directory, including `/tmp`, exits 127 with `cannot open shared object file`.
 
@@ -350,7 +350,7 @@ Presentation build is the single `gcc` line in `README.md` (no makefile). Course
 | U14 | Energy-aware path: use live `stats` averages per scanned symbol vs simple BFS? | **Scan-first + BFS** first; add cheapest-known-cell tie-break if time |
 | U15 | Should auto print the same energy line as manual when stats=y? | **Yes** (`ui_print_veh_data`) |
 
-MS_1 U1–U7 remain: executable `VehExplorer`, external `script`/`tee` OK, grow map from (0,0), `-std=c11`.
+MS_1 U1–U7 remain: executable `VehExplorer`, external `script`/`tee` OK, grow map from (0,0). The presentation build uses the compiler’s default C dialect.
 
 ---
 

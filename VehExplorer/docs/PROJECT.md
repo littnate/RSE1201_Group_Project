@@ -6,7 +6,7 @@ Read with `SPEC.md`. Prefer this file for hard constraints that are easy to viol
 
 - Language: **C only** (`gcc`, target **Linux x86-64**)
 - Primary env: **WSL2 Ubuntu**; must also build on Ubuntu 22.04 VM later
-- Standard: `-std=c11` unless tutor says otherwise
+- Standard: the compiler’s default C dialect. The build command does not pass `-std=c11`.
 - UI: **terminal CLI only** (no GUI, no ncurses unless later approved)
 - Executable working name: `VehExplorer`
 
@@ -114,7 +114,7 @@ Handlers may use a `handle` prefix. Keep names boring.
 
 ## Coding standards
 
-- `-Wall -Wextra`; fix warnings rather than silencing
+- The build command does not pass `-Wall` or `-Wextra`.
 - Early returns; check API failure (`'\0'` scan, move success from library text)
 - No `gets`; bounded input
 - Factor **act** vs **print** so auto-pilot can suppress maps/stats
@@ -132,7 +132,7 @@ cd VehExplorer
 After a source change, rebuild from that same folder (`bin/` already exists):
 
 ```bash
-gcc -std=c11 -Wall -Wextra -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
+gcc -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
 ```
 
 Presentation sample paths (encrypted `y`):

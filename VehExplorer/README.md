@@ -28,7 +28,7 @@ cd VehExplorer
 After a source change, rebuild with this one command from `VehExplorer/` (`bin/` already exists):
 
 ```bash
-gcc -std=c11 -Wall -Wextra -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
+gcc -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
 ```
 
 **Run constraint:** `-Wl,-rpath=.` sets the runtime search path to the current directory, and the binary asks the loader for `./libsatcom.so`. That path is resolved from the directory you are in, which must be `VehExplorer/` (the folder that contains the symlink). Starting `bin/VehExplorer.run` from any other directory, including `/tmp`, exits 127 with `cannot open shared object file`. `cd VehExplorer` first, then run `./bin/VehExplorer.run`.
