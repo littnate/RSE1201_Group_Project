@@ -51,7 +51,7 @@ RSE1201_Group_Project/
 - **Only** call the public API in `MS_1_files/SatComRelay.h` (`SCRelay_Signal_Veh_*`)
 - Auto-pilot goes through **`mission_control`**, not SatComRelay directly
 - Link **`libsatcom.so`** (`gcc ... ./libsatcom.so -Wl,-rpath=.`). Do not link the eight `MS_1_files/*.o` files
-- Compile and run from `VehExplorer/` (the folder that contains `libsatcom.so`)
+- Compile and run from `VehExplorer/` (the folder that contains `libsatcom.so`). `-Wl,-rpath=.` makes the loader open `./libsatcom.so` from the current directory. Any other current directory exits 127 with `cannot open shared object file`
 - Pass encryption as `fileNeedsDecryption` to Init — **never** decrypt/edit `.dat` / `.txt`
 - **Do not use** password / “Do not use!” helpers: `PrintEntireMap`, `PrintScannedMap`, `PrintExploredMap`, `PrintReport`
 - Do not reverse-engineer, patch, or strip `libsatcom.so` or the old objects
@@ -122,7 +122,7 @@ Handlers may use a `handle` prefix. Keep names boring.
 
 ## Build / run
 
-`bin/VehExplorer.run` is already built. Run it from `VehExplorer/` so the loader finds `./libsatcom.so`:
+`bin/VehExplorer.run` is already built. `-Wl,-rpath=.` records a runtime search path of `.`, and the binary needs `./libsatcom.so` from the current directory. Run it only after `cd VehExplorer`. From any other directory the process exits 127 with `cannot open shared object file`.
 
 ```bash
 cd VehExplorer

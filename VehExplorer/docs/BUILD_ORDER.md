@@ -22,7 +22,7 @@ Verified 2026-10-31 on WSL. The `gcc` line in `README.md` produced `bin/VehExplo
 | Check | Result |
 |-------|--------|
 | `ldd bin/VehExplorer.run` from `VehExplorer/` | Resolves `./libsatcom.so` |
-| Same binary started from `/tmp` | Exit 127, `cannot open shared object file` |
+| Same binary started from `/tmp` | Exit 127, `cannot open shared object file`. Expected: `-Wl,-rpath=.` loads `./libsatcom.so` from the current directory. Documented as a run constraint in `README.md`, `docs/PROJECT.md`, and `docs/SPEC.md` §5.4 |
 | `New_2026_Basic_Scenario_MS_1.dat` | Init energy 210761; allocate 10000; move north succeeded; scan north returned `'w'`; `Vehicle closed` |
 | `New_2026_Test_Scenario_MS_2.dat` | Init energy 255992; auto stopped `move limit reached`; 3 successful moves, 31 successful scans |
 | `Scenario05.dat` | Init energy 20000; auto stopped `move limit reached`; 3 successful moves, 24 successful scans of 31 issued |

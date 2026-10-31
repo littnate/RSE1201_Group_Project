@@ -1,6 +1,8 @@
 cd VehExplorer
 ./bin/VehExplorer.run
 
+Must stay in VehExplorer/. -Wl,-rpath=. loads ./libsatcom.so from the current directory. Any other directory exits 127: cannot open shared object file.
+
 input-files/New_2026_Basic_Scenario_MS_1.dat
 y
 n

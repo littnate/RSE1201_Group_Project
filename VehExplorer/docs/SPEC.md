@@ -227,7 +227,9 @@ Terrain **roles** (end / danger / wall) start from PDF examples and **discovery 
 
 ### 5.4 Build
 
-From `VehExplorer/`, one `gcc` command compiles every `src/*.c` and links `./libsatcom.so` with `-Wl,-rpath,.`. Flags: `-std=c11 -Wall -Wextra`. Output: `bin/VehExplorer.run`. Run `./bin/VehExplorer.run` from `VehExplorer/`. The exact line is in `README.md` and `TESTING.md`.
+From `VehExplorer/`, one `gcc` command compiles every `src/*.c` and links `./libsatcom.so` with `-Wl,-rpath,.`. Flags: `-std=c11 -Wall -Wextra`. Output: `bin/VehExplorer.run`. The exact line is in `README.md` and `TESTING.md`.
+
+**Run constraint:** `-Wl,-rpath=.` sets the runtime library search path to the current directory. The binary’s needed library is the relative path `./libsatcom.so`, so the loader opens it from wherever the process was started. `./bin/VehExplorer.run` works only when that directory is `VehExplorer/` (the folder with the `libsatcom.so` symlink). Starting the same binary from any other directory, including `/tmp`, exits 127 with `cannot open shared object file`.
 
 ---
 

@@ -16,7 +16,7 @@ sudo apt install build-essential
 
 The presentation library `../special-reveal/libsatcom.so` is **ELF 64-bit x86-64**. It will not link on macOS, native Windows, or ARM (e.g. Apple Silicon without an x86-64 Linux environment).
 
-This folder lives in the group repo. `bin/VehExplorer.run` is already built. From the repo root, run it from `VehExplorer/` so the loader finds `./libsatcom.so`:
+This folder lives in the group repo. `bin/VehExplorer.run` is already built. Start it only from `VehExplorer/`:
 
 ```bash
 cd VehExplorer
@@ -30,6 +30,8 @@ After a source change, rebuild with this one command from `VehExplorer/` (`bin/`
 ```bash
 gcc -std=c11 -Wall -Wextra -Iinc -I../MS_1_files src/autopilot.c src/local_map.c src/main.c src/mission_control.c src/stats.c src/ui_cli.c src/util_input.c src/veh_action.c ./libsatcom.so -o bin/VehExplorer.run -Wl,-rpath=.
 ```
+
+**Run constraint:** `-Wl,-rpath=.` sets the runtime search path to the current directory, and the binary asks the loader for `./libsatcom.so`. That path is resolved from the directory you are in, which must be `VehExplorer/` (the folder that contains the symlink). Starting `bin/VehExplorer.run` from any other directory, including `/tmp`, exits 127 with `cannot open shared object file`. `cd VehExplorer` first, then run `./bin/VehExplorer.run`.
 
 At the startup prompts, presentation sample paths are:
 
