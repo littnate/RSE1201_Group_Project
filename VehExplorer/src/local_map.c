@@ -115,10 +115,10 @@ static bool grow_map_to_include(int x, int y)
     new_w = new_max_x - new_min_x + 1;
     new_h = new_max_y - new_min_y + 1;
 
-    /* Allocate zero-filled arrays for the expanded grid */
-    new_explored = calloc((size_t)(new_w * new_h), sizeof(*new_explored));
-    new_scanned = calloc((size_t)(new_w * new_h), sizeof(*new_scanned));
-    new_blocked = calloc((size_t)(new_w * new_h), sizeof(*new_blocked));
+    /* Allocate zero filled arrays for the expanded grid */
+    new_explored = calloc((new_w * new_h), sizeof(*new_explored));
+    new_scanned = calloc((new_w * new_h), sizeof(*new_scanned));
+    new_blocked = calloc((new_w * new_h), sizeof(*new_blocked));
     if (new_explored == NULL || new_scanned == NULL || new_blocked == NULL) {
         free(new_explored);
         free(new_scanned);
