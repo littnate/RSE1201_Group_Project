@@ -6,22 +6,22 @@
 
 #include <stdbool.h>
 
-/* Shared move/scan/shield used by manual keys and auto-pilot.
- * Print flags let auto-pilot skip the status line and the map. */
+/* Shared move, scan, and shield actions used by manual keys and auto-pilot.
+ * Print flags let auto-pilot skip printing the status line or map when disabled. */
 
-void veh_action_move(VehDataType *vehicle, /* was vdt */
-                     bool (*move_fn)(VehDataType *),
+void veh_action_move(VehDataType *vehicle,
+                     char direction,
                      int dx,
                      int dy,
                      bool print_stats,
-                     bool print_travelled_map); /* was print_explored */
+                     bool print_travelled_map);
 
-void veh_action_scan(VehDataType *vehicle, /* was vdt */
+void veh_action_scan(VehDataType *vehicle,
                      MissionControlScanDir dir,
-                     const char *scan_direction_name, /* was dir_name */
+                     const char *scan_direction_name,
                      bool print_stats,
-                     bool print_scanned_map); /* was print_scanned */
+                     bool print_scanned_map);
 
-bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats); /* was vdt */
+bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats);
 
 #endif /* VEH_ACTION_H */

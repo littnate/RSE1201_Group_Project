@@ -6,30 +6,60 @@
 
 #include <stdio.h>
 
-void veh_action_move(VehDataType *vehicle, /* was vdt */
-                     bool (*move_fn)(VehDataType *),
+/* Move the vehicle in one direction ('N', 'S', 'E', 'W') and update stats and map. */
+void veh_action_move(VehDataType *vehicle,
+                     char direction,
                      int dx,
                      int dy,
                      bool print_stats,
-                     bool print_travelled_map) /* was print_explored */
+                     bool print_travelled_map)
 {
     VehDataType before;
     char dest_terrain;
-    bool ok;
+    bool ok = false;
 
-    if (vehicle == NULL || move_fn == NULL) {
+    if (vehicle == NULL) {
         return;
     }
 
+    /* Save energy values before moving so we can calculate the cost of this step */
     before = *vehicle;
+
+    /* Check what terrain we previously scanned at the target cell (or '?') */
     dest_terrain = local_map_peek_terrain_at_offset(dx, dy);
-    ok = move_fn(vehicle);
+
+    /* Call the matching movement function for the chosen direction */
+    switch (direction) {
+    case 'N':
+    case 'n':
+        ok = mission_control_move_north(vehicle);
+        break;
+    case 'S':
+    case 's':
+        ok = mission_control_move_south(vehicle);
+        break;
+    case 'E':
+    case 'e':
+        ok = mission_control_move_east(vehicle);
+        break;
+    case 'W':
+    case 'w':
+        ok = mission_control_move_west(vehicle);
+        break;
+    default:
+        ok = false;
+        break;
+    }
+
+    /* Update move counters */
     stats_count_move(ok);
 
+    /* Stop immediately if the move ended the mission or destroyed the vehicle */
     if (mission_control_is_mission_over()) {
         return;
     }
 
+    /* Record energy used on a successful move, or mark an unknown wall as blocked */
     if (ok) {
         long move_e = vehicle->totEnergyUsed - before.totEnergyUsed;
         long shld_e = vehicle->totShieldEnergyUsed - before.totShieldEnergyUsed;
@@ -40,6 +70,7 @@ void veh_action_move(VehDataType *vehicle, /* was vdt */
         local_map_mark_blocked_at_offset(dx, dy);
     }
 
+    /* Print energy line and travelled map when enabled */
     if (print_stats) {
         ui_print_veh_data(vehicle);
     }
@@ -48,11 +79,12 @@ void veh_action_move(VehDataType *vehicle, /* was vdt */
     }
 }
 
-void veh_action_scan(VehDataType *vehicle, /* was vdt */
+/* Scan one cell in the given direction at the current scan radius (1 or 2). */
+void veh_action_scan(VehDataType *vehicle,
                      MissionControlScanDir dir,
-                     const char *scan_direction_name, /* was dir_name */
+                     const char *scan_direction_name,
                      bool print_stats,
-                     bool print_scanned_map) /* was print_scanned */
+                     bool print_scanned_map)
 {
     VehDataType before;
     char terrain;
@@ -67,18 +99,21 @@ void veh_action_scan(VehDataType *vehicle, /* was vdt */
         return;
     }
 
+    /* Snapshot energy before scanning, then run the scan */
     before = *vehicle;
     radius = mission_control_get_scan_radius();
     terrain = mission_control_scan(vehicle, dir);
     ok = (terrain != '\0');
     stats_count_scan(ok);
 
+    /* Log any energy or shield cost spent on this scan attempt */
     scan_e = vehicle->totEnergyUsed - before.totEnergyUsed;
     shld_e = vehicle->totShieldEnergyUsed - before.totShieldEnergyUsed;
     if (scan_e != 0 || shld_e != 0) {
         stats_add_scan_energy(dir, radius, scan_e, shld_e);
     }
 
+    /* Out-of-bounds scan failed: mark cell blocked so auto-pilot skips it next time */
     if (!ok) {
         mission_control_scan_offset(dir, &dx, &dy);
         local_map_mark_blocked_at_offset(dx, dy);
@@ -89,9 +124,11 @@ void veh_action_scan(VehDataType *vehicle, /* was vdt */
         return;
     }
 
+    /* Save scanned terrain character into the local map */
     mission_control_scan_offset(dir, &dx, &dy);
     local_map_record_scan(dx, dy, terrain);
 
+    /* Print scanned symbol, plus energy status and scanned map when enabled */
     printf("Returned (scanned) terrain symbol is : '%c'\n", terrain);
     if (print_stats) {
         ui_print_veh_data(vehicle);
@@ -101,7 +138,8 @@ void veh_action_scan(VehDataType *vehicle, /* was vdt */
     }
 }
 
-bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats) /* was vdt */
+/* Transfer energy from main reserves to shields and optionally print status. */
+bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats)
 {
     bool ok;
 

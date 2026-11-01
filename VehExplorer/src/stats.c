@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* One row in the per-terrain movement energy table. */
 typedef struct {
     char terrain;
     long move_energy;
@@ -13,6 +14,7 @@ typedef struct {
     unsigned long samples;
 } TerrainEnergyRow;
 
+/* One row in the per-direction/radius scan energy table. */
 typedef struct {
     MissionControlScanDir dir;
     int radius;
@@ -21,14 +23,16 @@ typedef struct {
     unsigned long samples;
 } ScanEnergyRow;
 
-static StatsCounters move_scan_counts; /* was g_stats */
-static TerrainEnergyRow *terrain_energy_rows; /* was g_terrain_energy */
-static size_t terrain_energy_count; /* was g_terrain_energy_n */
-static size_t terrain_energy_capacity; /* was g_terrain_energy_cap */
-static ScanEnergyRow *scan_energy_rows; /* was g_scan_energy */
-static size_t scan_energy_count; /* was g_scan_energy_n */
-static size_t scan_energy_capacity; /* was g_scan_energy_cap */
+/* Module state: command counters and dynamic energy tables. */
+static StatsCounters move_scan_counts;
+static TerrainEnergyRow *terrain_energy_rows;
+static size_t terrain_energy_count;
+static size_t terrain_energy_capacity;
+static ScanEnergyRow *scan_energy_rows;
+static size_t scan_energy_count;
+static size_t scan_energy_capacity;
 
+/* Convert a scan direction enum into its short compass label. */
 static const char *scan_direction_name(MissionControlScanDir dir)
 {
     static const char *names[MISSION_CONTROL_DIR_COUNT] = {
@@ -41,6 +45,7 @@ static const char *scan_direction_name(MissionControlScanDir dir)
     return names[dir];
 }
 
+/* Free both dynamically allocated energy tables and reset their sizes. */
 static void free_energy_tables(void)
 {
     free(terrain_energy_rows);
@@ -53,6 +58,7 @@ static void free_energy_tables(void)
     scan_energy_capacity = 0;
 }
 
+/* Clear all counters and energy tables at session start. */
 void stats_reset(void)
 {
     free_energy_tables();
@@ -62,6 +68,7 @@ void stats_reset(void)
     move_scan_counts.scans_succeeded = 0;
 }
 
+/* Increment move counters after a move attempt. */
 void stats_count_move(bool success)
 {
     move_scan_counts.moves_issued++;
@@ -70,6 +77,7 @@ void stats_count_move(bool success)
     }
 }
 
+/* Increment scan counters after a scan attempt. */
 void stats_count_scan(bool success)
 {
     move_scan_counts.scans_issued++;
@@ -78,6 +86,7 @@ void stats_count_scan(bool success)
     }
 }
 
+/* Add observed movement energy cost to the matching terrain row (or append one). */
 void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
 {
     size_t i;
@@ -87,6 +96,7 @@ void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
         terrain = LOCAL_MAP_TERRAIN_UNKNOWN;
     }
 
+    /* Update existing row if we have already stepped on this terrain symbol */
     for (i = 0; i < terrain_energy_count; i++) {
         if (terrain_energy_rows[i].terrain == terrain) {
             terrain_energy_rows[i].move_energy += move_energy;
@@ -96,10 +106,18 @@ void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
         }
     }
 
+    /* Grow table capacity when full */
     if (terrain_energy_count >= terrain_energy_capacity) {
-        size_t new_cap = (terrain_energy_capacity == 0) ? 8 : terrain_energy_capacity * 2;
-        TerrainEnergyRow *grown =
-            realloc(terrain_energy_rows, new_cap * sizeof *grown);
+        size_t new_cap;
+        TerrainEnergyRow *grown;
+
+        if (terrain_energy_capacity == 0) {
+            new_cap = 8;
+        } else {
+            new_cap = terrain_energy_capacity * 2;
+        }
+
+        grown = realloc(terrain_energy_rows, new_cap * sizeof(*grown));
         if (grown == NULL) {
             fprintf(stderr, "stats: out of memory\n");
             return;
@@ -108,6 +126,7 @@ void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
         terrain_energy_capacity = new_cap;
     }
 
+    /* Append a new row for this newly seen terrain symbol */
     row = &terrain_energy_rows[terrain_energy_count++];
     row->terrain = terrain;
     row->move_energy = move_energy;
@@ -115,10 +134,11 @@ void stats_add_move_energy(char terrain, long move_energy, long shield_energy)
     row->samples = 1;
 }
 
+/* Add observed scan energy cost to the matching (dir, radius) row (or append one). */
 void stats_add_scan_energy(MissionControlScanDir dir,
-                            int radius,
-                            long scan_energy,
-                            long shield_energy)
+                           int radius,
+                           long scan_energy,
+                           long shield_energy)
 {
     size_t i;
     ScanEnergyRow *row;
@@ -130,6 +150,7 @@ void stats_add_scan_energy(MissionControlScanDir dir,
         return;
     }
 
+    /* Update existing row if this (dir, radius) pair was already recorded */
     for (i = 0; i < scan_energy_count; i++) {
         if (scan_energy_rows[i].dir == dir && scan_energy_rows[i].radius == radius) {
             scan_energy_rows[i].scan_energy += scan_energy;
@@ -139,9 +160,18 @@ void stats_add_scan_energy(MissionControlScanDir dir,
         }
     }
 
+    /* Grow table capacity when full */
     if (scan_energy_count >= scan_energy_capacity) {
-        size_t new_cap = (scan_energy_capacity == 0) ? 8 : scan_energy_capacity * 2;
-        ScanEnergyRow *grown = realloc(scan_energy_rows, new_cap * sizeof *grown);
+        size_t new_cap;
+        ScanEnergyRow *grown;
+
+        if (scan_energy_capacity == 0) {
+            new_cap = 8;
+        } else {
+            new_cap = scan_energy_capacity * 2;
+        }
+
+        grown = realloc(scan_energy_rows, new_cap * sizeof(*grown));
         if (grown == NULL) {
             fprintf(stderr, "stats: out of memory\n");
             return;
@@ -150,6 +180,7 @@ void stats_add_scan_energy(MissionControlScanDir dir,
         scan_energy_capacity = new_cap;
     }
 
+    /* Append a new row for this (dir, radius) pair */
     row = &scan_energy_rows[scan_energy_count++];
     row->dir = dir;
     row->radius = radius;
@@ -158,11 +189,13 @@ void stats_add_scan_energy(MissionControlScanDir dir,
     row->samples = 1;
 }
 
+/* Return a copy of the current move/scan counters. */
 StatsCounters stats_get(void)
 {
     return move_scan_counts;
 }
 
+/* Print issued vs successful move and scan counts. */
 static void print_command_stats(void)
 {
     printf("Moves issued : %lu, Successful moves : %lu\n",
@@ -173,15 +206,16 @@ static void print_command_stats(void)
            move_scan_counts.scans_succeeded);
 }
 
+/* Print how many cells of each terrain symbol were scanned and explored. */
 static void print_terrain_counts(void)
 {
     LocalMapTerrainCount counts[64];
+    unsigned max_entries = (unsigned)(sizeof(counts) / sizeof(counts[0]));
     unsigned n;
     unsigned i;
 
     printf("\n[ Terrain Types Scanned / Explored ]\n");
-    n = local_map_terrain_counts(counts,
-                                (unsigned)(sizeof counts / sizeof counts[0]));
+    n = local_map_terrain_counts(counts, max_entries);
     if (n == 0) {
         printf("(none recorded)\n");
         return;
@@ -196,6 +230,7 @@ static void print_terrain_counts(void)
     }
 }
 
+/* Print observed movement and shield energy totals grouped by terrain. */
 static void print_move_energy_by_terrain(void)
 {
     size_t i;
@@ -220,6 +255,7 @@ static void print_move_energy_by_terrain(void)
     }
 }
 
+/* Print observed scan and shield energy totals grouped by direction and radius. */
 static void print_scan_energy(void)
 {
     size_t i;
@@ -246,7 +282,8 @@ static void print_scan_energy(void)
     }
 }
 
-void stats_print_summary(const VehDataType *vehicle) /* was vdt */
+/* Print the full Stage 3 Exploration Report at the end of the session. */
+void stats_print_summary(const VehDataType *vehicle)
 {
     printf("\n");
     printf("-------------------------------------\n");

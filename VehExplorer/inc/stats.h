@@ -6,11 +6,12 @@
 
 #include <stdbool.h>
 
+/* Running totals of move and scan commands attempted vs succeeded. */
 typedef struct {
     unsigned long moves_issued;
-    unsigned long moves_succeeded; /* was moves_ok */
+    unsigned long moves_succeeded;
     unsigned long scans_issued;
-    unsigned long scans_succeeded; /* was scans_ok */
+    unsigned long scans_succeeded;
 } StatsCounters;
 
 void stats_reset(void);
@@ -18,26 +19,20 @@ void stats_reset(void);
 void stats_count_move(bool success);
 void stats_count_scan(bool success);
 
-/*
- * Attribute observed energy deltas from a successful move to destination
- * terrain (use LOCAL_MAP_TERRAIN_UNKNOWN / '?' when the cell was never scanned).
- */
+/* Record energy and shield deltas from a successful move onto terrain. */
 void stats_add_move_energy(char terrain,
-                            long move_energy,
-                            long shield_energy);
+                           long move_energy,
+                           long shield_energy);
 
-/*
- * Attribute observed energy deltas from a scan attempt to (dir, radius).
- * Call for any attempt that consumed energy (success or fail).
- */
+/* Record energy and shield deltas from a scan attempt at (dir, radius). */
 void stats_add_scan_energy(MissionControlScanDir dir,
-                            int radius,
-                            long scan_energy,
-                            long shield_energy);
+                           int radius,
+                           long scan_energy,
+                           long shield_energy);
 
 StatsCounters stats_get(void);
 
-/* Stage 3 summary: final veh stats, per-terrain tallies, observed costs. */
-void stats_print_summary(const VehDataType *vehicle); /* was vdt */
+/* Stage 3 summary: final vehicle reserves, terrain counts, and energy tables. */
+void stats_print_summary(const VehDataType *vehicle);
 
 #endif /* STATS_H */

@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 
+/* User-configurable display, delay, and limit settings from the 'o' menu. */
 typedef struct {
     bool configured;
     bool stats_every;
@@ -25,16 +26,19 @@ typedef struct {
     unsigned long max_scans; /* 0 = disabled */
 } AutopilotOptions;
 
+/* Tells the Stage 2 command loop whether auto-pilot paused or quit the game. */
 typedef enum {
-    AUTOPILOT_RUN_PAUSED = 0, /* back to manual loop */ /* was AP_RUN_PAUSED */
-    AUTOPILOT_RUN_QUIT        /* leave Stage 2 */ /* was AP_RUN_QUIT */
+    AUTOPILOT_RUN_PAUSED = 0, /* return to manual command loop */
+    AUTOPILOT_RUN_QUIT        /* leave Stage 2 and print final report */
 } AutopilotRunResult;
 
 void autopilot_options_set_defaults(AutopilotOptions *opt);
 bool autopilot_prompt_options(AutopilotOptions *opt);
 void autopilot_print_options(const AutopilotOptions *opt);
 
-/* Runs until pause/stop, `p`, `q`, destroy, or stuck. */
-AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, AutopilotOptions *opt); /* was vdt */
+/* Run autonomous exploration until paused, quit, goal met, or stuck. */
+AutopilotRunResult autopilot_run(VehDataType *vehicle,
+                                 int mission_type,
+                                 AutopilotOptions *opt);
 
 #endif /* AUTOPILOT_H */

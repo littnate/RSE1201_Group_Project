@@ -10,19 +10,24 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Ask the 4 Stage 1 startup questions and fill *cfg. */
 bool ui_prompt_startup(UiStartupConfig *cfg)
 {
+    int encrypted_num = 0;
+    int random_start_num = 0;
+
     if (cfg == NULL) {
         return false;
     }
 
-    memset(cfg, 0, sizeof *cfg);
+    memset(cfg, 0, sizeof(*cfg));
 
-    for (;;) {
+    /* Keep asking until a non-empty scenario file path is entered */
+    while (true) {
         printf("Please enter the scenario file's name : ");
         fflush(stdout);
 
-        if (!util_read_line(cfg->scenario_path, sizeof cfg->scenario_path)) {
+        if (!util_read_line(cfg->scenario_path, sizeof(cfg->scenario_path))) {
             if (feof(stdin)) {
                 fprintf(stderr, "No scenario path provided.\n");
                 return false;
@@ -33,6 +38,7 @@ bool ui_prompt_startup(UiStartupConfig *cfg)
         break;
     }
 
+    /* Prompt for encryption flag, randomized spawn, and mission type (1-8) */
     cfg->file_needs_decryption =
         util_prompt_yes_no("Is the scenario file encrypted? (y/n) : ");
     cfg->randomize_start =
@@ -51,21 +57,28 @@ bool ui_prompt_startup(UiStartupConfig *cfg)
         1,
         8);
 
+    if (cfg->file_needs_decryption) {
+        encrypted_num = 1;
+    }
+    if (cfg->randomize_start) {
+        random_start_num = 1;
+    }
+
     printf("fileName : %s, isFileEncrypted : %d, randomizeStartPosition : %d\n",
            cfg->scenario_path,
-           cfg->file_needs_decryption ? 1 : 0,
-           cfg->randomize_start ? 1 : 0);
+           encrypted_num,
+           random_start_num);
 
     return true;
 }
 
-void ui_print_veh_data(const VehDataType *vehicle) /* was vdt; removed unused label */
+/* Print the one-line summary of vehicle battery and shield energy. */
+void ui_print_veh_data(const VehDataType *vehicle)
 {
     if (vehicle == NULL) {
         return;
     }
 
-    /* Print the vehicle energy line. */
     printf("\nInitial Enrg : %ld, Tot Enrg Used : %ld, Tot Shld Enrg Used : %ld, "
            "Engy Left : %ld, Shld Enrg Left : %ld\n",
            vehicle->initialEnergy,
@@ -75,6 +88,7 @@ void ui_print_veh_data(const VehDataType *vehicle) /* was vdt; removed unused la
            vehicle->currShieldEnergy);
 }
 
+/* Print total moves and scans issued vs succeeded for the 'z' status view. */
 static void ui_print_command_stats(void)
 {
     StatsCounters s = stats_get();
@@ -87,6 +101,7 @@ static void ui_print_command_stats(void)
            s.scans_succeeded);
 }
 
+/* Print the command keybinding table. */
 void ui_print_help(void)
 {
     printf("\n*** Welcome to VehExplorer ! ***\n\n");
@@ -107,9 +122,10 @@ void ui_print_help(void)
     printf("In map display, '_' underline indicates curr. veh. location!\n");
 }
 
+/* Wait until the user enters 'y' before starting the command loop. */
 static void ui_wait_continue(void)
 {
-    for (;;) {
+    while (true) {
         printf("\nPress 'y' key and hit Enter to continue! ");
         fflush(stdout);
 
@@ -123,7 +139,8 @@ static void ui_wait_continue(void)
     }
 }
 
-static void handle_allocate_shield(VehDataType *vehicle) /* was vdt */
+/* Handle 'i': prompt for energy amount and transfer it to shields. */
+static void handle_allocate_shield(VehDataType *vehicle)
 {
     long amount;
     char prompt[128];
@@ -139,7 +156,7 @@ static void handle_allocate_shield(VehDataType *vehicle) /* was vdt */
     }
 
     snprintf(prompt,
-             sizeof prompt,
+             sizeof(prompt),
              "Enter amt. of energy to increase / allocate to shields "
              "(1 - %ld) : ",
              vehicle->currEnergy);
@@ -149,31 +166,35 @@ static void handle_allocate_shield(VehDataType *vehicle) /* was vdt */
         return;
     }
 
-    (void)mission_control_allocate_shield(vehicle, amount);
+    mission_control_allocate_shield(vehicle, amount);
 }
 
+/* Handle 't': flip scan radius between 1 and 2 and print the new setting. */
 static void handle_toggle_scan_radius(void)
 {
     int radius = mission_control_toggle_scan_radius();
     printf("Toggle Scan Radius => now set to %d terrain units!\n", radius);
 }
 
-void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
+/* Stage 2 interactive loop: read single-letter commands and dispatch actions. */
+void ui_run_command_loop(VehDataType *vehicle, int mission_type)
 {
-    AutopilotOptions autopilot_options; /* was ap_opt */
+    AutopilotOptions autopilot_options;
 
+    /* Set default auto-pilot options, show help screen, and wait for 'y' */
     autopilot_options_set_defaults(&autopilot_options);
 
     ui_print_help();
     ui_wait_continue();
     putchar('\n');
 
-    for (;;) {
+    while (true) {
         char cmd;
 
         printf("Enter your command (q to quit) : ");
         fflush(stdout);
 
+        /* Read command character; re-prompt on blank line, exit on EOF */
         cmd = util_read_command_char();
         if (cmd == '\0') {
             if (feof(stdin)) {
@@ -183,6 +204,7 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
             continue;
         }
 
+        /* Dispatch user command to the matching module */
         switch (cmd) {
         case 'v':
             ui_print_help();
@@ -207,9 +229,10 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
             handle_toggle_scan_radius();
             break;
         case 'o':
-            (void)autopilot_prompt_options(&autopilot_options);
+            autopilot_prompt_options(&autopilot_options);
             break;
         case 'p':
+            /* Configure auto-pilot first if the user hasn't run 'o' yet */
             if (!autopilot_options.configured) {
                 if (!autopilot_prompt_options(&autopilot_options)) {
                     break;
@@ -219,18 +242,20 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
                 return;
             }
             break;
+        /* Cardinal movement keys (w/s/a/d) */
         case 'w':
-            veh_action_move(vehicle, mission_control_move_north, 0, -1, true, true);
+            veh_action_move(vehicle, 'N', 0, -1, true, true);
             break;
         case 's':
-            veh_action_move(vehicle, mission_control_move_south, 0, 1, true, true);
+            veh_action_move(vehicle, 'S', 0, 1, true, true);
             break;
         case 'a':
-            veh_action_move(vehicle, mission_control_move_west, -1, 0, true, true);
+            veh_action_move(vehicle, 'W', -1, 0, true, true);
             break;
         case 'd':
-            veh_action_move(vehicle, mission_control_move_east, 1, 0, true, true);
+            veh_action_move(vehicle, 'E', 1, 0, true, true);
             break;
+        /* Numpad 8-direction scan keys (1-9 except center '5') */
         case '7':
             veh_action_scan(vehicle, MISSION_CONTROL_DIR_NORTHWEST, "NW", true, true);
             break;
@@ -265,6 +290,7 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type) /* was vdt */
             break;
         }
 
+        /* Exit loop if the latest action ended the mission */
         if (mission_control_is_mission_over()) {
             printf("\nLeaving manual control after mission end.\n");
             return;

@@ -5,15 +5,12 @@
 #include <string.h>
 #include <unistd.h>
 
-#define LOCAL_MAP_NOT_SCANNED '\0' 
-#define LOCAL_MAP_VISITED_MARK '.' 
-#define LOCAL_MAP_VEHICLE_MARK '_' 
+#define LOCAL_MAP_NOT_SCANNED '\0'
+#define LOCAL_MAP_VISITED_MARK '.'
+#define LOCAL_MAP_VEHICLE_MARK '_'
+#define LOCAL_MAP_CELL_WIDTH 3
 
-
-#define LOCAL_MAP_CELL_WIDTH 3 
-
-
-
+/* Stores current vehicle coordinates, bounding box, and three cell layers. */
 typedef struct {
     int x;
     int y;
@@ -23,13 +20,14 @@ typedef struct {
     int max_y;
     int width;
     int height;
-    bool *explored; 
-    char *scanned;  
-    bool *blocked;  
+    bool *explored;
+    char *scanned;
+    bool *blocked;
 } LocalMap;
 
-static LocalMap local_map; 
+static LocalMap local_map;
 
+/* Free the three heap arrays and clear grid dimensions. */
 static void free_map_arrays(void)
 {
     free(local_map.explored);
@@ -42,18 +40,20 @@ static void free_map_arrays(void)
     local_map.height = 0;
 }
 
+/* Convert 2D map coordinates (x, y) into a 1D row-major array index. */
 static int cell_index(int x, int y)
 {
     return (y - local_map.min_y) * local_map.width + (x - local_map.min_x);
 }
 
+/* Check whether (x, y) falls inside the currently allocated rectangle. */
 static bool in_bounds(int x, int y)
 {
-    return x >= local_map.min_x && x <= local_map.max_x && y >= local_map.min_y &&
-           y <= local_map.max_y;
+    return x >= local_map.min_x && x <= local_map.max_x &&
+           y >= local_map.min_y && y <= local_map.max_y;
 }
 
-
+/* Expand the map rectangle to include (x, y), copying existing cell values. */
 static bool grow_map_to_include(int x, int y)
 {
     int new_min_x;
@@ -67,32 +67,58 @@ static bool grow_map_to_include(int x, int y)
     bool *new_blocked;
     int yy;
 
+    /* First cell ever recorded: allocate a 1x1 grid at (x, y) */
     if (local_map.explored == NULL) {
-        local_map.min_x = local_map.max_x = x;
-        local_map.min_y = local_map.max_y = y;
+        local_map.min_x = x;
+        local_map.max_x = x;
+        local_map.min_y = y;
+        local_map.max_y = y;
         local_map.width = 1;
         local_map.height = 1;
-        local_map.explored = calloc(1, sizeof *local_map.explored);
-        local_map.scanned = calloc(1, sizeof *local_map.scanned);
-        local_map.blocked = calloc(1, sizeof *local_map.blocked);
+        local_map.explored = calloc(1, sizeof(*local_map.explored));
+        local_map.scanned = calloc(1, sizeof(*local_map.scanned));
+        local_map.blocked = calloc(1, sizeof(*local_map.blocked));
         return local_map.explored != NULL && local_map.scanned != NULL &&
                local_map.blocked != NULL;
     }
 
+    /* Nothing to do if (x, y) is already within the current bounds */
     if (in_bounds(x, y)) {
         return true;
     }
 
-    new_min_x = (x < local_map.min_x) ? x : local_map.min_x;
-    new_max_x = (x > local_map.max_x) ? x : local_map.max_x;
-    new_min_y = (y < local_map.min_y) ? y : local_map.min_y;
-    new_max_y = (y > local_map.max_y) ? y : local_map.max_y;
+    /* Compute expanded rectangle limits */
+    if (x < local_map.min_x) {
+        new_min_x = x;
+    } else {
+        new_min_x = local_map.min_x;
+    }
+
+    if (x > local_map.max_x) {
+        new_max_x = x;
+    } else {
+        new_max_x = local_map.max_x;
+    }
+
+    if (y < local_map.min_y) {
+        new_min_y = y;
+    } else {
+        new_min_y = local_map.min_y;
+    }
+
+    if (y > local_map.max_y) {
+        new_max_y = y;
+    } else {
+        new_max_y = local_map.max_y;
+    }
+
     new_w = new_max_x - new_min_x + 1;
     new_h = new_max_y - new_min_y + 1;
 
-    new_explored = calloc((size_t)(new_w * new_h), sizeof *new_explored);
-    new_scanned = calloc((size_t)(new_w * new_h), sizeof *new_scanned);
-    new_blocked = calloc((size_t)(new_w * new_h), sizeof *new_blocked);
+    /* Allocate zero-filled arrays for the expanded grid */
+    new_explored = calloc((size_t)(new_w * new_h), sizeof(*new_explored));
+    new_scanned = calloc((size_t)(new_w * new_h), sizeof(*new_scanned));
+    new_blocked = calloc((size_t)(new_w * new_h), sizeof(*new_blocked));
     if (new_explored == NULL || new_scanned == NULL || new_blocked == NULL) {
         free(new_explored);
         free(new_scanned);
@@ -100,6 +126,7 @@ static bool grow_map_to_include(int x, int y)
         return false;
     }
 
+    /* Copy old cells from their old indices to their new indices */
     for (yy = local_map.min_y; yy <= local_map.max_y; yy++) {
         int xx;
         for (xx = local_map.min_x; xx <= local_map.max_x; xx++) {
@@ -111,6 +138,7 @@ static bool grow_map_to_include(int x, int y)
         }
     }
 
+    /* Replace old arrays and bounds with the expanded ones */
     free_map_arrays();
     local_map.min_x = new_min_x;
     local_map.max_x = new_max_x;
@@ -132,7 +160,7 @@ void local_map_init(void)
 void local_map_reset(void)
 {
     free_map_arrays();
-    memset(&local_map, 0, sizeof local_map);
+    memset(&local_map, 0, sizeof(local_map));
 }
 
 int local_map_get_x(void)
@@ -145,6 +173,7 @@ int local_map_get_y(void)
     return local_map.y;
 }
 
+/* Mark the vehicle's current cell as explored. */
 void local_map_mark_explored_here(void)
 {
     if (!grow_map_to_include(local_map.x, local_map.y)) {
@@ -154,6 +183,7 @@ void local_map_mark_explored_here(void)
     local_map.explored[cell_index(local_map.x, local_map.y)] = true;
 }
 
+/* Move vehicle coordinates by (dx, dy) and mark the new cell explored. */
 void local_map_move_success(int dx, int dy)
 {
     local_map.x += dx;
@@ -161,6 +191,7 @@ void local_map_move_success(int dx, int dy)
     local_map_mark_explored_here();
 }
 
+/* Save a scanned terrain symbol at offset (dx, dy) and flag '#' walls blocked. */
 void local_map_record_scan(int dx, int dy, char terrain)
 {
     int sx = local_map.x + dx;
@@ -180,16 +211,20 @@ void local_map_record_scan(int dx, int dy, char terrain)
     }
 }
 
+/* Return the scanned terrain at (x, y), or '?' if not yet scanned. */
 char local_map_peek_terrain(int x, int y)
 {
+    char ch;
+
     if (local_map.scanned == NULL || !in_bounds(x, y)) {
         return LOCAL_MAP_TERRAIN_UNKNOWN;
     }
 
-    {
-        char ch = local_map.scanned[cell_index(x, y)];
-        return (ch != LOCAL_MAP_NOT_SCANNED) ? ch : LOCAL_MAP_TERRAIN_UNKNOWN;
+    ch = local_map.scanned[cell_index(x, y)];
+    if (ch != LOCAL_MAP_NOT_SCANNED) {
+        return ch;
     }
+    return LOCAL_MAP_TERRAIN_UNKNOWN;
 }
 
 char local_map_peek_terrain_at_offset(int dx, int dy)
@@ -213,6 +248,7 @@ bool local_map_is_blocked(int x, int y)
     return local_map.blocked[cell_index(x, y)];
 }
 
+/* Mark (x, y) as impassable or out-of-range. */
 void local_map_mark_blocked(int x, int y)
 {
     if (!grow_map_to_include(x, y)) {
@@ -227,6 +263,7 @@ void local_map_mark_blocked_at_offset(int dx, int dy)
     local_map_mark_blocked(local_map.x + dx, local_map.y + dy);
 }
 
+/* Copy current map boundary coordinates into caller pointers. */
 void local_map_get_bounds(int *min_x, int *max_x, int *min_y, int *max_y)
 {
     if (min_x != NULL) {
@@ -248,6 +285,7 @@ bool local_map_has_grid(void)
     return local_map.explored != NULL;
 }
 
+/* Count how many cells on the map have been scanned as terrain. */
 unsigned local_map_count_scanned(char terrain)
 {
     unsigned n = 0;
@@ -268,12 +306,13 @@ unsigned local_map_count_scanned(char terrain)
     return n;
 }
 
+/* Update or append one terrain entry in the Stage 3 tally array. */
 static void add_terrain_count(LocalMapTerrainCount *out,
-                       unsigned capacity,
-                       unsigned *used,
-                       char terrain,
-                       bool scanned_inc,
-                       bool explored_inc)
+                              unsigned capacity,
+                              unsigned *used,
+                              char terrain,
+                              bool scanned_inc,
+                              bool explored_inc)
 {
     unsigned i;
 
@@ -294,11 +333,20 @@ static void add_terrain_count(LocalMapTerrainCount *out,
     }
 
     out[*used].terrain = terrain;
-    out[*used].scanned = scanned_inc ? 1U : 0U;
-    out[*used].explored = explored_inc ? 1U : 0U;
+    if (scanned_inc) {
+        out[*used].scanned = 1;
+    } else {
+        out[*used].scanned = 0;
+    }
+    if (explored_inc) {
+        out[*used].explored = 1;
+    } else {
+        out[*used].explored = 0;
+    }
     (*used)++;
 }
 
+/* Build per-terrain scanned and explored tallies across the whole map. */
 unsigned local_map_terrain_counts(LocalMapTerrainCount *out, unsigned capacity)
 {
     unsigned used = 0;
@@ -319,11 +367,11 @@ unsigned local_map_terrain_counts(LocalMapTerrainCount *out, unsigned capacity)
                 add_terrain_count(out, capacity, &used, scanned, true, is_explored);
             } else if (is_explored) {
                 add_terrain_count(out,
-                           capacity,
-                           &used,
-                           LOCAL_MAP_TERRAIN_UNKNOWN,
-                           false,
-                           true);
+                                  capacity,
+                                  &used,
+                                  LOCAL_MAP_TERRAIN_UNKNOWN,
+                                  false,
+                                  true);
             }
         }
     }
@@ -331,30 +379,34 @@ unsigned local_map_terrain_counts(LocalMapTerrainCount *out, unsigned capacity)
     return used;
 }
 
+/* Pick which character to draw at (x, y) for either the explored or scanned map. */
 static char character_to_print(int x, int y, bool explored_view)
 {
+    int i;
+
     if (local_map.explored == NULL || !in_bounds(x, y)) {
         return ' ';
     }
 
-    {
-        int i = cell_index(x, y);
+    i = cell_index(x, y);
 
-        if (explored_view) {
-            if (!local_map.explored[i]) {
-                return ' ';
-            }
-            if (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) {
-                return local_map.scanned[i];
-            }
-            return LOCAL_MAP_VISITED_MARK;
+    if (explored_view) {
+        if (!local_map.explored[i]) {
+            return ' ';
         }
-
-        return (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) ? local_map.scanned[i] : ' ';
+        if (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) {
+            return local_map.scanned[i];
+        }
+        return LOCAL_MAP_VISITED_MARK;
     }
+
+    if (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) {
+        return local_map.scanned[i];
+    }
+    return ' ';
 }
 
-/* Approximate TERRAIN_GetTerrainColorRepresentation ANSI codes. */
+/* Choose an ANSI foreground colour code for a terrain character. */
 static int terrain_color(char ch)
 {
     switch (ch) {
@@ -381,16 +433,22 @@ static int terrain_color(char ch)
     }
 }
 
+/* Check once whether stdout is a terminal so piped output stays plain text. */
 static bool stdout_is_terminal(void)
 {
     static int cached = -1;
 
     if (cached < 0) {
-        cached = isatty(STDOUT_FILENO) ? 1 : 0;
+        if (isatty(STDOUT_FILENO)) {
+            cached = 1;
+        } else {
+            cached = 0;
+        }
     }
     return cached == 1;
 }
 
+/* Print a banner line in green when connected to a terminal. */
 static void print_green_line(const char *text)
 {
     if (stdout_is_terminal()) {
@@ -400,21 +458,23 @@ static void print_green_line(const char *text)
     }
 }
 
+/* Print the three-line header above a map display. */
 static void print_map_banner(const char *title)
 {
     char line[80];
 
     print_green_line("-------------------------------------");
-    snprintf(line, sizeof line, "-- %s --", title);
+    snprintf(line, sizeof(line), "-- %s --", title);
     print_green_line(line);
     print_green_line("-------------------------------------");
 }
 
+/* Find tight min/max coordinates containing the vehicle and known cells. */
 static bool bounds_of_known_cells(bool explored_view,
-                        int *out_min_x,
-                        int *out_max_x,
-                        int *out_min_y,
-                        int *out_max_y)
+                                  int *out_min_x,
+                                  int *out_max_x,
+                                  int *out_min_y,
+                                  int *out_max_y)
 {
     int x;
     int y;
@@ -422,21 +482,27 @@ static bool bounds_of_known_cells(bool explored_view,
     int max_x;
     int min_y;
     int max_y;
-    bool any = false;
 
     if (local_map.explored == NULL) {
         return false;
     }
 
-    min_x = max_x = local_map.x;
-    min_y = max_y = local_map.y;
-    any = true;
+    min_x = local_map.x;
+    max_x = local_map.x;
+    min_y = local_map.y;
+    max_y = local_map.y;
 
     for (y = local_map.min_y; y <= local_map.max_y; y++) {
         for (x = local_map.min_x; x <= local_map.max_x; x++) {
             int i = cell_index(x, y);
-            bool include = explored_view ? local_map.explored[i]
-                                         : (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED);
+            bool include;
+
+            if (explored_view) {
+                include = local_map.explored[i];
+            } else {
+                include = (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED);
+            }
+
             if (!include) {
                 continue;
             }
@@ -459,10 +525,10 @@ static bool bounds_of_known_cells(bool explored_view,
     *out_max_x = max_x;
     *out_min_y = min_y;
     *out_max_y = max_y;
-    return any;
+    return true;
 }
 
-
+/* Print a single 3-column cell, underlining the vehicle's current tile. */
 static void print_map_cell(char ch, bool is_vehicle)
 {
     int color = terrain_color(ch);
@@ -472,14 +538,14 @@ static void print_map_cell(char ch, bool is_vehicle)
         for (pad = 0; pad < LOCAL_MAP_CELL_WIDTH - 1; pad++) {
             putchar(' ');
         }
-       
+
         if (ch == ' ' || ch == LOCAL_MAP_VISITED_MARK) {
             ch = LOCAL_MAP_VEHICLE_MARK;
         }
         if (stdout_is_terminal()) {
             printf("\033[36;1;4m%c\033[0m", ch);
         } else {
-            putchar(ch == LOCAL_MAP_VEHICLE_MARK ? '_' : ch);
+            putchar(ch);
         }
         return;
     }
@@ -496,6 +562,7 @@ static void print_map_cell(char ch, bool is_vehicle)
     }
 }
 
+/* Render the full explored or scanned grid row-by-row (North at the top). */
 static void print_grid(bool explored_view)
 {
     int x;
@@ -512,7 +579,6 @@ static void print_grid(bool explored_view)
 
     putchar('\n');
 
-    
     for (y = min_y; y <= max_y; y++) {
         printf("%*c", LOCAL_MAP_CELL_WIDTH, ' ');
 
