@@ -1,26 +1,34 @@
 # v2 Student Deep-Dive Guide 2: `util_input.h` & `util_input.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch):** Covers every single line of [util_input.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/util_input.h) (lines 1–42) and refactored [util_input.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c) (lines 1–248), using `while (true)` and `sizeof(...)`. Every C keyword and library call is re-explained inline right inside each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch):** Covers every single line of [util_input.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/util_input.h) (lines 1–42) and [util_input.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c) (lines 1–248), complete with **byte-by-byte character array diagrams**, **`scanf` vs `fgets` visual comparisons**, and a **concrete `sscanf` trace table**. Every C keyword and library call is re-explained inline right inside each section.
 
 ---
 
-## 1. Why Does `util_input` Exist?
+## 1. Visual Mental Model: Why Raw `scanf` Breaks C Programs (and How `util_input` Fixes It)
 
-In C, calling raw `scanf("%d", &x)` directly on user keyboard input is notorious for causing **infinite re-prompt loops** whenever someone types letters like `"abc"` (because `"abc"` stays stuck in `stdin`) or **buffer overflows** on long lines.
-
-`util_input` solves this once for the entire project: **every single prompt reads a bounded line with `fgets`, flushes leftover characters if the line was too long, trims spaces, and validates the string in memory with `sscanf("%d%c", ...)`**.
+Suppose a prompt asks `"Enter 1-8 : "` and a clumsy user accidentally types `"hello"` and hits Enter. Look at what happens in `stdin` (the keyboard input queue):
 
 ```mermaid
-flowchart LR
-    Key["User types line on stdin"] --> Fgets["fgets(buf, buf_size, stdin)"]
-    Fgets --> CheckNL{"Ends with newline?"}
-    CheckNL -- "Yes" --> StripNL["Replace newline with null char"]
-    CheckNL -- "No (line too long)" --> Drain["getchar() loop until newline or EOF"]
-    StripNL --> Trim["trim_inplace(buf): strip leading & trailing spaces"]
-    Drain --> Trim
-    Trim --> Helpers["Prompt helpers validate y/n, int range, long, or command char"]
+flowchart TD
+    subgraph Bad["What Raw scanf('%d', &x) Does (BROKEN)"]
+        B1["stdin buffer holds: 'h' 'e' 'l' 'l' 'o' '\\n'"] --> B2["scanf sees 'h' (not a digit!) and fails"]
+        B2 --> B3["'hello\\n' STAYS STUCK inside stdin!"]
+        B3 --> B4["Next loop iteration reads the SAME 'h' again -> INFINITE LOOP!"]
+    end
+
+    subgraph Good["What util_input.c Does (SAFE)"]
+        G1["stdin buffer holds: 'h' 'e' 'l' 'l' 'o' '\\n'"] --> G2["fgets() consumes the ENTIRE line into line[64]"]
+        G2 --> G3["stdin is now 100% EMPTY and clean!"]
+        G3 --> G4["trim_inplace() strips spaces + '\\n'"]
+        G4 --> G5["sscanf(line, '%d%c', ...) rejects 'hello' cleanly & waits for fresh typing!"]
+    end
 ```
+
+That is the entire secret of `util_input`:
+1. **Always swallow one full keyboard line first** using `fgets` (and drain any extra characters if someone typed > 63 characters).
+2. **Clean up spaces/newlines** inside a `char` array in RAM (`trim_inplace`).
+3. **Validate the cleaned string in RAM** (`y/n`, `int` range, `long`, or single command key).
 
 ---
 
@@ -73,17 +81,25 @@ char util_read_command_char(void);
 #endif /* UTIL_INPUT_H */
 ```
 
+#### Quick Reference: Which Function Is Used Where?
+| Function | Where Used | Loops on Bad Input? | Empty `Enter` Behaviour |
+| :--- | :--- | :---: | :--- |
+| `util_read_line` | Everywhere (base helper + filename) | No | Returns `false` (`buf[0] = '\0'`) |
+| `util_prompt_yes_no` | Stage 1 encrypted & random spawn | Yes | Re-prompts `"Please enter y or n."` |
+| `util_prompt_yes_no_default` | Auto-pilot `'o'` menu Q1–Q6 | Yes | Uses `default_yes` (`[y]` or `[n]`)! |
+| `util_prompt_long_default` | Auto-pilot `'o'` menu Q7–Q13 & `a/b/c` | Yes | Uses `default_val` (`[0]` or `[1]`)! |
+| `util_prompt_int_range` | Stage 1 Mission Type (`1..8`) | Yes | Re-prompts `"Please enter 1 to 8."` |
+| `util_prompt_long` | Stage 2 manual shield key `'i'` | **No (asks once)** | Returns `false` (cancels shield prompt) |
+| `util_read_command_char` | Stage 2 command prompt (`w/a/s/d/q...`) | No | Returns `'\0'` |
+
 #### Every Term Explained Inline
-- **`#ifndef UTIL_INPUT_H` / `#define UTIL_INPUT_H` / `#endif` (Include Guard):** Prevents the compiler from seeing duplicate declarations if multiple headers `#include "util_input.h"` in the same `.c` file. The first time, `UTIL_INPUT_H` is not defined (`#ifndef` = *if not defined*), so it defines `UTIL_INPUT_H` and includes the contents; any second inclusion skips straight to `#endif`.
+- **`#ifndef UTIL_INPUT_H` / `#define UTIL_INPUT_H` / `#endif` (Include Guard):** `#ifndef` means *"if not defined yet."* Ensures the compiler only processes these declarations once per `.c` file even if `"util_input.h"` gets included indirectly multiple times.
 - **`#include <stdbool.h>`:** Standard C header providing `bool`, `true`, and `false`.
-- **`#include <stddef.h>`:** Standard C header providing `size_t` and `NULL`.
-- **`size_t`:** An unsigned integer type guaranteed to be large enough to represent the byte size of any array or object in memory (the type returned by `sizeof(...)` and `strlen(...)`).
-- **`char *buf`:** Pointer to a caller-supplied character array where [`util_read_line`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/util_input.h#L9) will store the typed text. Because it is **not** `const`, the function is allowed to write into `buf`.
-- **`const char *prompt`:** Pointer to a read-only C string (the question printed to the user). `const` guarantees the function will not modify the prompt string.
-- **`bool *out` / `long *out` (Out-parameters):** Pointers used when a function needs to return **two pieces of information**:
-  1. Return value (`bool`): Did reading succeed (`true`), or did input hit EOF / cancel (`false`)?
-  2. `*out`: The parsed `bool` or `long` answer written directly into the caller's variable!
-- **`(void)` in `char util_read_command_char(void);`:** Explicitly declares that the function accepts **zero arguments**.
+- **`#include <stddef.h>`:** Standard C header providing `size_t` (unsigned byte-count type) and `NULL`.
+- **`char *buf` vs `const char *prompt`:**
+  - `char *buf` has **no `const`** because `util_read_line` *writes* characters into the caller's array.
+  - `const char *prompt` **has `const`** because prompt functions only *read and print* the question text.
+- **`bool *out` and `long *out` (Why use an "out-pointer"?):** A C function can only `return` **one** value. In `util_prompt_yes_no_default`, the `return` value (`bool`) tells us *"Did we get an answer (`true`), or did `stdin` close with EOF (`false`)?"*, while `*out` writes the actual answer (`true`/`false` or `long` number) into the caller's variable!
 
 ---
 
@@ -129,21 +145,37 @@ static void trim_inplace(char *s)
 }
 ```
 
+#### Visual Byte-by-Byte Trace: Suppose User Typed `"  500  "`
+
+```text
+1) Entry into trim_inplace(s):
+   Index:   [0]  [1]  [2]  [3]  [4]  [5]  [6]  [7]
+   Memory: | ' ' | ' ' | '5' | '0' | '0' | ' ' | ' ' | '\0'|
+             ^
+             s, start (both point to index 0)
+
+2) After first while loop (lines 15-17) skips leading spaces:
+   Memory: | ' ' | ' ' | '5' | '0' | '0' | ' ' | ' ' | '\0'|
+             ^           ^
+             s           start (now at index 2; strlen(start) is 5)
+
+3) After memmove(s, start, 5 + 1) (line 21) shifts 6 bytes ('5','0','0',' ',' ','\0') left:
+   Memory: | '5' | '0' | '0' | ' ' | ' ' | '\0'| ' ' | '\0'|
+             ^                       ^
+             s                       end = s + 5 - 1 (points to index 4)
+
+4) After second while loop (lines 31-34) overwrites trailing spaces backward with '\0':
+   Memory: | '5' | '0' | '0' | '\0'| '\0'| '\0'| ...
+             ^           ^
+             s           end stops here ('0' is NOT space!) -> Result: "500"!
+```
+
 #### Every Term Explained Inline
-- **`<ctype.h>`:** Standard character-classification header providing `isspace(...)` and `tolower(...)`.
-- **`<stdio.h>`:** Standard I/O header providing `fgets`, `getchar`, `printf`, `fflush`, `sscanf`, `feof`, `stdin`, `stdout`, and `EOF`.
-- **`<string.h>`:** Standard string/memory header providing `strlen` and `memmove`.
-- **`static void trim_inplace(char *s)`:**
-  - `static`: Private helper visible **only inside `util_input.c`**.
-  - `void`: Returns nothing because it edits the character array `s` directly in memory ("in-place").
-  - `char *s`: Pointer to the start of the C string buffer.
-- **`'\0'` (Null terminator):** Byte value `0` that marks the end of every C string.
-- **`*start` (`*` dereference operator):** Reads the single `char` currently pointed to by `start`. `start++` advances the pointer by 1 byte to the next character in the array.
-- **`isspace((unsigned char)*start)`:** Returns non-zero (`true`) for `' '`, `'\t'`, `'\n'`, `'\r'`, etc. Why cast to `(unsigned char)`? In C, plain `char` can be signed (`-128..127`), and passing negative values (other than `EOF`) to `<ctype.h>` functions causes undefined behaviour—casting to `(unsigned char)` makes every byte safe (`0..255`).
-- **`memmove(s, start, strlen(start) + 1)`:** Copies the trimmed text from `start` back to the front of `s`.
-  - Why `memmove` instead of `memcpy`? Because `s` and `start` point inside the **same array**, so the source and destination memory regions overlap! `memmove` handles overlapping memory safely; `memcpy` does not.
-  - Why `+ 1`? `strlen(start)` counts characters *before* `'\0'`, so `+ 1` copies the closing `'\0'` byte too!
-- **`end = s + len - 1`:** Points `end` at the **last character** before `'\0'`. Walking backward (`end--`) while `end >= s` overwrites trailing spaces with `'\0'`, shrinking the string cleanly from the right.
+- **`static`:** Private function visible **only inside `util_input.c`**.
+- **`'\0'` (Null terminator):** Byte value `0` marking where a C string stops in memory. `printf("%s", s)` and `strlen(s)` stop reading at the **first** `'\0'` they hit!
+- **`*start` (`*` dereference) vs `start++` (pointer step):** `*start` inspects the `char` inside the current box; `start++` slides the pointer arrow one box to the right.
+- **`isspace((unsigned char)*start)`:** `<ctype.h>` function returning true for `' '`, `'\t'`, `'\n'`, `'\r'`. Casting to `(unsigned char)` ensures bytes `128..255` are positive (`0..255`), preventing undefined behaviour in `<ctype.h>`.
+- **`memmove(s, start, strlen(start) + 1)`:** Shifts bytes within the **same array** safely (unlike `memcpy`, `memmove` is guaranteed safe when source and destination overlap!). `+ 1` includes the closing `'\0'` byte.
 
 ---
 
@@ -181,13 +213,23 @@ bool util_read_line(char *buf, size_t buf_size)
 }
 ```
 
+#### Visual Comparison: Normal Line vs Too-Long Line in `fgets`
+```text
+Case A — Normal input ("w\n" into char buf[64]):
+  fgets stores:  | 'w' | '\n' | '\0' | ...
+  len = 2, buf[1] == '\n'  -->  Line 55 replaces '\n' with '\0': | 'w' | '\0' |
+
+Case B — Huge input (100 'x' letters + '\n' into char buf[64]):
+  fgets stops at 63 chars + '\0':  | 'x' | 'x' | ... (63 times) ... | '\0' |
+  Notice: NO '\n' at buf[62]! 37 'x' letters + '\n' are STILL sitting in stdin!
+  --> Lines 57-60 call getchar() in a loop to throw away those 37 'x's + '\n'
+      so they NEVER leak into the next question!
+```
+
 #### Every Term Explained Inline
-- **`buf == NULL || buf_size == 0`:** Defensive guard against a null pointer (`NULL`) or zero-length buffer.
-- **`fgets(buf, (int)buf_size, stdin)`:** Reads at most `buf_size - 1` characters from `stdin` (standard keyboard/pipe input), stopping at `'\n'` or `EOF`, and **always** appends `'\0'`. `(int)buf_size` casts `size_t` to `int` because `fgets`'s second parameter has type `int`. Returns `NULL` if `EOF` is hit with zero characters read.
-- **`if (len > 0 && buf[len - 1] == '\n')`:** Normal case—the user's whole line fit inside `buf`, including the Enter key `'\n'`. We replace `'\n'` with `'\0'` (null terminator).
-- **`else { int ch; while ((ch = getchar()) != '\n' && ch != EOF) { } }`:** Overflow case—if a user typed 200 characters into a 64-byte buffer, `fgets` read the first 63 characters and left the remaining 137 characters sitting in `stdin`! Without this loop, those leftover characters would accidentally answer the *next* prompt.
-  - Why is `ch` an **`int`** instead of `char`? Because `getchar()` returns every valid byte as `0..255` **plus** `EOF` (usually `-1`), which requires wider range than a 1-byte `char`!
-- **`return buf[0] != '\0';`:** After [`trim_inplace`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L8-L35), if `buf[0]` is `'\0'`, the line was empty (or spaces only) so we return `false`; otherwise we return `true`.
+- **`fgets(buf, (int)buf_size, stdin)`:** Reads at most `buf_size - 1` characters from `stdin`, always reserving 1 byte at the end for `'\0'`. Returns `NULL` on End-Of-File (`Ctrl+D` on Linux).
+- **Why `int ch;` (NOT `char ch;`) for `getchar()`?** `getchar()` returns any valid byte `0..255` **plus** `EOF` (`-1`). That is `257` distinct values, which cannot fit inside a `256`-value `char`!
+- **`return buf[0] != '\0';`:** After trimming spaces, if index `0` is `'\0'`, the line was blank so it returns `false`; otherwise it returns `true`.
 
 ---
 
@@ -268,15 +310,13 @@ bool util_prompt_yes_no_default(const char *prompt,
 ```
 
 #### Every Term Explained Inline
-- **`char line[64];`:** Stack-allocated character array of 64 bytes for reading one user answer.
-- **`while (true)`:** Repeats the prompt indefinitely until a `return` exits the function.
-- **`fflush(stdout);`:** Forces buffered output in `stdout` onto the screen immediately **before** waiting for input. (In C, `stdout` is normally line-buffered—because a prompt like `"Is the scenario file encrypted? (y/n) : "` does **not** end with `'\n'`, `fflush(stdout)` guarantees the prompt is visible right away, especially over pipes or remote terminals.)
-- **`sizeof(line)`:** Compile-time operator returning the byte size of the `line` array (`64`).
-- **`feof(stdin)`:** Returns non-zero (`true`) if `stdin` reached End-Of-File (e.g., `Ctrl+D` on Linux or end of a piped test script). Notice how we distinguish **EOF** vs **blank Enter**:
-  - [`util_read_line`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L38-L65) returns `false` on *both* EOF and an empty line.
-  - Checking `feof(stdin)` tells them apart! In [`util_prompt_yes_no`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L68-L97), a blank line prints `"Please enter y or n."` and `continue` jumps straight to the next iteration of `while (true)`. In [`util_prompt_yes_no_default`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L100-L137) (used by the `'o'` auto-pilot menu), a blank line stores `*out = default_yes;` and returns `true`!
-- **`*out = ...` (`*` dereference on pointer `out`):** Writes the chosen boolean (`true`, `false`, or `default_yes`) into the caller's variable.
-- **`strlen(line) == 1` + `tolower((unsigned char)line[0])`:** Rejects words like `"yes"` or `"nope"` cleanly and accepts `'y'`, `'Y'`, `'n'`, or `'N'`.
+- **`while (true)`:** Loops until valid input hits a `return`.
+- **`fflush(stdout);`:** Pushes the prompt string out of C's `stdout` memory buffer onto the terminal screen immediately. (Normally `stdout` waits for `'\n'` before flushing—since prompts end with `": "` without `'\n'`, `fflush(stdout)` ensures the prompt always shows before waiting for typing.)
+- **`sizeof(line)`:** Evaluates at compile time to `64` (the exact byte capacity of `char line[64]`).
+- **How `feof(stdin)` separates "Blank Enter" from "End-Of-File":**
+  - When `util_read_line` returns `false`, only two things could have happened: (1) user hit `Ctrl+D` / pipe ended (`feof(stdin)` is true), OR (2) user just hit `Enter` on an empty line (`feof(stdin)` is false).
+  - In `util_prompt_yes_no`, empty `Enter` prints `"Please enter y or n."` and `continue` jumps back to the top of `while (true)`.
+  - In `util_prompt_yes_no_default`, empty `Enter` sets `*out = default_yes;` (`*` writes into the caller's `bool` variable) and returns `true`! That's why hitting Enter 10 times in the `'o'` auto-pilot menu smoothly accepts every `[y]`/`[n]` default!
 
 ---
 
@@ -375,19 +415,21 @@ bool util_prompt_long(const char *prompt, long *out)
 }
 ```
 
+#### Worked Trace Table: How `sscanf(line, "%ld%c", &value, &extra) == 1` Works!
+`sscanf` reads from the string `line` in RAM and returns **how many `%` items matched** (`0`, `1`, or `2`). Look at why adding that sneaky `%c` (`&extra`) is pure genius:
+
+| Cleaned `line` | `%ld` (`value`) | `%c` (`extra`) | `sscanf` Return Value | `== 1` Result |
+| :--- | :--- | :--- | :---: | :--- |
+| `"500"` | Matches `500` | Hits `'\0'` (fails to match!) | **`1`** | **ACCEPTED (`500`)** |
+| `"-5"` | Matches `-5` | Hits `'\0'` (fails to match!) | **`1`** | Parsed `-5` (then checked vs `min_val`) |
+| `"500abc"` | Matches `500` | Matches `'a'`! | **`2`** | **REJECTED (`2 != 1`)** |
+| `"3.14"` | Matches `3` | Matches `'.'`! | **`2`** | **REJECTED (`2 != 1`)** |
+| `"xyz"` | Fails immediately! | Not reached | **`0`** | **REJECTED (`0 != 1`)** |
+
 #### Every Term Explained Inline
-- **`long` vs `int`:** `long` is a wider signed integer (64-bit on 64-bit Linux, formatted with `%ld`) matching `SatComRelay`'s `long` energy fields; `int` (`%d`) is used for small menu numbers like Mission Type `1..8`.
-- **The `sscanf(line, "%ld%c", &value, &extra) == 1` validation pattern (Star Interview Trick!):**
-  - `sscanf` parses from the already-trimmed string `line` in memory (NOT from `stdin`), returning **how many format specifiers matched** (`0`, `1`, or `2`).
-  - `&value` and `&extra` pass the memory addresses of `value` and `extra` so `sscanf` can fill them.
-  - Why include **`%c`** (`&extra`) and check **`== 1`**?
-    - Input `"500"` → `%ld` reads `500`, nothing left for `%c` → returns **`1`** (accepted!).
-    - Input `"500abc"` or `"3.14"` → `%ld` reads `500`/`3`, and `%c` reads `'a'`/`'.'` → returns **`2`** (rejected because `2 != 1`!).
-    - Input `"hello"` → `%ld` fails immediately → returns **`0`** (rejected!).
-- **Difference between the 3 numeric helpers:**
-  1. [`util_prompt_long_default`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L140-L174): Used in auto-pilot `'o'` config—loops on invalid input, accepts empty Enter as `default_val`, enforces `value >= min_val`.
-  2. [`util_prompt_int_range`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L177-L202): Used in Stage 1 Mission Type (`1`–`8`)—loops until `min_val <= value <= max_val`.
-  3. [`util_prompt_long`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L205-L228): Used by manual shield key `'i'`—asks **once** (no `while` loop) so pressing Enter or typing non-numbers cancels shield allocation cleanly back to the Stage 2 command prompt.
+- **`&value` and `&extra` (`&` address-of):** `sscanf` needs memory addresses so it can deposit the parsed integer into `value` and any leftover character into `extra`.
+- **`*out = value;` (`*` dereference):** Deposits the validated `long` number into the caller's variable.
+- **Why `util_prompt_long` (lines 205–228) has NO `while (true)` loop:** When the player presses `'i'` (allocate shields) by mistake, hitting Enter on a blank line immediately returns `false` and prints `"Shield allocation cancelled"` instead of trapping them inside the shield menu!
 
 ---
 
@@ -416,22 +458,21 @@ char util_read_command_char(void)
 ```
 
 #### Every Term Explained Inline
-- **`sizeof(line)`:** Returns `64` bytes so [`util_read_line`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/util_input.c#L38-L65) reads safely without overflowing `line`.
-- **`return '\0';`:** Returns the null character (`0`) if the user pressed Enter on a blank line or hit `EOF`.
-- **`for (i = 0; line[i] != '\0'; i++)`:** Walks index `i` across `line` until the null terminator `'\0'`.
-- **`(char)tolower(ch)`:** Converts uppercase letters like `'W'` or `'Q'` to lowercase `'w'` or `'q'` so Stage 2 commands work even when Caps Lock is on, while leaving digits `'1'`–`'9'` unchanged.
+- **`(void)` parameter list:** Takes zero arguments.
+- **`return '\0';`:** Returns null character `'\0'` if the line was empty or hit `EOF`.
+- **`(char)tolower(ch)`:** Turns `'W'` → `'w'`, `'Q'` → `'q'`, `'P'` → `'p'` so Stage 2 keys work regardless of Caps Lock, while leaving numpad digits `'1'..'9'` untouched.
 
 ---
 
 ## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`util_input.c` centralizes all keyboard input so our program never suffers from `scanf` infinite loops or buffer overflows. Everything builds on `util_read_line`, which reads a bounded line with `fgets`, drains any excess characters up to `'\n'` with `getchar()` if the user typed past the buffer limit, and strips leading and trailing spaces in-place using `trim_inplace`. On top of `util_read_line`, we provide reusable prompt functions for `y/n` questions, `1–8` integer ranges, default-able auto-pilot numbers, one-shot shield amounts, and single-key Stage 2 commands. For numbers, we validate using `sscanf(line, \"%ld%c\", &value, &extra) == 1` so inputs with trailing junk like `'12abc'` are cleanly rejected."
+> "`util_input.c` handles all user keyboard input safely so the program never gets stuck in `scanf` infinite loops or overflows buffers. Every prompt calls `util_read_line`, which reads a bounded string with `fgets`, flushes any overflow past the buffer up to `'\n'` using `getchar()`, and trims leading and trailing whitespace in-place with `trim_inplace`. On top of that single reader, we build reusable helpers for `y/n` prompts, `1–8` integer ranges, default-enabled auto-pilot prompts where pressing Enter accepts the bracketed default, one-shot shield inputs, and Stage 2 command letters. Numbers are validated in memory with `sscanf(line, \"%ld%c\", &value, &extra) == 1` so trailing non-digits like `'50abc'` are rejected."
 
 ### Likely Questions From Your Lecturer
-1. **Q: Why didn't you just use `scanf("%d", &value)`?**
-   - **A:** If a user types `"abc"` into `scanf("%d", &value)`, `scanf` fails without removing `"abc"` from `stdin`, causing an infinite loop on the next iteration. Reading whole lines with `fgets` consumes the bad line completely every time.
-2. **Q: Why is `int ch;` used with `getchar()` instead of `char ch;`?**
-   - **A:** `getchar()` can return any valid character byte (`0..255`) *plus* the special value `EOF` (`-1`). Storing that in a 1-byte `char` could either lose `EOF` (if `char` is unsigned) or confuse byte `0xFF` with `EOF` (if `char` is signed), so C requires `int`.
-3. **Q: Why does `sscanf(line, "%ld%c", &value, &extra) == 1` have a `%c` at the end?**
-   - **A:** Without `%c`, `sscanf("12abc", "%ld", &value)` would return `1` and silently accept `12`! Adding `%c` catches any leftover character (`'a'`), making `sscanf` return `2` so we know the input wasn't a pure integer.
+1. **Q: Why use `memmove` instead of `memcpy` inside `trim_inplace`?**
+   - **A:** Because `s` and `start` point to overlapping regions inside the same `char` array. In the C standard, `memcpy` on overlapping memory is undefined behaviour, whereas `memmove` is guaranteed to copy overlapping bytes safely.
+2. **Q: Why is `ch` declared as `int` instead of `char` when calling `getchar()`?**
+   - **A:** `getchar()` returns every valid unsigned byte (`0..255`) plus `EOF` (`-1`), which is 257 possible values and requires `int` rather than a 1-byte `char`.
+3. **Q: How does `util_prompt_long_default` tell the difference between a user pressing Enter on an empty line vs `Ctrl+D` (EOF)?**
+   - **A:** Both make `util_read_line` return `false`, so we check `feof(stdin)`. If `feof(stdin)` is true, input ended so we return `false`; otherwise it was just an empty Enter, so we set `*out = default_val` and return `true`.

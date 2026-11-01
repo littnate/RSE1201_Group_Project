@@ -1,33 +1,65 @@
 # v2 Student Deep-Dive Guide 8: `autopilot.h` & `autopilot.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch):** Covers every single line of [autopilot.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/autopilot.h) (lines 1–44) and refactored [autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c) (lines 1–816). All function pointers, `**why` double pointers, `(void)` casts, ternaries, and `goto` labels have been replaced with straightforward student C (`char direction`, [`autopilot_stop_limit_hit`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L223-L245), [`stop_on_interrupt`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L706-L714), and readable BFS names `queue`, `came_from`, `visited`, `step_index`). Every C term is re-explained inline right inside each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch):** Covers [autopilot.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/autopilot.h) (lines 1–44) and all 816 lines of [autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c), with a **4-panel visual trace of Breadth-First Search (`queue`, `visited`, `came_from`, `step_index`)**, an **Appendix A skip-rule flowchart**, and a **non-blocking `select()` polling diagram**! Every C term is re-explained inline right inside each section.
 
 ---
 
-## 1. Big-Picture Architecture: How Auto-Pilot Thinks
+## 1. Mental Imagery: The 6-Rule Brain Inside `autopilot_run`
 
-Every turn inside [`autopilot_run`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L717-L816), the vehicle runs a strict **6-step priority checklist** so it **never** steps onto an unscanned tile `'?'`, a wall `'#'`, or a danger trap `'X'`, and never lets shields drop to `0`:
+Think of `autopilot.c` as a cautious self-driving rover with **one golden safety law**:
+> **"Never step onto a tile unless radar has ALREADY scanned it AND confirmed it is neither a wall `'#'` nor a danger trap `'X'`!"**
+
+Every single tick of `while (true)` inside [`autopilot_run`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L717-L816) runs this exact 6-step priority ladder from top to bottom:
 
 ```mermaid
 flowchart TD
-    Top["Start of Auto-Pilot Tick: while (true)"] --> S1{"1. User typed 'p' or 'q'? (select poll)"}
-    S1 -- "Yes" --> Int["stop_on_interrupt(cmd): Pause or Quit"]
-    S1 -- "No" --> S2{"2. Mission over, goal met (1-8), or energy/action limit hit?"}
-    S2 -- "Yes" --> Pause["Print reason & return AUTOPILOT_RUN_PAUSED"]
-    S2 -- "No" --> S3{"3. Shields < 2500 and Battery > 2500?"}
-    S3 -- "Yes" --> Shield["Allocate 10% battery to shields + delay (t4 or t7)"]
-    S3 -- "No" --> S4{"4. Any unknown '?' cell within radius 1 or 2?"}
-    S4 -- "Yes" --> Scan["Scan nearest unknown (cardinals first, r=1 then r=2) + delay"]
-    S4 -- "No" --> S5{"5. BFS finds safe path to Mission Goal or Frontier?"}
+    Top["Start of Auto-Pilot Tick: while (true)"] --> S1{"1. Did player type 'p' or 'q'? (select 0-sec peek)"}
+    S1 -- "Yes" --> Int["stop_on_interrupt(cmd): Pause ('p') or Quit ('q')"]
+    S1 -- "No" --> S2{"2. Destroyed, Goal Met (1-8), or Battery/Move/Scan Limit Hit?"}
+    S2 -- "Yes" --> Stop["Print exact stop reason & return AUTOPILOT_RUN_PAUSED"]
+    S2 -- "No" --> S3{"3. Are Shields < 2500 while Battery > 2500?"}
+    S3 -- "Yes" --> Shield["Divert 10% battery to shields + apply delay (t4 or t7)"]
+    S3 -- "No" --> S4{"4. Any unscanned '?' tile within radius 1 or 2?"}
+    S4 -- "Yes" --> Scan["Scan nearest '?' (cardinals N/E/S/W first, r=1 then r=2) + delay"]
+    S4 -- "No" --> S5{"5. Does BFS find a safe path to Mission Goal or Frontier?"}
     S5 -- "Yes" --> Move["Take 1 cardinal step along shortest BFS path + delay"]
-    S5 -- "No" --> Stuck["6. Print 'stuck / map exhausted' & Pause"]
+    S5 -- "No" --> Stuck["6. Print 'stuck / map exhausted' & return AUTOPILOT_RUN_PAUSED"]
     Shield & Scan & Move --> Top
 ```
 
+Notice **why Step 4 (Scan) comes BEFORE Step 5 (Move)**: whenever the rover reaches a new spot, it scans its surroundings *first* before deciding where to walk next!
+
 ---
 
-## 2. Header Walkthrough: `autopilot.h` (Lines 1–44)
+## 2. Visual Mental Model: How Breadth-First Search (`autopilot_bfs_step`) Finds the Shortest Safe Path!
+
+BFS sounds fancy, so picture **water ripples spreading 1 step at a time** from the rover `[S]` at `(0, 0)` trying to reach End Point `'E'` at `(2, 0)` while avoiding Danger `'X'` at `(1, -1)` and Wall `'#'` at `(1, 0)`:
+
+```text
+STAGE A — Known Scanned Map:          STAGE B — BFS Ripples Spreading in queue[]:
+      x=0   x=1   x=2                       x=0   x=1   x=2
+y=-1 [ . ] [ X ] [ . ]                y=-1 [w=1] [ X ] [   ]   ('X' & '#' are skipped by
+y= 0 [ S ] [ # ] [ E ]                y= 0 [w=0] [ # ] [w=4!]   autopilot_cell_is_passable!)
+y=+1 [ . ] [ . ] [ . ]                y=+1 [w=1] [w=2] [w=3]
+                                      Ripple hits 'E' at (2,0) on Wave 4 — SHORTEST safe path!
+
+STAGE C — came_from[] Breadcrumbs:    STAGE D — Tracing Back ONLY the First Step (Lines 600-617):
+  Each cell remembers which parent      Start at goal 'E' (2,0) and follow arrows BACKWARD
+  cell discovered it!                   until came_from[step_index] == start (0,0):
+      x=0   x=1   x=2
+y=-1 [ | ] [ X ] [   ]                  (2,0) ---> (2,1) ---> (1,1) ---> (0,1)  [STOP! Parent is S!]
+y= 0 [ S ] [ # ] [ | ]                                                     ^
+       ^           v                                                       |
+y=+1 [ ^ ]<-[ < ]<-[ < ]                First step px=0, py=+1  -->  out_dx = 0, out_dy = +1 (Move South!)
+```
+
+Why output **only the first step `(0, +1)`** instead of walking all 4 steps blindly?
+Because as soon as the rover steps South to `(0, +1)`, **Step 4 (Scan)** runs again on the next tick and scans newly reachable tiles—reacting immediately if a closer `'E'` or hazard appears!
+
+---
+
+## 3. Header Walkthrough: `autopilot.h` (Lines 1–44)
 
 ### Full Header ([autopilot.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/autopilot.h#L1-L44))
 
@@ -79,25 +111,35 @@ AutopilotRunResult autopilot_run(VehDataType *vehicle,
 ```
 
 #### Every Term Explained Inline
-- **`#ifndef AUTOPILOT_H` / `#define AUTOPILOT_H` / `#endif`:** Include guard preventing duplicate struct/enum definitions.
-- **`AutopilotOptions` (`typedef struct`):** Stores every Appendix A `'o'` menu answer:
-  - `configured`: `false` until the user completes `'o'` at least once (so pressing `'p'` first triggers `'o'` automatically).
-  - `stats_every`, `stats_scan`, `stats_move`, `stats_shield`, `map_scan`, `map_move`: Display toggles.
-  - `t1..t7`: Delay timers in seconds (`long`).
-  - `energy_floor`, `max_moves`, `max_scans`: Safety stop thresholds (`0` means uncapped for `max_moves`/`max_scans`).
-- **`AutopilotRunResult` (`typedef enum`):** Clean two-value return code so [`ui_run_command_loop`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c#L241-L243) knows whether to stay in Stage 2 (`AUTOPILOT_RUN_PAUSED`) or exit straight to Stage 3 (`AUTOPILOT_RUN_QUIT`).
+- **`#ifndef AUTOPILOT_H` / `#define AUTOPILOT_H` / `#endif`:** Include guard preventing duplicate type declarations.
+- **`AutopilotOptions` (`typedef struct`):** Holds all user answers from the `'o'` configuration menu:
+  - `configured`: Starts `false`; becomes `true` once `'o'` finishes so pressing `'p'` again reuses your saved settings without re-asking 16 questions!
+  - `t1..t7` (`long`): Pause delays in seconds after stats/maps/actions.
+  - `energy_floor` (`long`), `max_moves` / `max_scans` (`unsigned long`): Safety auto-pause thresholds (`0` disables move/scan caps).
+- **`AutopilotRunResult` (`typedef enum`):** Lets `ui_cli.c` distinguish between **Pausing** (`AUTOPILOT_RUN_PAUSED` → stay in manual Stage 2) and **Quitting** (`AUTOPILOT_RUN_QUIT` → jump straight to Stage 3 report).
 
 ---
 
-## 3. Source Walkthrough: `autopilot.c` (Lines 1–816)
+## 4. Source Walkthrough: `autopilot.c` (Lines 1–816)
 
-### Chunk A: Constants, Lookup Tables & Map Passability Helpers ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L1-L187))
+### Chunk A: Constants, Scan/Move Tables & Map Helpers ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L1-L187))
 
 ```c
 #define _DEFAULT_SOURCE
 
 #include "autopilot.h"
-/* ... project & system includes (<sys/select.h>, <unistd.h>) (L5-15) ... */
+
+#include "local_map.h"
+#include "mission_control.h"
+#include "stats.h"
+#include "util_input.h"
+#include "veh_action.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/select.h>
+#include <unistd.h>
 
 #define AUTOPILOT_SHIELD_RESERVE 2500L
 #define AUTOPILOT_END 'E'
@@ -111,14 +153,10 @@ static const char *scan_direction_labels[MISSION_CONTROL_DIR_COUNT] = {
 
 /* Check cheaper cardinal scans (N, E, S, W) before diagonal scans. */
 static const MissionControlScanDir scan_order[MISSION_CONTROL_DIR_COUNT] = {
-    MISSION_CONTROL_DIR_NORTH,
-    MISSION_CONTROL_DIR_EAST,
-    MISSION_CONTROL_DIR_SOUTH,
-    MISSION_CONTROL_DIR_WEST,
-    MISSION_CONTROL_DIR_NORTHEAST,
-    MISSION_CONTROL_DIR_NORTHWEST,
-    MISSION_CONTROL_DIR_SOUTHEAST,
-    MISSION_CONTROL_DIR_SOUTHWEST
+    MISSION_CONTROL_DIR_NORTH,     MISSION_CONTROL_DIR_EAST,
+    MISSION_CONTROL_DIR_SOUTH,     MISSION_CONTROL_DIR_WEST,
+    MISSION_CONTROL_DIR_NORTHEAST, MISSION_CONTROL_DIR_NORTHWEST,
+    MISSION_CONTROL_DIR_SOUTHEAST, MISSION_CONTROL_DIR_SOUTHWEST
 };
 
 /* Pairs a direction character ('N', 'E', 'S', 'W') with its (dx, dy) step. */
@@ -134,53 +172,46 @@ static const AutopilotMove cardinal_moves[4] = {
     { 'S', 0, 1 },
     { 'W', -1, 0 },
 };
+
+/* Eight surrounding neighbour offsets at radius 1. */
+static const int neighbor_dx[MISSION_CONTROL_DIR_COUNT] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+static const int neighbor_dy[MISSION_CONTROL_DIR_COUNT] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 ```
 
-#### Every Term Explained Inline
-- **`2500L` (`L` integer suffix):** Marks `2500` explicitly as a `long` constant matching `vehicle->currShieldEnergy`.
-- **Why `scan_order` checks N, E, S, W before diagonals (`L28–37`):** Smart energy optimization! Cardinal scans cost less energy than diagonal scans and directly reveal tiles the vehicle can walk onto in 1 cardinal step.
-- **`AutopilotMove` & `cardinal_moves[4]` (`L40–51`):** Pairs each direction character (`'N'`, `'E'`, `'S'`, `'W'`) with its `(dx, dy)` step—passed directly to [`veh_action_move`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/veh_action.c#L10-L80) with zero function pointers!
-- **Passability & Frontier Helpers (`L57–187`):**
-  - [`autopilot_cell_is_passable(x, y)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L68-L86): Returns `true` **only** if `(x, y)` is not `blocked`, HAS been scanned (`!= '?'`), is not `'#'`, and is not `'X'`! That single rule is why auto-pilot **never walks blindly into danger**.
-  - [`autopilot_unknown_cell_remains()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L96-L127): Checks whether any known non-wall cell still touches an unscanned `'?'` neighbour ("frontier"). When this returns `false`, the entire reachable interior inside the walls has been 100% scanned!
-  - [`autopilot_has_unvisited_passable()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L130-L152): Checks if any safe cell hasn't been physically stepped on yet (for Mission 8).
-  - [`autopilot_all_known_ends_visited()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L155-L182): Checks if at least one `'E'` exists and every known `'E'` has been stepped on (for Mission 5).
+#### Map Inspection Helpers (`L57–187`) Explained Inline:
+- **[`autopilot_cell_is_passable(x, y)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L68-L86):** Returns `false` if `(x, y)` is `blocked`, unscanned (`'?'`), a wall (`'#'`), or danger (`'X'`); returns `true` only for scanned, safe tiles!
+- **[`autopilot_unknown_at(x, y)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L89-L93):** Returns `true` if `(x, y)` is **not** marked `blocked` AND `local_map_peek_terrain(x, y) == '?'`.
+- **[`autopilot_unknown_cell_remains()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L96-L127) ("Is there still a frontier?"):**
+  ```text
+  Known floor '.' next to '?':   [ . ][ ? ]  --> Frontier EXISTS (returns true — keep exploring!)
+  Surrounded by walls '#':       [ . ][ # ]  --> Walls block outward vision; when zero non-wall
+                                                 cells touch '?', the WHOLE interior is mapped!
+  ```
+- **[`autopilot_has_unvisited_passable()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L130-L152):** Checks if any safe scanned tile has `!local_map_is_explored(x, y)` (needed for Mission 8).
+- **[`autopilot_all_known_ends_visited()`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L155-L182):** Checks that at least one `'E'` was found (`any = true`) and every `'E'` on the map has `local_map_is_explored(x, y) == true` (needed for Mission 5).
 
 ---
 
-### Chunk B: All 8 Mission Goals & Limit Checks ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L189-L245))
+### Chunk B: All 8 Mission Goals & Safety Limit Checks ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L189-L245))
 
 ```c
 /* Check whether the goal condition for mission_type (1-8) has been met. */
 static bool autopilot_goal_met(int mission_type)
 {
-    char here;
-    bool frontier;
-    bool unvisited;
-
-    here = local_map_peek_terrain(local_map_get_x(), local_map_get_y());
-    frontier = autopilot_unknown_cell_remains();
-    unvisited = autopilot_has_unvisited_passable();
+    char here = local_map_peek_terrain(local_map_get_x(), local_map_get_y());
+    bool frontier = autopilot_unknown_cell_remains();
+    bool unvisited = autopilot_has_unvisited_passable();
 
     switch (mission_type) {
-    case 1:
-        return false;
-    case 2:
-        return autopilot_end_count() >= 1;
-    case 3:
-        return autopilot_is_end(here);
-    case 4:
-        return !frontier;
-    case 5:
-        return !frontier && autopilot_all_known_ends_visited();
-    case 6:
-        return !frontier;
-    case 7:
-        return !frontier && local_map_count_scanned(AUTOPILOT_WALL) > 0;
-    case 8:
-        return !frontier && !unvisited;
-    default:
-        return false;
+    case 1: return false;                                              /* Casual Explore */
+    case 2: return autopilot_end_count() >= 1;                         /* Find 1 End Point */
+    case 3: return autopilot_is_end(here);                             /* Reach 1 End Point */
+    case 4: return !frontier;                                          /* Find ALL End Points */
+    case 5: return !frontier && autopilot_all_known_ends_visited();    /* Reach ALL End Points */
+    case 6: return !frontier;                                          /* Find ALL Danger Points */
+    case 7: return !frontier && local_map_count_scanned(AUTOPILOT_WALL) > 0; /* Boundaries */
+    case 8: return !frontier && !unvisited;                            /* Explore Everything */
+    default: return false;
     }
 }
 
@@ -211,28 +242,32 @@ static bool autopilot_stop_limit_hit(const VehDataType *vehicle,
 ```
 
 #### Every Term Explained Inline
-- **How all 8 Mission Types (`switch (mission_type)`) work:**
-  1. **Casual Explore:** Never auto-stops on a goal (`return false;`)—explores until map exhausted or user cap hit.
-  2. **Find 1 End Point:** Stops as soon as at least 1 `'E'` is scanned (`autopilot_end_count() >= 1`).
-  3. **Reach 1 End Point:** Stops once the vehicle is standing on `'E'` (`autopilot_is_end(here)`).
-  4. **Find ALL End Points:** Since we don't know how many `'E'`s exist beforehand, we only know we found *all* of them once zero unknown frontier cells remain (`!frontier`)!
-  5. **Reach ALL End Points:** Zero frontier left (`!frontier`) AND every discovered `'E'` was visited.
-  6. **Find ALL Danger Points:** Zero frontier left (`!frontier`), guaranteeing every reachable `'X'` was scanned without stepping on it.
-  7. **Find Map Boundaries:** Zero frontier left (`!frontier`) AND walls `'#'` scanned around the perimeter.
-  8. **Explore Everything:** Zero frontier left (`!frontier`) AND every passable cell physically visited (`!unvisited`).
-- **[`autopilot_stop_limit_hit`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L223-L245):** Uses `const` single pointers (`const VehDataType *vehicle`, `const AutopilotOptions *opt`) and `->` arrow access to check battery depletion, `energy_floor`, `max_moves`, and `max_scans` in one clean place.
+- **`!frontier` (`!` logical NOT):** Means `autopilot_unknown_cell_remains()` returned `false`—every reachable room inside the `'#'` walls has been 100% scanned! That's how Missions 4, 5, 6, 7, and 8 know for sure no hidden `'E'` or `'X'` tiles remain anywhere in the arena!
+- **`const VehDataType *vehicle` & `const AutopilotOptions *opt`:** Read-only single pointers (`->` arrow reads fields without modifying them). Notice `opt->max_moves > 0` checks whether the user enabled a cap (`0` means unlimited).
 
 ---
 
-### Chunk C: `'o'` Menu Configuration & Non-Blocking `'p'`/`'q'` Polling ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L247-L469))
+### Chunk C: Appendix A `'o'` Configuration & Skip Rules ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L247-L395))
 
-- **Defaults & Printing (`L248–290`):** [`autopilot_options_set_defaults`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L248-L257) zeroes `*opt` with `memset(opt, 0, sizeof(*opt))`, sets `map_scan = true`, `map_move = true`, `energy_floor = 1`. [`yes_no_text`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L260-L266) returns `"y"` or `"n"` with a simple `if` for [`autopilot_print_options`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L269-L290).
-- **Appendix A Skip Rules in [`autopilot_prompt_options`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L293-L395):**
-  - **Skip Rule 1 (`if (!opt->stats_every)` at `L315`):** If Question 1 ("show energy stats after *every* action?") is `'y'`, Questions 2, 3, and 4 (per-scan/move/shield stats) are automatically skipped!
-  - **Skip Rule 2 (`if (opt->t4 == 0)` at `L360`):** If Question 10 (`t4` global delay after *any* action) is `> 0`, Questions 11, 12, and 13 (`t5`, `t6`, `t7` individual delays) are automatically skipped!
-- **Non-Blocking Interrupt Check in [`autopilot_poll_interrupt`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L398-L420):**
+```mermaid
+flowchart LR
+    Q1["Q1: Show stats after EVERY action?"] -- "Yes (stats_every = true)" --> Q5["Skip Q2, Q3, Q4! Jump to Q5-Q9"]
+    Q1 -- "No (stats_every = false)" --> Q24["Ask Q2 (scan), Q3 (move), Q4 (shield)"] --> Q5
+    Q5 --> Q10["Ask Q5-Q9 (maps & t1..t3), then Q10: t4 global delay"]
+    Q10 -- "t4 > 0" --> Caps["Skip Q11, Q12, Q13 (t5..t7)! Jump to a, b, c limits"]
+    Q10 -- "t4 == 0" --> Q11["Ask Q11 (t5), Q12 (t6), Q13 (t7)"] --> Caps
+```
+
+- **[`autopilot_options_set_defaults`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L248-L257):** Zeroes `*opt` with `memset(opt, 0, sizeof(*opt))`, then sets `map_scan = true`, `map_move = true`, and `energy_floor = 1`.
+- **[`yes_no_text`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L260-L266) & [`autopilot_print_options`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L269-L290):** Prints the active summary table after `'o'` finishes.
+- **[`autopilot_prompt_options`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L293-L395):** Uses `util_prompt_yes_no_default` and `util_prompt_long_default` (passing `&opt->...` addresses so answers write straight into `*opt`), enforces both Appendix A skip rules (`if (!opt->stats_every)` and `if (opt->t4 == 0)`), and sets `opt->configured = true;`.
+
+---
+
+### Chunk D: Non-Blocking `'p'`/`'q'` Interrupts with `select()` ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L397-L469))
 
 ```c
+/* Peek at stdin without blocking to see if the user entered 'p' or 'q'. */
 static bool autopilot_poll_interrupt(char *cmd)
 {
     fd_set rfds;
@@ -257,53 +292,61 @@ static bool autopilot_poll_interrupt(char *cmd)
     return *cmd == 'p' || *cmd == 'q';
 }
 ```
-  - **Why `select(...)` with `tv_sec = 0, tv_usec = 0`?** Calling `fgets` directly during auto-pilot would **freeze** the vehicle waiting for the user to press Enter! `select` from `<sys/select.h>` peeks at `STDIN_FILENO` (`0`, standard input) with a **zero-second timeout**: if the user hasn't pressed a key, `select` returns `0` immediately so auto-pilot keeps driving; if the user *did* type `'p'` or `'q'` + Enter, `n > 0` and we read it with `util_read_command_char()`!
-  - **[`autopilot_sleep_secs`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L423-L437):** Sleeps 1 second at a time (`sleep(1)`) in a `for` loop, polling `autopilot_poll_interrupt` every second so pressing `'p'` or `'q'` during a 10-second delay responds within 1 second instead of making the user wait!
 
----
+#### Visual Comparison: Why Can't Auto-Pilot Just Call `fgets()` Directly?
+```text
+Calling fgets() directly:
+  Rover scans N --> calls fgets() --> FREEZES FOREVER waiting for human to press Enter!
 
-### Chunk D: `autopilot_bfs_step` — Breadth-First Search Pathfinding ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L471-L624))
-
-```c
-/* Find the shortest safe path to a goal cell using Breadth-First Search (BFS)
- * and output only the immediate first step (out_dx, out_dy). */
-static bool autopilot_bfs_step(bool any_frontier,
-                               bool any_unvisited,
-                               bool any_unvisited_end,
-                               bool any_end,
-                               int *out_dx,
-                               int *out_dy)
+Calling select() with timeout tv = {0 sec, 0 usec} (What autopilot_poll_interrupt does!):
+  Rover scans N --> select() peeks at keyboard in 0.000s:
+     - Human typed nothing?  n == 0 --> returns false INSTANTLY, rover keeps driving!
+     - Human typed 'p'+'\n'? n == 1 --> reads 'p' and pauses IMMEDIATELY!
 ```
 
-#### Every Term Explained Inline (How BFS Works in Plain English!)
-Think of BFS like **ripples spreading outward in a pond** from the vehicle's current tile `(sx, sy)`:
-1. **3 Heap Arrays (`malloc` / `calloc` at `L522–524`, freed with `free` before returning):**
-   - **`queue` (`AutopilotPoint *`):** First-In-First-Out waiting line of `(x, y)` tiles to inspect (`head` reads from the front; `tail` adds to the back). Because ripples expand 1 step, then 2 steps, then 3 steps, the **first goal cell we hit is guaranteed to be the closest safe goal!**
-   - **`visited` (`bool *`, zeroed by `calloc`):** Marks tiles already added to `queue` so we never walk in circles.
-   - **`came_from` (`int *`):** Breadcrumb trail! `came_from[ni] = ci` remembers *"to reach cell `ni`, we stepped here from parent cell `ci`."*
-2. **Goal Check (`L549–573`):** Checks whether `cur` is our target (an unvisited `'E'`, any `'E'`, an unvisited safe tile, or a tile next to an unscanned `'?'` frontier). When found, sets `found = true; fx = cur.x; fy = cur.y; break;` (clean `break` out of `while (head < tail)`—no `goto`!).
-3. **Tracing Back the First Step (`L600–618`):**
-   - Starting at goal index `step_index = gi`, `while (came_from[step_index] != si && came_from[step_index] != -1)` walks backward along `came_from` until `step_index` is the tile **one single step away from start `si`**!
-   - Converts `step_index` back into `(px, py)` using modulo `% w` (column offset) and integer division `/ w` (row offset), sets `*out_dx = px - sx` and `*out_dy = py - sy`, frees all 3 arrays, and returns `true`!
+- **[`autopilot_sleep_secs`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L423-L437):** Instead of calling `sleep(10)` (which would ignore `'p'`/`'q'` for 10 whole seconds!), it loops `for (i = 0; i < secs; i++) { sleep(1); if (autopilot_poll_interrupt(cmd)) return true; }` so interrupts respond within 1 second!
+- **[`autopilot_show_action_result`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L440-L469):** Applies post-stats delay `t1`, post-map delays `t2`/`t3`, and either global action delay `t4` (when `t4 > 0`) or specific delay `t5` (scan `'s'`), `t6` (move `'m'`), or `t7` (shield `'i'`).
 
 ---
 
-### Chunk E: Scan Picker, Move Picker, Shield Top-Up & `autopilot_run` ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L626-L816))
+### Chunk E: `autopilot_bfs_step` Code Walkthrough ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L471-L624))
 
-- **[`autopilot_pick_scan`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L627-L652):** Loops `r = 1` then `r = 2`, checking `scan_order[0..7]` (cardinals first, diagonals second) for any `autopilot_unknown_at(x, y)`.
-- **[`autopilot_pick_move`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L655-L686):** Calls `autopilot_bfs_step` for Mission 3 (`any_end`), Mission 5 (`any_unvisited_end`), or Mission 8 (`any_unvisited`); if that goal isn't visible yet (`!step_found`), falls back to `any_frontier` (`true`) to walk toward the nearest unscanned area! Matches `(dx, dy)` to `cardinal_moves[0..3]`.
-- **[`autopilot_shield_amount`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L689-L703):** Diverts `currEnergy / 10` (or `currEnergy / 2` when battery is small) whenever shields dip below `2500` while battery is above `2500`.
-- **[`stop_on_interrupt`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L706-L714) & [`autopilot_run`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L717-L816):** Runs the 6-step `while (true)` loop—poll interrupt → check mission/goal/limits → top up shields → scan nearby `'?'` → take 1 BFS move (`veh_action_move(vehicle, cardinal_moves[move_i].direction, ...)`) → or pause when the map is exhausted.
+- **Lines 509–530 (Search Window & Heap Arrays):** Reads map bounds, adds a 1-cell border (`min_x--`, `max_x++`, etc.), computes `cap = w * h`, and allocates 3 heap arrays:
+  - `queue = malloc((size_t)cap * sizeof(*queue));` — FIFO ripple queue (`head` pops front, `tail` pushes back).
+  - `came_from = malloc((size_t)cap * sizeof(*came_from));` — stores parent 1D index for each discovered cell.
+  - `visited = calloc((size_t)cap, sizeof(*visited));` — `calloc` zeroes all flags to `false`.
+- **Lines 533–597 (Ripple Expansion Loop `while (head < tail)`):**
+  - Pops `AutopilotPoint cur = queue[head++];`.
+  - Checks if `cur` satisfies our goal (`any_unvisited_end` → unvisited `'E'`, `any_end` → any `'E'`, `any_unvisited` → unvisited safe tile, or `any_frontier` → tile adjacent to `'?'`). If so (and `cur` isn't start `(sx, sy)`), sets `found = true; fx = cur.x; fy = cur.y; break;`!
+  - Otherwise loops `i = 0..3` over `cardinal_moves`, pushing passable unvisited neighbours onto `queue[tail++]` and recording `came_from[ni] = ci;`.
+- **Lines 600–624 (Breadcrumb Backtrack & Cleanup):**
+  - Walks `step_index` backward from goal `gi` (`while (came_from[step_index] != si && came_from[step_index] != -1) step_index = came_from[step_index];`) until `step_index` is the immediate neighbour of start `si`.
+  - Converts 1D `step_index` back into 2D `(px, py)` using **modulo `% w`** (`px = min_x + (step_index % w)`) and **integer division `/ w`** (`py = min_y + (step_index / w)`), writes `*out_dx = px - sx` and `*out_dy = py - sy`, calls `free()` on all 3 arrays, and returns `true`!
 
 ---
 
-## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
+### Chunk F: Scan Picker, Move Picker, Shield Chunk & `autopilot_run` ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L626-L816))
+
+- **[`autopilot_pick_scan`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L627-L652):** Checks `r = 1` first, then `r = 2`, looping through `scan_order` (N, E, S, W before diagonals) to pick the cheapest nearby `'?'` cell.
+- **[`autopilot_pick_move`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L655-L686):**
+  - Mission 3 → `autopilot_bfs_step` toward any known `'E'`.
+  - Mission 5 → `autopilot_bfs_step` toward any unvisited `'E'`.
+  - Mission 8 → `autopilot_bfs_step` toward any unvisited passable cell.
+  - **Fallback (`if (!step_found)`):** If no `'E'` has been discovered yet (or for Missions 1, 2, 4, 6, 7), walks toward the nearest **frontier** cell (`any_frontier = true`) to uncover new map territory!
+- **[`autopilot_shield_amount`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L689-L703):** Transfers `10%` of `currEnergy` (or `50%` if `10% < 1000`) whenever `currShieldEnergy < 2500` and `currEnergy > 2500`.
+- **[`stop_on_interrupt`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L706-L714) & [`autopilot_run`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L717-L816):** Executes the 6-step `while (true)` loop diagrammed in Section 1, calling `veh_action_allocate`, `veh_action_scan`, and `veh_action_move(vehicle, cardinal_moves[move_i].direction, ...)`!
+
+---
+
+## 5. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`autopilot.c` implements our `'o'` configuration menu and `'p'` autonomous explorer. `autopilot_prompt_options` implements all Appendix A prompts including both skip rules—skipping per-action stats if Q1 is `'y'` and per-action delays if `t4 > 0`. During `autopilot_run`, each loop iteration checks non-blocking `select()` input for `'p'` or `'q'`, checks `autopilot_goal_met` across all 8 mission types plus battery and move/scan caps in `autopilot_stop_limit_hit`, tops up shields if below `2500`, scans any unknown neighbour at radius `1` then `2` (cardinals first), and otherwise uses Breadth-First Search (`autopilot_bfs_step`) over scanned passable tiles to step along the shortest safe path toward the mission target or nearest frontier—never stepping onto `'?'`, `'#'`, or `'X'`."
+> "`autopilot.c` implements our `'o'` option menu and `'p'` autonomous explorer. `autopilot_prompt_options` implements all Appendix A prompts and skip rules—skipping individual stats questions when Q1 is `'y'` and individual delays `t5..t7` when global delay `t4 > 0`. Inside `autopilot_run`, each iteration of `while (true)` polls `stdin` without blocking using `select()`, checks mission completion across all 8 mission types in `autopilot_goal_met` plus battery and action limits in `autopilot_stop_limit_hit`, tops up shields whenever below `2500`, scans any unknown cell within radius `1` or `2` prioritizing cheaper cardinal scans, and otherwise runs Breadth-First Search in `autopilot_bfs_step` over scanned safe cells to take one step toward the mission target or nearest frontier."
 
 ### Likely Questions From Your Lecturer
-1. **Q: How does auto-pilot know when Mission 4 ("Find ALL End Points") or Mission 6 ("Find ALL Danger Points") is finished if it doesn't know how many `'E'` or `'X'` tiles exist in the file?**
-   - **A:** `autopilot_unknown_cell_remains()` checks whether any reachable non-wall cell still has an unscanned `'?'` neighbour. Once no reachable frontier cells remain (`!frontier`), every reachable tile inside the map boundaries has been scanned, guaranteeing all `'E'` or `'X'` tiles have been discovered!
-2. **Q: Why re-run `autopilot_bfs_step` for just one step at a time instead of following a whole pre-planned path blindly?**
-   - **A:** After taking a single step, new unknown cells come within scan radius `1` or `2`—which might reveal an `'E'` end point or a shorter corridor! Re-evaluating scan-before-move on every tick lets the vehicle react immediately to newly discovered terrain and check `'p'`/`'q'` and energy limits after every single action.
+1. **Q: Why is Breadth-First Search (BFS) guaranteed to find the shortest step count to `'E'` or the nearest frontier?**
+   - **A:** Because `queue` is First-In-First-Out (FIFO), BFS explores all cells 1 step away before any cell 2 steps away, and all cells 2 steps away before 3 steps away. So the very first goal cell popped from `queue` is mathematically guaranteed to have the minimum number of steps.
+2. **Q: How did you convert the 1D array index `step_index` back into 2D coordinates `(px, py)` at the end of `autopilot_bfs_step`?**
+   - **A:** Since forward indexing is `index = (y - min_y) * w + (x - min_x)`, the remainder `step_index % w` recovers `(x - min_x)` and integer division `step_index / w` recovers `(y - min_y)`. Adding `min_x` and `min_y` back gives `(px, py)`.
+3. **Q: Why check `if (!isatty(STDIN_FILENO)) return false;` inside `autopilot_poll_interrupt`?**
+   - **A:** If someone pipes a scripted input file (`./bin/VehExplorer.run < commands.txt`), all lines in the file are immediately readable in `stdin`. Checking `isatty` ensures auto-pilot doesn't prematurely swallow scripted post-autopilot commands while running!

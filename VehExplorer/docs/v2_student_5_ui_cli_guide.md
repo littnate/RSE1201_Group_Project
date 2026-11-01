@@ -1,32 +1,56 @@
 # v2 Student Deep-Dive Guide 5: `ui_cli.h` & `ui_cli.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch):** Covers every single line of [ui_cli.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/ui_cli.h) (lines 1–30) and refactored [ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c) (lines 1–301), including `while (true)` loops, `if`-based flag formatting, and `'N'`/`'S'`/`'W'`/`'E'` movement calls. Every C term is re-explained inline right inside each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch):** Covers every single line (zero lines skipped!) of [ui_cli.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/ui_cli.h) (lines 1–30) and [ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c) (lines 1–301), with **visual WASD + Numpad keyboard diagrams**, a **Stage 1–3 state machine diagram**, and a **`sizeof(*cfg)` vs `sizeof(cfg)` memory diagram**. Every C term is re-explained inline right inside each section.
 
 ---
 
-## 1. Big-Picture Role of `ui_cli`
+## 1. Mental Imagery: The Cockpit Dashboard (`ui_cli`)
 
-`ui_cli` ("User Interface — Command-Line Interface") handles all **direct player interaction**:
-1. **Stage 1 (`ui_prompt_startup`):** Asks the 4 startup setup questions (scenario filename, encrypted `y/n`, randomize start `y/n`, and mission type `1–8`).
-2. **Stage 2 (`ui_run_command_loop`):** Shows the `[ Usage Instructions ]` table, waits for `'y'`, and runs the interactive `while (true)` loop dispatching `'w'/'a'/'s'/'d'`, numpad `'1'–'9'`, `'i'`, `'t'`, `'z'`, `'x'`, `'c'`, `'v'`, `'o'`, `'p'`, and `'q'`.
+`ui_cli` ("User Interface — Command-Line Interface") is the **cockpit dashboard** that talks directly to the human player:
+- **Stage 1 (`ui_prompt_startup`):** Collects the 4 pre-mission settings into `UiStartupConfig`.
+- **Stage 2 (`ui_run_command_loop`):** Displays the controls, waits for `'y'`, and runs the interactive cockpit loop switching cleanly between **Manual Driving**, **Option Menu (`'o'`)**, and **Auto-Pilot (`'p'`)**:
 
 ```mermaid
-flowchart TD
-    Startup["Stage 1: ui_prompt_startup(&cfg)"] --> Help["Stage 2: ui_print_help() + ui_wait_continue() ('y')"]
-    Help --> Prompt["Loop: Enter your command (q to quit) :"]
-    Prompt --> ReadCmd["cmd = util_read_command_char()"]
-    ReadCmd --> Switch{"switch (cmd)"}
-    Switch -- "w / s / a / d" --> Move["veh_action_move('N'/'S'/'W'/'E')"]
-    Switch -- "1..4, 6..9" --> Scan["veh_action_scan(dir, label)"]
-    Switch -- "i / t" --> ShieldRad["handle_allocate_shield / handle_toggle_scan_radius"]
-    Switch -- "v / z / x / c" --> Views["Print help, status, explored map, or scanned map"]
-    Switch -- "o / p" --> Auto["Configure or run auto-pilot"]
-    Switch -- "q" --> Quit["return to main() -> Stage 3 report"]
-    Move & Scan & ShieldRad & Views & Auto --> CheckOver{"mission_control_is_mission_over()?"}
-    CheckOver -- "Yes" --> Quit
-    CheckOver -- "No" --> Prompt
+stateDiagram-v2
+    [*] --> Stage1_Setup: ui_prompt_startup(&cfg)
+    Stage1_Setup --> Help_Gate: ui_print_help() + wait for 'y'
+    Help_Gate --> Manual_Cockpit: Enter Stage 2 while(true)
+
+    Manual_Cockpit --> Manual_Cockpit: w/a/s/d (Move), 1-9 (Scan), i (Shield), t (Radius), z/x/c/v (Views)
+    Manual_Cockpit --> Options_Menu: Press 'o' (or first 'p' when unconfigured)
+    Options_Menu --> Manual_Cockpit: Pressed 'o' (configured = true)
+    Options_Menu --> AutoPilot_Running: Pressed 'p' (configured = true)
+    Manual_Cockpit --> AutoPilot_Running: Press 'p' (already configured)
+
+    AutoPilot_Running --> Manual_Cockpit: AUTOPILOT_RUN_PAUSED ('p', goal met, or limit hit)
+    AutoPilot_Running --> Stage3_Exit: AUTOPILOT_RUN_QUIT (typed 'q' during auto-pilot)
+    Manual_Cockpit --> Stage3_Exit: Press 'q', EOF, or vehicle destroyed
+    Stage3_Exit --> [*]
 ```
+
+### Visual Keyboard Map: Why Move Uses `W/A/S/D` & Scan Uses Numpad `1–9`!
+
+```text
+   LEFT HAND: CARDINAL MOVE                 RIGHT HAND: 8-DIRECTION RADAR SCAN
+     (Steps 1 tile onto terrain)             (Peeks 1 or 2 tiles away safely!)
+
+             +-------+                            +-------+-------+-------+
+             |   W   |                            |   7   |   8   |   9   |
+             | North |                            |  NW   |   N   |  NE   |
+             | (0,-1)|                            |(-1,-1)| (0,-1)|(+1,-1)|
+     +-------+-------+-------+                    +-------+-------+-------+
+     |   A   |   S   |   D   |                    |   4   |  [5]  |   6   |
+     | West  | South | East  |                    |   W   | ROVER |   E   |
+     | (-1,0)| (0,+1)| (+1,0)|                    | (-1,0)|invalid| (+1,0)|
+     +-------+-------+-------+                    +-------+-------+-------+
+                                                  |   1   |   2   |   3   |
+                                                  |  SW   |   S   |  SE   |
+                                                  |(-1,+1)| (0,+1)|(+1,+1)|
+                                                  +-------+-------+-------+
+```
+
+Look at key `[5]` in the middle of the numpad: `[5]` is where the rover is already standing! That's why pressing `'5'` prints `Invalid Command : '5', please try again!`.
 
 ---
 
@@ -68,14 +92,14 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type);
 ```
 
 #### Every Term Explained Inline
-- **`#ifndef UI_CLI_H` / `#define UI_CLI_H` / `#endif`:** Include guard preventing duplicate struct/function definitions.
-- **`#define UI_SCENARIO_PATH_MAX 512`:** Preprocessor constant defining the maximum length (`512` bytes, including `'\0'`) of the scenario file path buffer.
-- **`typedef struct { ... } UiStartupConfig;`:** Bundles all 4 Stage 1 answers into one neat struct type named `UiStartupConfig` so [`ui_prompt_startup`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/ui_cli.h#L19) can fill them via a single pointer `UiStartupConfig *cfg`.
-- **`const VehDataType *vehicle` vs `VehDataType *vehicle`:** Notice [`ui_print_veh_data`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/ui_cli.h#L22) marks `vehicle` as `const` because printing never changes energy, whereas [`ui_run_command_loop`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/ui_cli.h#L28) omits `const` because moves/scans/shields update `*vehicle`.
+- **`#ifndef UI_CLI_H` / `#define UI_CLI_H` / `#endif`:** Include guard preventing duplicate declarations.
+- **`#define UI_SCENARIO_PATH_MAX 512`:** Preprocessor constant setting the filename buffer capacity to `512` bytes.
+- **`typedef struct { ... } UiStartupConfig;`:** Packages all 4 startup answers into one struct type so `main()` can pass a single pointer `UiStartupConfig *cfg` to `ui_prompt_startup`.
+- **`const VehDataType *vehicle` vs `VehDataType *vehicle`:** `ui_print_veh_data` uses `const` (read-only printing); `ui_run_command_loop` has no `const` because gameplay actions update `*vehicle`.
 
 ---
 
-## 3. Source Walkthrough: `ui_cli.c` (Lines 1–301)
+## 3. Source Walkthrough: `ui_cli.c` (Lines 1–301, Complete!)
 
 ### Chunk A: `#include`s & Stage 1 `ui_prompt_startup` ([ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c#L1-L73))
 
@@ -155,18 +179,25 @@ bool ui_prompt_startup(UiStartupConfig *cfg)
 }
 ```
 
+#### Visual Trap Alert: `sizeof(cfg)` vs `sizeof(*cfg)` on Line 23!
+```text
+   cfg (Pointer variable)              *cfg (The actual UiStartupConfig struct!)
+  +----------------------+            +------------------------------------------+
+  | 0x7ffc1000 (8 bytes) | ---------> | scenario_path[512] + bools + int         |
+  +----------------------+            | (~520 bytes total!)                      |
+   sizeof(cfg) == 8  (WRONG!)         +------------------------------------------+
+                                       sizeof(*cfg) == 520  (WIPES WHOLE STRUCT!)
+```
+
 #### Every Term Explained Inline
-- **`memset(cfg, 0, sizeof(*cfg));`:**
-  - `memset`: Standard `<string.h>` function that fills a block of memory with byte `0`.
-  - `sizeof(*cfg)`: Dereferences the type of `cfg` at compile time to get the exact byte size of the entire `UiStartupConfig` struct! Writing `sizeof(*cfg)` instead of `sizeof(cfg)` is super important: `sizeof(cfg)` would only be `8` bytes (the size of a pointer!), whereas `sizeof(*cfg)` is the full struct size.
-- **`while (true)` + `continue` + `break`:** Keeps asking for the scenario path if the user hits Enter on an empty line (`continue` restarts the loop), aborts with `return false` on `feof(stdin)` (EOF), and exits the loop with `break` as soon as a non-empty filename is entered.
-- **`fflush(stdout);`:** Flushes the prompt text without a trailing newline straight to the terminal before waiting for input.
-- **`cfg->scenario_path` (`->` arrow operator):** Accesses fields of `UiStartupConfig` through pointer `cfg`. `sizeof(cfg->scenario_path)` evaluates to `512`.
-- **`encrypted_num` and `random_start_num`:** Plain `0`/`1` integers set with `if` statements so the confirmation line prints `isFileEncrypted : 0` or `1`.
+- **`memset(cfg, 0, sizeof(*cfg));`:** Fills every byte of `*cfg` with `0` before asking questions so no leftover stack garbage remains.
+- **`while (true)` + `continue` + `break` (Lines 26–39):** If the user hits Enter on an empty filename, prints `"Path cannot be empty."` and `continue` jumps back to ask again; as soon as a valid non-empty path is typed, `break` exits the `while` loop to ask Question 2!
+- **`cfg->scenario_path` (`->` arrow):** Follows pointer `cfg` to access the `scenario_path` array; `sizeof(cfg->scenario_path)` evaluates to `512`.
+- **`encrypted_num` & `random_start_num`:** Convert `bool` (`false`/`true`) into `0` or `1` using simple `if` statements for the Stage 1 summary `printf`.
 
 ---
 
-### Chunk B: Status, Help, Wait-for-`'y'`, Shield & Radius Helpers ([ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c#L75-L177))
+### Chunk B: Status, Full Help Table, `'y'` Gate, Shield & Radius Handlers ([ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c#L75-L177))
 
 ```c
 /* Print the one-line summary of vehicle battery and shield energy. */
@@ -203,7 +234,19 @@ void ui_print_help(void)
 {
     printf("\n*** Welcome to VehExplorer ! ***\n\n");
     printf("[ Usage Instructions ]\n");
-    /* ... lines 109-122 print each keybinding ... */
+    printf("-------------------------------------\n");
+    printf("Enter 'q' to Quit\n");
+    printf("Enter 'v' to show this help\n");
+    printf("'w', 's', 'a', 'd' keys to MOVE vehicle North, South, West & East\n");
+    printf("'t' key = Toggle Scan Radius (betw. 1-2)\n");
+    printf("NumPad keys to SCAN : SW (1), S (2), SE (3), W (4), E (6), "
+           "NW (7), N (8), NE (9) respectively\n");
+    printf("'i' = Increase / divert energy to shield\n");
+    printf("'z' key = Info on Vehicle Status\n");
+    printf("'c' key = Map of terrain scanned by Vehicle\n");
+    printf("'x' key = Map of terrain travelled by Vehicle\n");
+    printf("'o' key = Configure auto-pilot options\n");
+    printf("'p' key = Toggle auto-pilot on / off\n");
     printf("In map display, '_' underline indicates curr. veh. location!\n");
 }
 
@@ -263,10 +306,9 @@ static void handle_toggle_scan_radius(void)
 ```
 
 #### Every Term Explained Inline
-- **`%ld` vs `%lu`:** `%ld` prints signed `long` (`VehDataType` energy fields); `%lu` prints `unsigned long` (`StatsCounters` command counts, which can never be negative).
-- **`static` on `ui_print_command_stats`, `ui_wait_continue`, `handle_allocate_shield`, `handle_toggle_scan_radius`:** Marks these four helpers **private to `ui_cli.c`** (internal linkage), keeping `ui_cli.h` minimal and clean.
-- **`snprintf(prompt, sizeof(prompt), "...", vehicle->currEnergy)`:** Safe formatted string builder from `<stdio.h>`! Writes the dynamic prompt showing the player's exact current battery (`1 - 4850`, for example) into `prompt[128]`, guaranteed never to write past `sizeof(prompt)` (`128` bytes).
-- **`util_prompt_long(prompt, &amount)`:** Passes `&amount` (`&` address-of operator) so `util_prompt_long` writes the typed number into `amount`, or returns `false` if the user pressed Enter / typed letters to cancel.
+- **`%ld` vs `%lu`:** `%ld` formats signed `long` (`VehDataType` energies); `%lu` formats `unsigned long` (`StatsCounters` counts).
+- **`static` on internal helpers (`ui_print_command_stats`, `ui_wait_continue`, `handle_allocate_shield`, `handle_toggle_scan_radius`):** Keeps these 4 helpers private inside `ui_cli.c` so other files only see the 4 clean public functions in `ui_cli.h`.
+- **`snprintf(prompt, sizeof(prompt), "...", vehicle->currEnergy)`:** Builds the custom prompt string (e.g., `"Enter amt. of energy ... (1 - 299788555) : "`) inside `prompt[128]`, safely capped at `128` bytes (`sizeof(prompt)`) so it can never overflow!
 
 ---
 
@@ -399,21 +441,21 @@ void ui_run_command_loop(VehDataType *vehicle, int mission_type)
 ```
 
 #### Every Term Explained Inline
-- **`AutopilotOptions autopilot_options;`:** Local struct living in `ui_run_command_loop`'s stack frame so settings entered via `'o'` stay remembered whenever the player pauses and resumes auto-pilot with `'p'`!
-- **`putchar('\n');`:** Lightweight `<stdio.h>` call that outputs a single newline character.
-- **Why `'p'` checks `if (!autopilot_options.configured)`:** Matches the milestone specification! If the user presses `'p'` to launch auto-pilot *before* ever pressing `'o'`, it automatically runs [`autopilot_prompt_options(&autopilot_options)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c#L293-L395) once first. Next time they press `'p'`, `configured` is `true`, so it launches straight away using their saved options!
-- **`AUTOPILOT_RUN_QUIT` vs `AUTOPILOT_RUN_PAUSED`:** If the player typed `'q'` *during* auto-pilot, `autopilot_run` returns `AUTOPILOT_RUN_QUIT` and `return;` exits Stage 2 straight to the Stage 3 report. If auto-pilot paused (`'p'`, goal achieved, or energy cap reached), `break;` drops peacefully back into manual control!
-- **Numpad Layout (`7 8 9` top row, `4 _ 6` middle row, `1 2 3` bottom row):** Matches a physical keyboard numpad—`'7'`=NW, `'8'`=N, `'9'`=NE, `'4'`=W, `'6'`=E, `'1'`=SW, `'2'`=S, `'3'`=SE, while `'5'` is the vehicle's own center tile (`Invalid Command : '5'`).
+- **Where `autopilot_options` lives:** Declared once at the top of `ui_run_command_loop` (line 182), *outside* `while (true)`, so your `'o'` settings stay remembered every time you pause and re-start auto-pilot with `'p'`!
+- **First-Time `'p'` Check (`if (!autopilot_options.configured)`):** If you press `'p'` right away without pressing `'o'` first, `configured` is `false`, so it runs `autopilot_prompt_options` once (which sets `configured = true`) and immediately launches `autopilot_run`!
+- **`return;` vs `break;` inside `switch (cmd)`:**
+  - `break;` exits *only* the `switch` statement and stays inside `while (true)` to ask for the next command.
+  - `return;` (on `'q'`, `EOF`, `AUTOPILOT_RUN_QUIT`, or `mission_control_is_mission_over()`) exits `ui_run_command_loop` completely, handing control back to `main()` for Stage 3!
 
 ---
 
 ## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`ui_cli.c` handles Stage 1 setup and the Stage 2 interactive command loop. In `ui_prompt_startup`, we zero-initialize a `UiStartupConfig` struct and use `util_input` helpers to safely collect the scenario filename, encryption and random-start booleans, and mission type `1` to `8`. In `ui_run_command_loop`, we initialize default `AutopilotOptions`, display the keybinding instructions, wait for `'y'`, and run a `while (true)` loop reading commands with `util_read_command_char()`. A single `switch` dispatches `'w/a/s/d'` moves and numpad `'1–9'` scans through `veh_action`, `'i'` and `'t'` to shield and scan-radius handlers, `'z/x/c/v'` to status and map views, and `'o/p'` to auto-pilot—automatically prompting for options on the first `'p'` if `'o'` wasn't used yet."
+> "`ui_cli.c` manages Stage 1 startup configuration and the Stage 2 interactive command loop. In `ui_prompt_startup`, we zero a `UiStartupConfig` struct with `memset(cfg, 0, sizeof(*cfg))` and collect the scenario filename, encryption and random-spawn flags, and mission type `1` to `8`. In `ui_run_command_loop`, we set default `AutopilotOptions`, print the help instructions, wait for `'y'`, and run a `while (true)` command loop. A single `switch` routes `w/a/s/d` moves and numpad `1–9` scans through `veh_action`, `'i'` and `'t'` to shield and scan-radius helpers, `'z/x/c/v'` to status and map displays, and `'o/p'` to auto-pilot—automatically prompting for options on the first `'p'` if `'o'` wasn't run yet."
 
 ### Likely Questions From Your Lecturer
-1. **Q: Why did you write `memset(cfg, 0, sizeof(*cfg))` instead of `sizeof(cfg)`?**
-   - **A:** `cfg` is a pointer (`UiStartupConfig *`), so `sizeof(cfg)` would only zero the first 8 bytes! Dereferencing inside `sizeof(*cfg)` gives the byte size of the entire `UiStartupConfig` struct.
-2. **Q: Why does `'5'` have its own `case '5':` if `default:` prints the exact same message?**
-   - **A:** Making `case '5':` explicit documents clearly for anyone reading the code that `'5'` is the center of the numpad (where the vehicle already stands) rather than an accidentally forgotten scan direction!
+1. **Q: What is the difference between `break;` and `return;` inside `switch (cmd)`?**
+   - **A:** `break;` only leaves the `switch` block so the `while (true)` loop prompts for the next command. `return;` leaves `ui_run_command_loop` completely, moving the program from Stage 2 to Stage 3 in `main()`.
+2. **Q: Why is `AutopilotOptions autopilot_options;` declared before `while (true)` instead of inside `while (true)`?**
+   - **A:** So the user's configuration persists across commands! If it were re-initialized inside `while (true)`, pressing `'o'` to set options would be wiped out before the user pressed `'p'` on the next prompt.

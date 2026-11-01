@@ -1,34 +1,85 @@
 # v2 Student Deep-Dive Guide 3: `mission_control.h` & `mission_control.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch — Nathan's Core Module!):** Covers every single line of [mission_control.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/mission_control.h) (lines 1–45) and refactored [mission_control.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c) (lines 1–304). Notice how **all function pointers are gone**—moves and scans now use clean `switch` statements! Every C term is re-explained right inside each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch — Nathan's Core Module!):** Covers every single line of [mission_control.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/mission_control.h) (lines 1–45) and [mission_control.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c) (lines 1–304), with **4-step visual diagrams of `dup` / `dup2` output capture**, a **5×5 radar offset coordinate map**, and **inline explanations of every C keyword and pointer operator** right inside each section.
 
 ---
 
-## 1. Big-Picture Role: Why Do We Need `mission_control`?
+## 1. Mental Imagery: What Problem Does `mission_control` Solve?
 
-`mission_control` is our **safety adapter around `libsatcom.so`** (`SatComRelay.h`). Calling the raw `SatComRelay` functions directly from the UI or auto-pilot has three big problems that `mission_control` solves cleanly:
+Think of `libsatcom.so` (`SatComRelay.h`) as a **sealed black-box radio transceiver** built by your lecturer. We cannot edit `libsatcom.so`'s source code, and it has three quirks that would make the rest of our program painful if we called it directly:
 
-1. **Movement functions don't return `bool`!** `SCRelay_Signal_Veh_MoveUpNorth()` returns a `VehDataType` struct, *not* true/false—it only prints `"Vehicle moved"` (or `"Blocked"` / `"DESTROYED"`) to `stdout`! Without knowing if the move succeeded, our local map wouldn't know whether to advance `(x, y)` or stay put. `mission_control` temporarily redirects `stdout` into a temporary file, runs the move, reads what `SatComRelay` printed, reprints it to the screen, and checks for `"Vehicle moved"` or `"DESTROYED"`.
-2. **Pre-flight shield & battery guards:** Moving onto damaging terrain with `0` shields destroys the vehicle and tears down library state, so `mission_control` blocks moves when `currShieldEnergy <= 0` or `currEnergy <= 0`.
-3. **16 separate scan functions:** `SatComRelay.h` has 8 radius-1 scan functions (`ScanNorth`, ...) and 8 radius-2 scan functions (`ScanNorth2`, ...). `mission_control` tracks `scan_radius` (`1` or `2`) and dispatches all 16 functions cleanly through `if (scan_radius == 2)` + `switch (dir)`.
+1. **Quirk 1 — Move functions don't return `true`/`false`!**
+   When you call `SCRelay_Signal_Veh_MoveUpNorth()`, it returns an updated `VehDataType` struct, **NOT** a `bool`! The *only* way it tells you whether the vehicle actually moved, hit an impassable `'#'` wall, or blew up (`DESTROYED`) is by **printing words straight to `stdout` (the screen)**!
+2. **Quirk 2 — Moving with `0` shields onto damaging terrain destroys the rover!**
+   So `mission_control` acts as a **safety seatbelt**, blocking moves whenever `currShieldEnergy <= 0` or `currEnergy <= 0`.
+3. **Quirk 3 — 16 separate scan functions!**
+   `SatComRelay.h` has 8 radius-1 functions (`ScanNorth`, ...) and 8 radius-2 functions (`ScanNorth2`, ...). `mission_control` remembers `scan_radius` (`1` or `2`) and routes all 16 functions cleanly with `if (scan_radius == 2)` + `switch (dir)`.
 
 ```mermaid
-flowchart TD
-    Caller["veh_action / ui_cli calls mission_control_move_north(vehicle)"] --> Guard{"Shields <= 0 or Energy <= 0 or Destroyed?"}
-    Guard -- "Yes" --> Block["Print clear warning and return false"]
-    Guard -- "No" --> Redirect["Save stdout with dup(), redirect stdout to tmpfile() with dup2()"]
-    Redirect --> CallMove["call_relay_move('N', *vehicle) -> SCRelay_Signal_Veh_MoveUpNorth()"]
-    CallMove --> Restore["Restore terminal stdout with dup2(), read tmpfile into library_text"]
-    Restore --> Reprint["Re-print library_text to terminal with fputs()"]
-    Reprint --> CheckDest{"Contains DESTROYED or MISSION OVER?"}
-    CheckDest -- "Yes" --> SetOver["vehicle_destroyed = true; return false"]
-    CheckDest -- "No" --> CheckMoved["Return true if library_text contains 'Vehicle moved'"]
+sequenceDiagram
+    participant VA as veh_action.c
+    participant MC as mission_control.c
+    participant TMP as tmpfile() in RAM/Disk
+    participant LIB as libsatcom.so
+    participant SCR as Terminal Screen
+
+    VA->>MC: mission_control_move_north(vehicle)
+    Note over MC: 1. Check shields > 0, battery > 0, not destroyed
+    MC->>MC: 2. Save Terminal FD (dup) & redirect stdout FD 1 -> tmpfile (dup2)
+    MC->>LIB: 3. SCRelay_Signal_Veh_MoveUpNorth()
+    LIB->>TMP: printf("Vehicle moved! ...") goes into tmpfile!
+    LIB-->>MC: Returns updated VehDataType struct
+    MC->>MC: 4. Restore stdout FD 1 -> Terminal Screen (dup2)
+    MC->>TMP: 5. rewind() + fread() text into library_text[4096]
+    MC->>SCR: 6. fputs(library_text, stdout) so player sees normal output!
+    MC-->>VA: 7. Returns true if library_text contains "Vehicle moved"
 ```
 
 ---
 
-## 2. Header Walkthrough: `mission_control.h` (Lines 1–45)
+## 2. Visual Mental Model: How `dup` & `dup2` Catch `libsatcom.so`'s Printed Text!
+
+This is the coolest trick in `mission_control.c` (lines 88–136). In Linux, every running program has a numbered **File Descriptor Table** where **Slot `1` (`STDOUT_FILENO`)** is wherever `printf` sends text!
+
+Watch the 4 steps like unplugging and re-plugging a speaker cable:
+
+```text
+STEP 1 — Normal State (Before Move):
+  +-----------------------+
+  | FD 0 (STDIN_FILENO)   | ---> Keyboard
+  | FD 1 (STDOUT_FILENO)  | ---> Terminal Screen
+  | FD 3 (captured_output)| ---> Temporary File (tmpfile)
+  +-----------------------+
+
+STEP 2 — Backup Terminal Cable:  saved_stdout = dup(STDOUT_FILENO);
+  +-----------------------+
+  | FD 1 (STDOUT_FILENO)  | ---> Terminal Screen
+  | FD 3 (captured_output)| ---> Temporary File (tmpfile)
+  | FD 4 (saved_stdout)   | ---> Terminal Screen   <-- Backup copy of Screen!
+  +-----------------------+
+
+STEP 3 — Aim Slot 1 at Temp File:  dup2(fileno(captured_output), STDOUT_FILENO);
+  +-----------------------+
+  | FD 1 (STDOUT_FILENO)  | ---> Temporary File (tmpfile)  <-- libsatcom.so prints HERE!
+  | FD 3 (captured_output)| ---> Temporary File (tmpfile)
+  | FD 4 (saved_stdout)   | ---> Terminal Screen
+  +-----------------------+
+  (Now call_relay_move() runs! libsatcom.so thinks it's printing to FD 1 as usual,
+   so its message "Vehicle moved..." lands safely inside Temporary File!)
+
+STEP 4 — Restore Slot 1 to Screen:  dup2(saved_stdout, STDOUT_FILENO); close(saved_stdout);
+  +-----------------------+
+  | FD 1 (STDOUT_FILENO)  | ---> Terminal Screen   <-- Restored!
+  | FD 3 (captured_output)| ---> Temporary File (rewind & fread into library_text[],
+  +-----------------------+                      then fputs() to Screen & fclose!)
+```
+
+Once you picture that 4-box cable swap, lines 88–136 become 100% intuitive!
+
+---
+
+## 3. Header Walkthrough: `mission_control.h` (Lines 1–45)
 
 ### Full Header ([mission_control.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/mission_control.h#L1-L45))
 
@@ -81,17 +132,18 @@ void mission_control_scan_offset(MissionControlScanDir dir, int *dx, int *dy);
 ```
 
 #### Every Term Explained Inline
-- **`#ifndef MISSION_CONTROL_H` / `#define MISSION_CONTROL_H` / `#endif`:** Include guard preventing duplicate type and function declarations when multiple `.c` files include `"mission_control.h"`.
+- **`#ifndef MISSION_CONTROL_H` / `#define MISSION_CONTROL_H` / `#endif` (Include Guard):** Prevents `"redefinition"` compiler errors if multiple headers include `"mission_control.h"` inside the same `.c` file.
 - **`typedef enum { ... } MissionControlScanDir;`:**
-  - `enum` (enumeration): Assigns readable constant names to integers starting at `0` (`NORTHWEST = 0`, `NORTH = 1`, ..., `SOUTHEAST = 7`).
-  - `MISSION_CONTROL_DIR_COUNT`: Automatically gets the value **`8`** because it comes right after `7`! That gives us the exact number of directions without hardcoding magic number `8`.
-  - `typedef ... MissionControlScanDir;`: Lets us write `MissionControlScanDir dir` instead of `enum ... dir`.
-- **`VehDataType *vehicle`:** Pointer to the live `VehDataType` struct in `main()`, allowing moves, shield allocations, and scans to update energy values directly in place.
-- **`int *dx, int *dy` (Out-parameters):** Pointers to two caller `int` variables so [`mission_control_scan_offset`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/mission_control.h#L43) can output *both* the horizontal step `dx` and vertical step `dy` at the same time.
+  - `enum` (enumeration): Gives friendly names to integer numbers `0` through `7`:
+    `NW=0, N=1, NE=2, W=3, E=4, SW=5, S=6, SE=7`.
+  - `MISSION_CONTROL_DIR_COUNT`: Automatically equals **`8`** (one past `7`), giving us the exact size for 8-direction arrays without magic numbers!
+  - `typedef`: Creates the clean type alias `MissionControlScanDir`.
+- **`VehDataType *vehicle`:** Pointer (`*`) to `main()`'s `VehDataType` struct so moves, shield allocations, and scans update energy fields directly.
+- **`int *dx, int *dy` (Out-pointers):** Two integer pointers so `mission_control_scan_offset` can write **both** the horizontal offset (`*dx`) and vertical offset (`*dy`) back to the caller.
 
 ---
 
-## 3. Source Walkthrough: `mission_control.c` (Lines 1–304)
+## 4. Source Walkthrough: `mission_control.c` (Lines 1–304)
 
 ### Chunk A: Feature Macro, `#include`s, Private State & Destruction Check ([mission_control.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L1-L32))
 
@@ -131,12 +183,11 @@ static bool library_text_says_destroyed(const char *library_text)
 ```
 
 #### Every Term Explained Inline
-- **`#define _DEFAULT_SOURCE`:** Tells Linux's `<stdio.h>` header to expose POSIX helper `fileno(...)` even when compiled with strict C standards flags. Must appear *before* `#include <stdio.h>`.
-- **`#include <unistd.h>`:** Linux/POSIX system-call header providing `dup`, `dup2`, `close`, and `STDOUT_FILENO` (`1`, the file descriptor number for standard output).
-- **`static int scan_radius = 1;` and `static bool vehicle_destroyed = false;`:**
-  - `static` at **file scope** (outside any function) gives these variables **static storage duration** (they keep their values for the entire run of the program) and **internal linkage** (only code inside `mission_control.c` can read or modify them directly—other modules must call getter/setter functions).
-- **`const char *library_text`:** Pointer to a read-only C string holding whatever `libsatcom.so` printed during a move.
-- **`strstr(library_text, "DESTROYED")`:** Standard `<string.h>` substring search! Searches `library_text` for `"DESTROYED"`; returns a pointer to the match if found, or `NULL` if not found. Checking `!= NULL` tells us whether `"DESTROYED"` or `"MISSION OVER"` appeared anywhere in the message.
+- **`#define _DEFAULT_SOURCE`:** Unlocks POSIX function `fileno(...)` inside Linux's `<stdio.h>`. Must sit at the very top before `#include <stdio.h>`.
+- **`#include <unistd.h>`:** Linux POSIX header providing `dup`, `dup2`, `close`, and `STDOUT_FILENO` (`1`).
+- **`static int scan_radius = 1;` & `static bool vehicle_destroyed = false;`:**
+  - `static` **outside** any function = **private module memory**: (1) lives for the entire duration of the program, and (2) hidden inside `mission_control.c` so other files cannot corrupt `scan_radius` or `vehicle_destroyed` directly!
+- **`strstr(library_text, "DESTROYED")`:** `<string.h>` "string-in-string" finder! Searches `library_text` for the exact word `"DESTROYED"`. Returns a pointer to where `"DESTROYED"` starts if found, or `NULL` if absent.
 
 ---
 
@@ -162,14 +213,12 @@ static VehDataType call_relay_move(char direction, VehDataType fallback)
 ```
 
 #### Every Term Explained Inline
-- **`static`:** Private helper function visible only inside `mission_control.c`.
-- **`char direction`:** Single character (`'N'`, `'S'`, `'E'`, or `'W'`) selecting which cardinal direction to move.
-- **`VehDataType fallback`:** Copy of the current `VehDataType` returned unchanged if an unexpected character ever hits `default:`.
-- **`switch (direction)` / `case '...'` / `default:`:** Standard C multi-way branch (Lecture 3). Note that `return ...;` exits the entire function immediately, so no extra `break;` is needed after a `return`.
+- **`static`:** Private helper inside `mission_control.c`.
+- **`switch (direction)`:** Checks the character `'N'`, `'S'`, `'E'`, or `'W'` and calls the matching `SatComRelay.h` function, returning the updated `VehDataType` struct. If an invalid character were ever passed, `default:` safely returns `fallback` unchanged.
 
 ---
 
-### Chunk C: `capture_move_and_reprint` — Capturing `libsatcom.so` Output ([mission_control.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L51-L146))
+### Chunk C: `capture_move_and_reprint` — Safety Guards + Output Capture ([mission_control.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L51-L146))
 
 ```c
 /* Run a SatComRelay move while capturing its printed message into a temp file
@@ -270,22 +319,14 @@ static bool capture_move_and_reprint(VehDataType *vehicle, char direction)
 }
 ```
 
-#### Every Term Explained Inline (Step-by-Step!)
-- **`VehDataType *vehicle` and `vehicle->currShieldEnergy`:** `vehicle` is a pointer to `main`'s struct; `->` reads fields through that pointer, and `*vehicle = ...` writes the updated struct returned by `SatComRelay` back into `main`'s variable!
-- **`size_t`:** Unsigned size integer type used for byte counts (`n` and `captured_len`).
-- **`tmpfile()`:** Standard `<stdio.h>` function that creates an unnamed temporary file in read/write mode that Linux **automatically deletes** the moment `fclose(captured_output)` is called!
-- **`fflush(stdout)`:** Empties any pending text sitting in `stdout`'s C buffer *before* we swap file descriptors (and again right after the move so `SatComRelay`'s text is flushed into the temp file before we switch back).
-- **`STDOUT_FILENO` (`1`), `dup`, `fileno`, `dup2`, `close` (How Linux Output Redirection Works):**
-  1. In Linux, terminal output goes to **file descriptor `1` (`STDOUT_FILENO`)**.
-  2. `saved_stdout = dup(STDOUT_FILENO);` makes a **backup copy** of the real terminal descriptor (e.g., descriptor `4`) so we don't lose the screen!
-  3. `fileno(captured_output)` gets the Linux integer file descriptor inside the `FILE *` temp file.
-  4. `dup2(fileno(captured_output), STDOUT_FILENO);` points descriptor `1` at our temporary file! Now, when `SCRelay_Signal_Veh_MoveUpNorth()` calls `printf(...)` inside `libsatcom.so`, its words go into `captured_output` instead of vanishing straight onto the terminal!
-  5. After `call_relay_move`, `dup2(saved_stdout, STDOUT_FILENO);` restores descriptor `1` back to the real terminal, and `close(saved_stdout);` closes the backup copy.
-- **`rewind(captured_output);`:** Moves the temp file's read cursor back to byte `0` (the start of the file) so we can read what was just written.
-- **`fread(read_chunk, 1, sizeof(read_chunk), captured_output)`:** Reads up to `512` (`sizeof(read_chunk)`) 1-byte characters at a time into `read_chunk`, returning `n` (number of bytes read, or `0` at end-of-file).
-- **`memcpy(library_text + captured_len, read_chunk, n)`:** Copies those `n` bytes onto the end of `library_text` and appends `'\0'` (null terminator) so `library_text` is always a valid C string.
-- **`fputs(library_text, stdout);`:** Prints the exact captured message back to the real terminal so the player still sees `libsatcom.so`'s normal output!
-- **`strstr(library_text, "Vehicle moved") != NULL`:** Returns `true` **only** if `libsatcom.so` confirmed the vehicle actually moved (returns `false` if blocked by a `'#'` wall or map edge!).
+#### Every Term Explained Inline
+- **`vehicle->currShieldEnergy` (`->` arrow) vs `*vehicle = ...` (`*` dereference):** `vehicle->currShieldEnergy` reads one field inside `main()`'s struct; `*vehicle = call_relay_move(...)` overwrites the entire struct in `main()` with the updated energy numbers returned by `libsatcom.so`!
+- **`tmpfile()`:** Creates an anonymous temporary `FILE *` stream that **auto-deletes itself** when `fclose(captured_output)` runs.
+- **`fflush(stdout);`:** Pushes any buffered text out *before* redirecting `STDOUT_FILENO`, and again *right after* `call_relay_move` so `libsatcom.so`'s output finishes writing into `captured_output` before we restore the terminal.
+- **`dup(STDOUT_FILENO)` / `fileno(captured_output)` / `dup2(src, dst)` / `close(saved_stdout)`:** Performs the 4-step file-descriptor swap illustrated in Section 2 above (`< 0` checks catch rare OS errors).
+- **`rewind(captured_output)` + `fread(...)` + `memcpy(...)`:** Moves the file cursor back to byte `0`, reads 512-byte chunks into `library_text[4096]`, and keeps `library_text` null-terminated with `'\0'`.
+- **`fputs(library_text, stdout)`:** Prints the captured `libsatcom.so` message back onto the real screen so nothing is hidden from the user.
+- **`strstr(library_text, "Vehicle moved") != NULL`:** Returns `true` **only** when `libsatcom.so` confirmed the vehicle moved (returns `false` when blocked by `'#'`, out-of-bounds, or destroyed!).
 
 ---
 
@@ -369,10 +410,13 @@ int mission_control_set_scan_radius(int radius)
 ```
 
 #### Every Term Explained Inline
-- **4 Public Move Functions (`move_north` .. `move_west`):** Clean one-line wrappers passing `'N'`, `'S'`, `'E'`, `'W'` to [`capture_move_and_reprint`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L54-L146). Notice they do **not** have `static` because they are public functions declared in `mission_control.h`!
-- **`long amount` and `%ld`:** Signed long integer matching `SCRelay_Signal_Veh_AllocateToShield(long amountOfEnergy)`.
-- **Shield Validation Guards:** Checks `vehicle == NULL`, `vehicle_destroyed`, `amount <= 0`, and `amount > vehicle->currEnergy` (`->` arrow operator reads `currEnergy` through pointer `vehicle`) before calling `*vehicle = SCRelay_Signal_Veh_AllocateToShield(amount);` (`*vehicle` dereferences the pointer to overwrite `main`'s struct with the updated energy numbers).
-- **Radius Get / Toggle / Set:** Encapsulates the private `static int scan_radius` variable so it can **only ever** hold `1` or `2`.
+- **No `static` keyword here:** Because these 8 functions are declared in `mission_control.h` for `veh_action.c`, `ui_cli.c`, `autopilot.c`, and `main.c` to call!
+- **Shield Transfer Mental Picture (`SCRelay_Signal_Veh_AllocateToShield`):**
+  ```text
+  Before allocating 5000:   currEnergy: 300,000   |   currShieldEnergy:     0
+  After  allocating 5000:   currEnergy: 295,000   |   currShieldEnergy: 5,000
+  ```
+  *(Note: When you later step onto rough/hazardous terrain like swamp, hill, or mountain, your shields absorb terrain damage—so `currShieldEnergy` goes down and `totShieldEnergyUsed` goes up!)*
 
 ---
 
@@ -463,27 +507,43 @@ void mission_control_scan_offset(MissionControlScanDir dir, int *dx, int *dy)
 }
 ```
 
+#### Visual 5×5 Radar Grid: How `base_dx * radius` & `base_dy * radius` Work!
+
+Notice why **North is `dy = -1`** and **South is `dy = +1`**: on a computer screen, rows print from top (`y = -2, -1`) downward (`y = 0, +1, +2`)!
+
+```text
+          x = -2         x = -1          x = 0          x = +1         x = +2
+      +--------------+--------------+--------------+--------------+--------------+
+y=-2  | NW2 (-2, -2) |              |  N2 ( 0, -2) |              | NE2 (+2, -2) |  <-- Radius 2
+      +--------------+--------------+--------------+--------------+--------------+
+y=-1  |              |  NW (-1, -1) |   N ( 0, -1) |  NE (+1, -1) |              |  <-- Radius 1
+      +--------------+--------------+--------------+--------------+--------------+
+y= 0  |  W2 (-2,  0) |   W (-1,  0) | [ VEHICLE ]  |   E (+1,  0) |  E2 (+2,  0) |
+      +--------------+--------------+--------------+--------------+--------------+
+y=+1  |              |  SW (-1, +1) |   S ( 0, +1) |  SE (+1, +1) |              |  <-- Radius 1
+      +--------------+--------------+--------------+--------------+--------------+
+y=+2  | SW2 (-2, +2) |              |  S2 ( 0, +2) |              | SE2 (+2, +2) |  <-- Radius 2
+      +--------------+--------------+--------------+--------------+--------------+
+```
+
 #### Every Term Explained Inline
-- **`'\0'` (Null character):** Returned on failed or out-of-bounds scans, matching `SatComRelay.h`'s own convention (`Returns '\0' if unsuccessful`).
-- **`if (scan_radius == 2) { switch (dir) ... } else { switch (dir) ... }`:** Super clear two-branch `if-else` + `switch` calling the exact `SCRelay_Signal_Veh_Scan*2(vehicle)` (for radius 2) or `SCRelay_Signal_Veh_Scan*(vehicle)` (for radius 1) API function! Notice `SatComRelay`'s scan functions take `VehDataType *` directly (unlike move functions, which return `VehDataType` by value).
+- **`return '\0';`:** Returns null character `'\0'` whenever a scan is invalid or out-of-bounds (matching `SatComRelay.h`: *"Returns `'\0'` if unsuccessful"*).
 - **`static const int base_dx[8]` and `base_dy[8]`:**
-  - `static` inside a function: Allocates these lookup arrays **once** in static memory rather than rebuilding them on the stack every scan.
-  - `const`: Read-only table.
-  - Coordinate convention: **East = `+x`**, **West = `-x`**, **North = `-y`** (higher row on terminal screen), **South = `+y`** (lower row on terminal screen).
-  - Multiplying `base_dx[dir] * radius` and `base_dy[dir] * radius` automatically turns North `(-1)` at radius `2` into `(0, -2)` and SouthEast `(1, 1)` at radius `2` into `(2, 2)`!
-  - `*dx = ...` and `*dy = ...`: Dereferences the caller's pointers `dx` and `dy` to store both calculated offsets.
+  - `static` inside a function keeps one permanent read-only table in memory instead of re-creating the 8-element array on every call.
+  - Multiplying by `radius` (`1` or `2`) automatically scales `(-1, -1)` (NW radius 1) into `(-2, -2)` (NW radius 2)!
+- **`*dx = ...` and `*dy = ...`:** Dereferences the two output pointers to hand both offsets back to `veh_action.c` or `autopilot.c`.
 
 ---
 
-## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
+## 5. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`mission_control` wraps `SatComRelay` so the rest of our program has clean boolean statuses and safety guards. First, for movement, `SatComRelay`'s move functions return `VehDataType` without a boolean status—they only print `'Vehicle moved'` or `'DESTROYED'` to `stdout`. In `capture_move_and_reprint`, we first check that shields and battery are above zero so the player doesn't accidentally destroy the vehicle, then use `dup` and `dup2` with `tmpfile()` to capture the library's `stdout` text, reprint it back to the terminal, set `vehicle_destroyed` if `'DESTROYED'` appeared, and return `true` only if `'Vehicle moved'` appeared. Second, `mission_control_allocate_shield` validates `1 <= amount <= currEnergy`. Third, `mission_control_scan` and `mission_control_scan_offset` manage scan radius `1` or `2` and use a `switch` on `MissionControlScanDir` to call the matching `SatComRelay` scan function and compute `(dx, dy)`."
+> "`mission_control.c` is our safety and translation wrapper around `libsatcom.so`. First, `SatComRelay`'s movement functions return `VehDataType` without a boolean return value—they only print `'Vehicle moved'` or `'DESTROYED'` to `stdout`. In `capture_move_and_reprint`, we first guard against `0` shields or `0` battery so the rover isn't accidentally destroyed, then temporarily redirect `STDOUT_FILENO` into `tmpfile()` using `dup` and `dup2`, run `call_relay_move`, restore terminal `stdout`, reprint the captured text with `fputs`, flag `vehicle_destroyed` if `'DESTROYED'` appeared, and return `true` only if `'Vehicle moved'` appeared. Second, `mission_control_allocate_shield` validates `1 <= amount <= currEnergy`. Third, `mission_control_scan` and `mission_control_scan_offset` track `scan_radius` (`1` or `2`), dispatch all 16 scan calls with an `if-else` and `switch`, and scale `base_dx` and `base_dy` by `scan_radius`."
 
 ### Likely Questions From Your Lecturer
-1. **Q: Why did you use `dup`, `dup2`, and `tmpfile()` inside `mission_control.c`?**
-   - **A:** Because `SCRelay_Signal_Veh_MoveUpNorth()` doesn't return whether a move succeeded or hit a wall `'#'`—and hitting a wall can even cost `0` energy on some configurations, so energy delta alone isn't guaranteed to distinguish a blocked move. Capturing `stdout` into `tmpfile()` lets us inspect the exact `"Vehicle moved"` / `"DESTROYED"` message from `libsatcom.so` and still reprint every character to the screen.
-2. **Q: Why is `North` `dy = -1` and `South` `dy = +1` in `base_dy`?**
-   - **A:** Terminal output prints from top row to bottom row (`y` increases downward). Making North `-1` and South `+1` means printing rows from `min_y` to `max_y` naturally puts North at the top of the screen!
-3. **Q: Why are `scan_radius` and `vehicle_destroyed` marked `static` at the top of `mission_control.c`?**
-   - **A:** `static` at file scope hides them inside `mission_control.c` (encapsulation), so no other `.c` file can accidentally set `scan_radius = 99` or overwrite `vehicle_destroyed` without going through our functions.
+1. **Q: Why couldn't you just check whether `currEnergy` changed to tell if a move succeeded, instead of capturing `stdout` with `dup2`?**
+   - **A:** Because in `libsatcom.so`, even a failed move into an impassable `'#'` wall still deducts movement energy! And if a move onto `'X'` destroys the vehicle, we also need to detect `"DESTROYED"` so `main()` knows not to call `SCRelay_Signal_Veh_Close()` twice. Inspecting the captured message solves both reliably.
+2. **Q: Why didn't `mission_control_scan` need `dup2` output capture like `capture_move_and_reprint` did?**
+   - **A:** Because `SatComRelay`'s scan functions already have a clear return value: they return the terrain `char` (`'.'`, `'#'`, `'E'`, `'X'`, etc.) on success and `'\0'` when out-of-bounds!
+3. **Q: Why is `North` `dy = -1` instead of `+1`?**
+   - **A:** Terminal grids print from top row to bottom row, so row `y` increases going South (downward) and decreases going North (upward).

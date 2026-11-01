@@ -1,33 +1,74 @@
 # v2 Student Deep-Dive Guide 7: `local_map.h` & `local_map.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch):** Covers every single line of [local_map.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/local_map.h) (lines 1–53) and refactored [local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c) (lines 1–614), with all ternaries expanded into `if / else` and current symbol names (`local_map`, `cell_index`, `grow_map_to_include`, `character_to_print`). Every C term is re-explained inline right inside each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch):** Covers [local_map.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/local_map.h) (lines 1–53) and all 614 lines of [local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c), with **3-layer map diagrams**, a **worked negative-coordinate `cell_index` visual**, and a **before/after grid expansion diagram** so you can literally *see* how the vehicle builds its map in RAM! Every C term is re-explained inline right inside each section.
 
 ---
 
-## 1. Big-Picture Idea: How Do We Map an Unknown Arena Without Knowing Spawn?
+## 1. Visual Mental Model 1: How Do You Draw a Map When You Don't Know Where You Spawned?
 
-When `SCRelay_Signal_Veh_Init` spawns our vehicle (especially with `randomizeStartPosition = true`), **`libsatcom.so` never tells us our absolute `(row, col)` or the size of the map!**
+When `libsatcom.so` drops your rover into an arena (especially with `randomizeStartPosition = y`), **it never tells you the map's width, height, or your `(row, col)`!**
 
-`local_map` solves this elegantly using **Vehicle-Relative Coordinates**:
-- Wherever the vehicle spawns is defined as **`(0, 0)`**.
-- Moving **West** makes `x` negative (`-1, -2, ...`); moving **East** makes `x` positive (`+1, +2, ...`).
-- Moving **North** makes `y` negative (`-1, -2, ...`); moving **South** makes `y` positive (`+1, +2, ...`).
-- Whenever a move or scan reaches outside the current rectangle `[min_x..max_x] × [min_y..max_y]`, [`grow_map_to_include`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L57-L153) allocates a slightly bigger rectangle with `calloc` and copies existing cells across!
+`local_map.c` solves this like drawing a map on expandable graph paper starting from **wherever you woke up as `(0, 0)`**:
+- **Spawn = `(0, 0)`**
+- **West = `x - 1`**, **East = `x + 1`**
+- **North = `y - 1`** (upward on screen), **South = `y + 1`** (downward on screen)
 
-```mermaid
-flowchart TD
-    Spawn["Spawn at (0, 0): 1x1 grid"] --> Event["Move (dx, dy) or Scan (dx, dy, terrain)"]
-    Event --> Bounds{"Target (x, y) inside [min_x..max_x, min_y..max_y]?"}
-    Bounds -- "Yes" --> Write["Compute cell_index(x, y) and update explored / scanned / blocked"]
-    Bounds -- "No" --> Grow["grow_map_to_include(x, y): calloc larger arrays & copy old cells"]
-    Grow --> Write
-    Write --> Print["Print Explored ('x') or Scanned ('c') grid with '_' underlined vehicle"]
+### Why Does `LocalMap` Store **3 Separate Layers** (`explored`, `scanned`, `blocked`)?
+
+Picture 3 transparent plastic sheets stacked on top of each other over a 3×3 area around `(0, 0)`:
+
+```text
+Layer 1: explored[] (bool)     Layer 2: scanned[] (char)      Layer 3: blocked[] (bool)
+(Did the rover WALK here?)     (What did RADAR see here?)     (Wall '#' or out-of-range?)
+   x=-1  x=0  x=+1                x=-1  x=0  x=+1                x=-1  x=0  x=+1
+  +----+----+----+               +----+----+----+               +----+----+----+
+  |  0 |  1 |  0 | y=-1          | '#'| 'h'| 'E'| y=-1          |  1 |  0 |  0 | y=-1
+  +----+----+----+               +----+----+----+               +----+----+----+
+  |  0 |  1 |  0 | y= 0          | '\0'| '\0'| '.'| y= 0        |  0 |  0 |  0 | y= 0
+  +----+----+----+               +----+----+----+               +----+----+----+
+
+Now look at how character_to_print() combines them for the 2 user map keys!
+  Press 'x' (Explored Map — ONLY shows tiles where explored == 1):
+      Row y=-1:   [   ] [ h ] [   ]   <-- (0,-1) was walked on & scanned as 'h' (rover '_' if here!)
+      Row y= 0:   [   ] [ . ] [   ]   <-- (0, 0) was walked on WITHOUT scanning -> shows '.'!
+
+  Press 'c' (Scanned Map — shows ALL tiles where scanned != '\0'):
+      Row y=-1:   [ # ] [ h ] [ E ]   <-- Shows wall '#', hill 'h', and End 'E' even before walking!
+      Row y= 0:   [   ] [ _ ] [ . ]   <-- Rover '_' underlined at current position!
 ```
 
 ---
 
-## 2. Header Walkthrough: `local_map.h` (Lines 1–53)
+## 2. Visual Mental Model 2: Turning Negative `(x, y)` into a 1D Array Index (`cell_index`)!
+
+C arrays cannot have negative indices like `grid[-1][-1]`! So `local_map.c` stores a 2D rectangle `[min_x..max_x] × [min_y..max_y]` inside a **flat 1D array** using `cell_index(x, y)` on line 46:
+
+$$\text{cell\_index}(x, y) = (y - \text{min\_y}) \times \text{width} + (x - \text{min\_x})$$
+
+Trace it with real numbers! Suppose `min_x = -1, max_x = +1` (`width = 3`) and `min_y = -1, max_y = 0` (`height = 2`):
+
+```text
+2D Relative Grid (width = 3, height = 2):
+             x = -1            x = 0             x = +1
+        +-----------------+-----------------+-----------------+
+  y=-1  | (-1,-1) -> idx 0| ( 0,-1) -> idx 1| (+1,-1) -> idx 2|   (y - (-1)) = 0
+        +-----------------+-----------------+-----------------+
+  y= 0  | (-1, 0) -> idx 3| ( 0, 0) -> idx 4| (+1, 0) -> idx 5|   (y - (-1)) = 1
+        +-----------------+-----------------+-----------------+
+          (x - (-1)) = 0    (x - (-1)) = 1    (x - (-1)) = 2
+
+Flattened 1D Heap Array in RAM (size = width * height = 6):
+  Index:    [0]       [1]       [2]       [3]       [4]       [5]
+         +---------+---------+---------+---------+---------+---------+
+         | (-1,-1) | ( 0,-1) | (+1,-1) | (-1, 0) | ( 0, 0) | (+1, 0) |
+         +---------+---------+---------+---------+---------+---------+
+```
+Check `(0, 0)`: `(0 - (-1)) * 3 + (0 - (-1)) = 1 * 3 + 1 = 4` → **Slot `[4]`!** Subtracting `min_x` and `min_y` shifts the top-left corner `(-1, -1)` cleanly to slot `[0]`!
+
+---
+
+## 3. Header Walkthrough: `local_map.h` (Lines 1–53)
 
 ### Full Header ([local_map.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/local_map.h#L1-L53))
 
@@ -88,17 +129,16 @@ void local_map_print_scanned(void);
 ```
 
 #### Every Term Explained Inline
-- **`#define LOCAL_MAP_TERRAIN_UNKNOWN '?'`:** Character returned when asking for terrain at a cell that has **not** been scanned yet.
-- **`LocalMapTerrainCount`:** Struct used by Stage 3 (`stats.c`) to report how many cells of each terrain character were `scanned` vs physically stepped on (`explored`). Note `unsigned` is shorthand in C for `unsigned int`.
-- **Two Coordinate Flavours in the API:**
-  - **Absolute relative coordinates `(x, y)`** (relative to spawn `(0, 0)`): `local_map_peek_terrain(x, y)`, `local_map_is_explored(x, y)`, `local_map_is_blocked(x, y)` — used heavily by auto-pilot BFS!
-  - **Vehicle-offset coordinates `(dx, dy)`** (relative to where the vehicle stands *right now*): `local_map_peek_terrain_at_offset(dx, dy)`, `local_map_record_scan(dx, dy, terrain)`, `local_map_mark_blocked_at_offset(dx, dy)` — used by `veh_action.c`!
+- **`#ifndef LOCAL_MAP_H` / `#define LOCAL_MAP_H` / `#endif`:** Include guard preventing duplicate declarations.
+- **`#define LOCAL_MAP_TERRAIN_UNKNOWN '?'`:** Returned by `local_map_peek_terrain` whenever a cell has not been scanned yet.
+- **`unsigned`:** Shorthand for `unsigned int` (non-negative whole number `>= 0`).
+- **Two Coordinate Styles:** Functions ending in `_at_offset(dx, dy)` measure from the **rover's current `(x, y)`** (handy for `veh_action.c`); functions taking `(x, y)` measure from **spawn `(0, 0)`** (handy for `autopilot.c` BFS!).
 
 ---
 
-## 3. Source Walkthrough: `local_map.c` (Lines 1–614)
+## 4. Source Walkthrough: `local_map.c` (Lines 1–614)
 
-### Chunk A: Constants, `LocalMap` Struct & Index Math ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L1-L55))
+### Chunk A: Constants, `LocalMap` Struct, Free & `cell_index` ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L1-L55))
 
 ```c
 #include "local_map.h"
@@ -158,21 +198,22 @@ static bool in_bounds(int x, int y)
 ```
 
 #### Every Term Explained Inline
-- **Three Parallel Layers (`explored`, `scanned`, `blocked`):** Why three arrays instead of just one `char` array? Because a single cell `(x, y)` can be **explored without having been scanned** (`explored = true`, `scanned = '\0'`), OR **scanned without having been stepped on** (`explored = false`, `scanned = 'h'`), OR **marked blocked** after a failed scan/move (`blocked = true`)! Keeping 3 parallel arrays makes every state combination clean and bug-free.
-- **`static LocalMap local_map;`:** Private file-scope struct holding our entire map state (automatically zero-initialized at startup).
-- **The Row-Major Index Formula `cell_index(x, y)` (Key Formula to Know!):**
-  $$\text{index} = (y - \text{min\_y}) \times \text{width} + (x - \text{min\_x})$$
-  - Why subtract `min_x` and `min_y`? Because `x` and `y` can be **negative** (e.g., `min_x = -3`), whereas C array indices must start at **`0`**! Subtracting `min_x` shifts `min_x` to column `0`, and multiplying `(y - min_y) * width` skips full rows to flatten our 2D grid into a 1D heap array.
+- **`static LocalMap local_map;`:** Private file-scope struct holding the rover's live `(x, y)`, bounding box `min_x..max_y`, `width`/`height`, and the 3 heap pointers (`explored`, `scanned`, `blocked`). Automatically zero-initialized at startup!
+- **`LOCAL_MAP_NOT_SCANNED` (`'\0'`):** Because `calloc` fills new memory with byte `0` (`'\0'`), every newly allocated cell in `scanned[]` automatically starts out marked "not scanned yet"!
 
 ---
 
-### Chunk B: `grow_map_to_include` — Dynamic Bounding-Box Expansion ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L56-L153))
+### Chunk B: `grow_map_to_include` — Expanding the Grid Dynamically ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L56-L153))
 
 ```c
 /* Expand the map rectangle to include (x, y), copying existing cell values. */
 static bool grow_map_to_include(int x, int y)
 {
-    /* ... local declarations (L59-69) ... */
+    int new_min_x, new_max_x, new_min_y, new_max_y, new_w, new_h;
+    bool *new_explored;
+    char *new_scanned;
+    bool *new_blocked;
+    int yy;
 
     /* First cell ever recorded: allocate a 1x1 grid at (x, y) */
     if (local_map.explored == NULL) {
@@ -194,13 +235,12 @@ static bool grow_map_to_include(int x, int y)
         return true;
     }
 
-    /* Compute expanded rectangle limits (L91-116) */
-    if (x < local_map.min_x) {
-        new_min_x = x;
-    } else {
-        new_min_x = local_map.min_x;
-    }
-    /* ... same if/else for new_max_x, new_min_y, new_max_y ... */
+    /* Compute expanded rectangle limits */
+    if (x < local_map.min_x) { new_min_x = x; } else { new_min_x = local_map.min_x; }
+    if (x > local_map.max_x) { new_max_x = x; } else { new_max_x = local_map.max_x; }
+    if (y < local_map.min_y) { new_min_y = y; } else { new_min_y = local_map.min_y; }
+    if (y > local_map.max_y) { new_max_y = y; } else { new_max_y = local_map.max_y; }
+
     new_w = new_max_x - new_min_x + 1;
     new_h = new_max_y - new_min_y + 1;
 
@@ -230,85 +270,144 @@ static bool grow_map_to_include(int x, int y)
     /* Replace old arrays and bounds with the expanded ones */
     free_map_arrays();
     local_map.min_x = new_min_x;
-    /* ... update max_x, min_y, max_y, width, height, and 3 pointers (L144-152) ... */
+    local_map.max_x = new_max_x;
+    local_map.min_y = new_min_y;
+    local_map.max_y = new_max_y;
+    local_map.width = new_w;
+    local_map.height = new_h;
+    local_map.explored = new_explored;
+    local_map.scanned = new_scanned;
+    local_map.blocked = new_blocked;
     return true;
 }
 ```
+*(Note: lines 91–113 in `local_map.c` write those four `if / else` blocks out across multiple lines for readability.)*
 
-#### Every Term Explained Inline
-- **`calloc(count, element_size)` vs `malloc`:** `calloc` allocates `count * element_size` bytes on the heap **AND zeroes every single byte**! That guarantees every newly added cell starts with `explored = false`, `scanned = '\0'` (`LOCAL_MAP_NOT_SCANNED`), and `blocked = false` automatically!
-- **`new_w = new_max_x - new_min_x + 1`:** Why `+ 1`? Fencepost math! If `min_x = -1` and `max_x = +1`, there are `1 - (-1) + 1 = 3` columns (`-1`, `0`, `+1`).
-- **Why can't we just call `realloc` here like `stats.c` did?** Because in a 2D row-major grid, when `new_w` or `new_min_x` changes, **every row shifts to a different index** (`new_i = (yy - new_min_y) * new_w + (xx - new_min_x)`)! Allocating fresh zeroed arrays with `calloc` and copying `(xx, yy)` from `old_i` to `new_i` keeps every existing coordinate aligned properly.
-
----
-
-### Chunk C: Map Updates, Queries & Stage 3 Terrain Tallies ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L155-L380))
-
-- **Init, Reset & Position (`L155–175`):** `memset(&local_map, 0, sizeof(local_map))` zeroes `(x, y)` back to `(0, 0)` after `free_map_arrays()`. `local_map_get_x()` and `local_map_get_y()` return current coordinates.
-- **Updates (`L177–212`):**
-  - [`local_map_mark_explored_here`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L177-L184): Grows map if needed and sets `explored[...] = true`.
-  - [`local_map_move_success`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L187-L192): Adds `dx, dy` to `local_map.x, local_map.y` and marks the new tile explored.
-  - [`local_map_record_scan`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L195-L212): Stores `terrain` at `(x + dx, y + dy)`, and if `terrain == '#'`, immediately sets `blocked[...] = true` so auto-pilot treats walls as impassable!
-- **Queries & Bounds (`L215–307`):**
-  - [`local_map_peek_terrain`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L215-L228): Safely returns `'?'` if out-of-bounds or unscanned (`'\0'`), otherwise returns the scanned character.
-  - [`local_map_get_bounds`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L267-L281): Checks each pointer (`!= NULL`) before dereferencing `*min_x = local_map.min_x;`.
-  - [`local_map_count_scanned`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L289-L307): Counts how many cells match `terrain` (e.g., `'E'` end points or `'#'` walls for Mission 2 and Mission 7).
-- **Stage 3 Tallies (`add_terrain_count` & `local_map_terrain_counts`, `L310–380`):**
-  - Loops across every `(x, y)` in the map. Notice `*used` (`unsigned *used`): because `add_terrain_count` modifies the caller's entry count `used`, we pass `&used` (`&` address-of) and increment `(*used)++` (parentheses required because `++` binds tighter than `*`!). Cells explored *without* ever being scanned are tallied under `'?'` (`LOCAL_MAP_TERRAIN_UNKNOWN`).
+#### Visual Diagram: Why Must Old Cells Move from `old_i` to `new_i`?
+```text
+OLD 2x2 Grid (width = 2):                 NEW 3x2 Grid after scanning East (new_w = 3):
+  [0] (0,0) | [1] (1,0)                     [0] (0,0) | [1] (1,0) | [2] (2,0) <-- new!
+  ----------+----------                     ----------+-----------+----------
+  [2] (0,1) | [3] (1,1)                     [3] (0,1) | [4] (1,1) | [5] (2,1) <-- new!
+   ^                                         ^
+   Notice cell (0,1) WAS at old_i = 2, and MUST move to new_i = 3 because width changed!
+```
+- **`calloc(count, elem_size)`:** Allocates heap memory AND zeroes every byte so all new border slots start empty (`false` / `'\0'`).
 
 ---
 
-### Chunk D: ANSI Colours, Tight Cropping & Grid Rendering ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L382-L614))
+### Chunk C: Map Updates, Queries & Stage 3 Terrain Counts ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L155-L380))
 
 ```c
-/* Pick which character to draw at (x, y) for either the explored or scanned map. */
-static char character_to_print(int x, int y, bool explored_view)
+void local_map_init(void)  { local_map_reset(); }
+
+void local_map_reset(void)
 {
-    int i;
+    free_map_arrays();
+    memset(&local_map, 0, sizeof(local_map));
+}
 
-    if (local_map.explored == NULL || !in_bounds(x, y)) {
-        return ' ';
+int local_map_get_x(void) { return local_map.x; }
+int local_map_get_y(void) { return local_map.y; }
+
+/* Mark the vehicle's current cell as explored. */
+void local_map_mark_explored_here(void)
+{
+    if (!grow_map_to_include(local_map.x, local_map.y)) {
+        fprintf(stderr, "local_map: out of memory\n");
+        return;
     }
+    local_map.explored[cell_index(local_map.x, local_map.y)] = true;
+}
 
-    i = cell_index(x, y);
+/* Move vehicle coordinates by (dx, dy) and mark the new cell explored. */
+void local_map_move_success(int dx, int dy)
+{
+    local_map.x += dx;
+    local_map.y += dy;
+    local_map_mark_explored_here();
+}
 
-    if (explored_view) {
-        if (!local_map.explored[i]) {
-            return ' ';
-        }
-        if (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) {
-            return local_map.scanned[i];
-        }
-        return LOCAL_MAP_VISITED_MARK;
+/* Save a scanned terrain symbol at offset (dx, dy) and flag '#' walls blocked. */
+void local_map_record_scan(int dx, int dy, char terrain)
+{
+    int sx = local_map.x + dx;
+    int sy = local_map.y + dy;
+
+    if (terrain == '\0') {
+        return;
     }
-
-    if (local_map.scanned[i] != LOCAL_MAP_NOT_SCANNED) {
-        return local_map.scanned[i];
+    if (!grow_map_to_include(sx, sy)) {
+        fprintf(stderr, "local_map: out of memory\n");
+        return;
     }
-    return ' ';
+    local_map.scanned[cell_index(sx, sy)] = terrain;
+    if (terrain == '#') {
+        local_map.blocked[cell_index(sx, sy)] = true;
+    }
 }
 ```
-*(Followed by `terrain_color` L410–434, `stdout_is_terminal` L437–449, `print_green_line` / `print_map_banner` L452–470, `bounds_of_known_cells` L473–529, `print_map_cell` L532–563, `print_grid` L566–598, and `local_map_print_explored` / `local_map_print_scanned` L600–614.)*
-
-#### Every Term Explained Inline
-- **Explored View (`'x'`) vs Scanned View (`'c'`) in [`character_to_print`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L383-L407):**
-  - **Explored (`explored_view == true`):** Hides unvisited cells (`' '`). For visited cells, shows the known terrain symbol if scanned, or `'.'` (`LOCAL_MAP_VISITED_MARK`) if walked onto blindly without scanning.
-  - **Scanned (`explored_view == false`):** Shows every scanned cell regardless of whether we walked there yet!
-- **`isatty(STDOUT_FILENO)` inside `stdout_is_terminal` (`L437–449`):** `<unistd.h>` check returning `1` when `stdout` is an interactive terminal screen, or `0` if output is redirected to a `.txt` log file! Notice `static int cached = -1;` inside the function: `static` on a local variable makes it remember `0` or `1` across future calls so `isatty` only runs once!
-- **ANSI Escape Codes (`\033[36;1;4m%c\033[0m` in `print_map_cell`, `L546`):**
-  - `\033[` starts a terminal style sequence: `36` = cyan, `1` = bold, `4` = **underline** (marking the vehicle's current tile, matching the instructions!), and `\033[0m` resets colour back to normal.
-- **`printf("%*c", LOCAL_MAP_CELL_WIDTH, ch)` (`*` dynamic width specifier!):** In `printf`, `*` inside `%*c` reads `LOCAL_MAP_CELL_WIDTH` (`3`) as the column width argument, printing 2 spaces + `ch` so every map column is evenly 3 characters wide!
-- **Why `bounds_of_known_cells` (`L473–529`)?** Failed out-of-bounds scans mark cells `blocked` outside the arena walls, expanding `local_map.min_x..max_x`. Computing tight bounds around *actual* explored/scanned cells keeps printed maps compact without empty border padding!
+- **Lookup & Blocked Functions (`L215–307`):**
+  - `local_map_peek_terrain(x, y)`: Returns `'?'` if `scanned == NULL`, `!in_bounds(x, y)`, or `scanned[i] == '\0'`; otherwise returns the scanned symbol.
+  - `local_map_is_explored(x, y)` & `local_map_is_blocked(x, y)`: Return `false` if out-of-bounds, else read `explored[i]` / `blocked[i]`.
+  - `local_map_mark_blocked(x, y)`: Grows grid to include `(x, y)` and sets `blocked[i] = true`.
+  - `local_map_get_bounds`: Writes `min_x, max_x, min_y, max_y` through non-`NULL` caller pointers (`*min_x = local_map.min_x;`).
+  - `local_map_count_scanned(terrain)`: Nested `y` / `x` loop counting how many cells equal `terrain`.
+- **Stage 3 Terrain Tallies (`add_terrain_count` & `local_map_terrain_counts`, `L310–380`):**
+  - Walks every cell in `[min_y..max_y] × [min_x..max_x]`. If a cell was scanned, increments `scanned` (and `explored` if also walked on). If a cell was walked on *without* ever being scanned (like spawn `(0, 0)`!), tallies it under `'?'` (`LOCAL_MAP_TERRAIN_UNKNOWN`) with `explored = 1`!
+  - Notice **`(*used)++`** on line 346: parentheses are essential because postfix `++` has higher precedence than `*`—`(*used)++` increments the caller's `unsigned used` counter rather than moving the pointer!
 
 ---
 
-## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
+### Chunk D: ANSI Colours, Tight Cropping & Grid Printing ([local_map.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/local_map.c#L382-L614))
+
+```c
+/* Choose an ANSI foreground colour code for a terrain character. */
+static int terrain_color(char ch)
+{
+    switch (ch) {
+    case '#': case 's': case 'X': return 31; /* red: walls, swamp, danger */
+    case 'h': case 'j': case 'g': return 32; /* green: hills, jungle, grass */
+    case 'E': case 'M':           return 35; /* magenta: end point, mountain */
+    case 'f': case '~': case '_': return 36; /* cyan: forest, water, vehicle */
+    case 'w': case '-': case '.':
+    default:                      return 37; /* white: normal / default */
+    }
+}
+
+/* Check once whether stdout is a terminal so piped output stays plain text. */
+static bool stdout_is_terminal(void)
+{
+    static int cached = -1;
+
+    if (cached < 0) {
+        if (isatty(STDOUT_FILENO)) {
+            cached = 1;
+        } else {
+            cached = 0;
+        }
+    }
+    return cached == 1;
+}
+```
+
+#### How `bounds_of_known_cells`, `print_map_cell` & `print_grid` Render the Screen (`L451–614`):
+1. **Why calculate `bounds_of_known_cells` (`L473–529`) instead of using `local_map.min_x..max_x` directly?**
+   Remember when you scanned West at radius 2 past the map border (`Error! Scanning location is BEYOND map range!`), `veh_action_scan` marked `(x - 2, y)` **blocked**! That grew `local_map.min_x` outside the arena walls, even though those outside cells are empty (`' '`). `bounds_of_known_cells` shrinks the print rectangle tightly around **actual visited/scanned cells + the rover**, keeping the printed map crisp!
+2. **3-Character Cell Alignment (`print_map_cell`, `L532–563`):**
+   - Each cell occupies `LOCAL_MAP_CELL_WIDTH` (`3`) characters: `'  h'`, `'  #'`, `'  _'`.
+   - **`printf("%*c", LOCAL_MAP_CELL_WIDTH, ch)`:** `*` inside `%*c` substitutes `3` as the width!
+   - **Underlining the Rover (`\033[36;1;4m%c\033[0m`):** Prints 2 spaces *first* (`for (pad = 0; pad < 2; pad++) putchar(' ');`), and then underlines **only the 1 character** where the rover stands (`36` = cyan, `1` = bold, `4` = underline, `0` = reset)! And if output is redirected to a file (`!stdout_is_terminal()`), it prints plain characters with zero `\033` codes!
+
+---
+
+## 5. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`local_map.c` builds our vehicle's memory of the arena even when spawn is randomized and map dimensions are hidden. We treat spawn as `(0, 0)`, with East as `+x` and South as `+y`, and store three heap-allocated layers—`explored`, `scanned`, and `blocked`—flattened via row-major indexing `(y - min_y) * width + (x - min_x)`. Whenever a scan or move steps outside our current rectangle, `grow_map_to_include` allocates zero-initialized arrays with `calloc` and copies existing cells to their new indices. Finally, `local_map_print_explored` and `local_map_print_scanned` crop to known cells and print 3-column aligned tiles, underlining the vehicle's live position and disabling ANSI colour codes automatically via `isatty` if output is piped to a file."
+> "`local_map.c` builds our vehicle's map dynamically from `(0, 0)` without needing map dimensions or spawn coordinates from `libsatcom.so`. We store three heap-allocated layers—`explored`, `scanned`, and `blocked`—indexed by `(y - min_y) * width + (x - min_x)` so negative North and West coordinates map cleanly to zero-based 1D arrays. Whenever a move or scan reaches outside `[min_x..max_x, min_y..max_y]`, `grow_map_to_include` allocates zeroed arrays with `calloc` and copies existing cells to their new row-major indices. For display, `local_map_print_explored` and `local_map_print_scanned` crop tightly to known cells, underline the live vehicle tile, and check `isatty` so redirected log files stay clean ASCII."
 
 ### Likely Questions From Your Lecturer
-1. **Q: Why did you need `(y - local_map.min_y)` in `cell_index` instead of just `y * width + x`?**
-   - **A:** Because spawn is `(0, 0)`, moving North or West produces negative `x` and `y` coordinates (`-1`, `-2`, ...). Subtracting `min_x` and `min_y` shifts the minimum coordinate to `0` so every valid cell maps to a non-negative C array index.
-2. **Q: Why write `(*used)++` with parentheses in `add_terrain_count`?**
-   - **A:** Postfix `++` has higher operator precedence than pointer dereference `*`. Without parentheses, `*used++` would advance the *pointer address* instead of incrementing the `unsigned` integer pointed to by `used`!
+1. **Q: Why couldn't `grow_map_to_include` just call `realloc` like `stats.c` did?**
+   - **A:** `stats.c` stores a 1D list of rows where existing indices never change. `local_map.c` stores a 2D rectangle in row-major order `(y - min_y) * width + (x - min_x)`. Whenever `width` or `min_x` changes, existing `(x, y)` cells shift to new array indices, so we `calloc` the new rectangle and copy each `(xx, yy)` from `old_i` to `new_i`.
+2. **Q: What does `static int cached = -1;` inside `stdout_is_terminal` do?**
+   - **A:** `static` on a local variable gives it static storage duration—it keeps its value between function calls. So `isatty(STDOUT_FILENO)` is only queried from the OS on the first call (`cached < 0`), and every later cell print reuses the cached `0` or `1`.

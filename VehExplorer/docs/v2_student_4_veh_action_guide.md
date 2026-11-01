@@ -1,29 +1,65 @@
 # v2 Student Deep-Dive Guide 4: `veh_action.h` & `veh_action.c`
 
 > [!NOTE]
-> **Updated v2 Guide (`nathan` branch):** Covers every single line of refactored [veh_action.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/veh_action.h) (lines 1–27) and [veh_action.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/veh_action.c) (lines 1–155). Notice [`veh_action_move`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/veh_action.c#L10-L80) now takes a plain `char direction` (`'N'`, `'S'`, `'E'`, `'W'`) instead of a function pointer! Every C term is re-explained inline in each section.
+> **Beginner-Friendly Visual Edition (`nathan` branch):** Covers every single line of [veh_action.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/veh_action.h) (lines 1–27) and [veh_action.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/veh_action.c) (lines 1–155), with **before/after energy snapshot diagrams**, a **peek-before-move timeline**, and a **scan flowchart**. Every C term is re-explained inline right inside each section.
 
 ---
 
-## 1. Big-Picture Role: Why Does `veh_action` Exist?
+## 1. Mental Imagery: Why Does `veh_action` Sit Between UI/Auto-Pilot and the Backends?
 
-Both **manual keyboard play** ([ui_cli.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/ui_cli.c)) and **autonomous play** ([autopilot.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/autopilot.c)) need to perform the exact same 3 vehicle actions: **Move**, **Scan**, and **Allocate Shield**.
-
-Without `veh_action`, we would have had to copy-paste all the bookkeeping—snapshotting `before` energy, calling `mission_control`, counting stats, calculating energy spent, updating `local_map`, and printing maps—into both `ui_cli.c` and `autopilot.c`! Putting that shared pipeline in `veh_action.c` guarantees manual and auto-pilot actions always record stats and update maps identically.
+Suppose you press `'w'` manually in `ui_cli.c`, OR auto-pilot decides to move North in `autopilot.c`. In **both** cases, one single move has to coordinate **4 different modules** in exact order:
+1. Ask `local_map` what terrain is at the target cell *before* stepping onto it.
+2. Tell `mission_control` to move the physical rover via `libsatcom.so`.
+3. Tell `stats` whether the move succeeded and how much battery + shield energy that step burned.
+4. Tell `local_map` to move the `'_'` rover marker (or mark a wall blocked) and optionally print the status line + map!
 
 ```mermaid
 flowchart LR
-    Manual["ui_cli.c (w/a/s/d, 1-9, i)"] --> VA["veh_action.c (move / scan / allocate)"]
-    Auto["autopilot.c (BFS step, scan, shield)"] --> VA
-    VA --> MC["1. mission_control (SatComRelay call)"]
-    VA --> ST["2. stats (counters + energy delta)"]
-    VA --> LM["3. local_map (explored / scanned / blocked)"]
-    VA --> UI["4. Optional print (status line + map)"]
+    Manual["Manual Keys: ui_cli.c (print flags = always true)"] --> VA["Shared Pipeline: veh_action.c"]
+    Auto["Auto-Pilot: autopilot.c (print flags = user 'o' options)"] --> VA
+
+    VA --> Step1["1. Snapshot: before = *vehicle"]
+    Step1 --> Step2["2. Execute: mission_control"]
+    Step2 --> Step3["3. Log Deltas: stats.c"]
+    Step3 --> Step4["4. Update & Print: local_map.c"]
+```
+
+Without `veh_action.c`, we would have had to copy-paste all 4 steps into both `ui_cli.c` and `autopilot.c`!
+
+---
+
+## 2. Visual Mental Model: How `before = *vehicle` Measures One Action's Energy Cost
+
+`libsatcom.so` never tells you *"that move cost 560 battery and 814 shield energy."* Instead, `VehDataType` only stores **running lifetime totals** (`totEnergyUsed` and `totShieldEnergyUsed`).
+
+So `veh_action` takes a **"Before Photo"** of `*vehicle` right before the action, and subtracts it from the **"After Photo"** right after!
+
+```text
+BEFORE Move (before = *vehicle; on Line 26 — independent struct copy!):
+  +--------------------------------------+
+  | before (VehDataType copy on stack)   |
+  |   totEnergyUsed:        210,000      |
+  |   totShieldEnergyUsed:    9,000      |
+  +--------------------------------------+
+
+... mission_control_move_north(vehicle) steps onto hilly terrain 'h' ...
+
+AFTER Move (*vehicle updated in place by libsatcom.so!):
+  +--------------------------------------+
+  | *vehicle (live struct in main)       |
+  |   totEnergyUsed:        210,596      |
+  |   totShieldEnergyUsed:   11,043      |
+  +--------------------------------------+
+
+SUBTRACT (Lines 64-65):
+  move_e = 210,596 - 210,000 =   596  battery energy spent on 'h'!
+  shld_e =  11,043 -   9,000 = 2,043  shield energy spent on 'h'!
+  --> stats_add_move_energy('h', 596, 2043);
 ```
 
 ---
 
-## 2. Header Walkthrough: `veh_action.h` (Lines 1–27)
+## 3. Header Walkthrough: `veh_action.h` (Lines 1–27)
 
 ### Full Header ([veh_action.h](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/veh_action.h#L1-L27))
 
@@ -58,18 +94,16 @@ bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats);
 ```
 
 #### Every Term Explained Inline
-- **`#ifndef VEH_ACTION_H` / `#define VEH_ACTION_H` / `#endif`:** Include guard preventing duplicate declarations if `"veh_action.h"` is included more than once.
-- **`VehDataType *vehicle`:** Pointer to `main`'s live `VehDataType` struct so actions update energy and shield fields directly.
-- **`char direction`:** Single character `'N'`, `'S'`, `'E'`, or `'W'` telling [`veh_action_move`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/inc/veh_action.h#L12-L17) which cardinal move function to call.
-- **`int dx, int dy`:** Relative step on our local map (`(0, -1)` North, `(0, 1)` South, `(-1, 0)` West, `(1, 0)` East).
-- **`bool print_stats`, `bool print_travelled_map`, `bool print_scanned_map`:** Boolean display switches!
-  - Manual keys in `ui_cli.c` always pass `true, true` so the player sees energy + map after every keypress.
-  - Auto-pilot passes whatever flags the user chose in the `'o'` configuration menu!
-- **`const char *scan_direction_name`:** Read-only string label like `"NW"` or `"E"` for printing clear error messages if a scan fails out-of-bounds.
+- **`#ifndef VEH_ACTION_H` / `#define VEH_ACTION_H` / `#endif`:** Include guard preventing duplicate declarations.
+- **`VehDataType *vehicle`:** Pointer (`*`) to `main()`'s live `VehDataType` struct.
+- **`char direction`:** Single character `'N'`, `'S'`, `'E'`, or `'W'` telling `veh_action_move` which direction to drive.
+- **`int dx, int dy`:** Relative grid step (`(0, -1)` North, `(0, 1)` South, `(-1, 0)` West, `(1, 0)` East).
+- **`bool print_stats`, `bool print_travelled_map`, `bool print_scanned_map`:** Let manual mode pass `true, true` (always show feedback) while auto-pilot passes whatever flags the player picked in `'o'`!
+- **`const char *scan_direction_name`:** Read-only short text like `"NW"` or `"S"` for printing `"Scan W (radius 2) failed."` when a scan goes beyond map boundaries.
 
 ---
 
-## 3. Source Walkthrough: `veh_action.c` (Lines 1–155)
+## 4. Source Walkthrough: `veh_action.c` (Lines 1–155)
 
 ### Chunk A: `#include`s & `veh_action_move` ([veh_action.c](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/veh_action.c#L1-L80))
 
@@ -156,14 +190,25 @@ void veh_action_move(VehDataType *vehicle,
 }
 ```
 
+#### Why Must Line 29 (`local_map_peek_terrain_at_offset`) Run *Before* Moving?
+```text
+Vehicle starts at (0, 0). Tile North at (0, -1) was previously scanned as 'h' (Hill).
+  1) Line 29: peek offset (0, -1) from (0, 0)  -->  dest_terrain = 'h'!
+  2) Line 35: mission_control_move_north(vehicle) succeeds (ok = true).
+  3) Line 67: stats_add_move_energy('h', move_e, shld_e) logs cost under 'h'.
+  4) Line 68: local_map_move_success(0, -1) updates vehicle coordinates to (0, -1)!
+(If we had moved local_map FIRST and then peeked offset (0, -1), we would have
+ accidentally peeked (0, -2) one tile too far North!)
+```
+
 #### Every Term Explained Inline
-- **`before = *vehicle;` (Struct copy via dereference `*`):** Dereferences pointer `vehicle` and copies all 5 `long` energy fields into local variable `before` **before** the move happens! Why? Because `SatComRelay` only reports cumulative `totEnergyUsed`—subtracting `vehicle->totEnergyUsed - before.totEnergyUsed` after the move gives us the **exact energy cost of this single step**!
-- **`dest_terrain = local_map_peek_terrain_at_offset(dx, dy);`:** Looks up what terrain symbol we previously scanned at `(x + dx, y + dy)` *before* moving onto it (returns `'?'` if the player moved blindly without scanning first).
-- **`switch (direction)` with stacked `case 'N': case 'n':`:** Matches either uppercase `'N'` or lowercase `'n'` (fall-through between two `case` labels), calls [`mission_control_move_north(vehicle)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L148-L151), stores the boolean result in `ok`, and exits the `switch` with `break;`.
-- **`stats_count_move(ok);`:** Increments `moves_issued` (always) and `moves_succeeded` (if `ok` is `true`).
-- **`if (mission_control_is_mission_over()) { return; }`:** If stepping onto `'X'` destroyed the vehicle, exit immediately so we don't print normal post-move maps over the destruction screen.
-- **`vehicle->totEnergyUsed - before.totEnergyUsed` (`->` vs `.`):** Notice why `vehicle` uses `->` while `before` uses `.`! `vehicle` is a **pointer** (`VehDataType *`), so it uses `->`; `before` is a **direct struct value** (`VehDataType`), so it uses `.`!
-- **`else if (dest_terrain == LOCAL_MAP_TERRAIN_UNKNOWN)`:** Smart learning! If a move failed (`!ok`) when shields and energy were fine, and the target tile hadn't been scanned yet (`'?'`), it must be an impassable wall `'#'` or out-of-bounds edge—so we mark `(dx, dy)` blocked on our local map!
+- **`before = *vehicle;` vs `vehicle->totEnergyUsed`:**
+  - `vehicle` is a **pointer** (`VehDataType *`), so `*vehicle` dereferences it to copy the whole struct into local variable `before`.
+  - Later on line 64, `vehicle->totEnergyUsed` uses `->` (because `vehicle` is a pointer) while `before.totEnergyUsed` uses `.` (because `before` is a plain struct variable)!
+- **Stacked `case 'N': case 'n':` in `switch (direction)`:** Handles both uppercase and lowercase direction characters cleanly and exits the `switch` with `break;`.
+- **Smart Wall Memory (`else if (dest_terrain == LOCAL_MAP_TERRAIN_UNKNOWN)` on Line 69):** Wait—what if the move failed (`ok == false`)?Wait: why check `dest_terrain == '?'`?
+  - Remember `mission_control` also returns `false` when **shields are `0`**! If you already scanned `'h'` (a passable hill) and tried to walk onto `'h'` with `0` shields, `'h'` is NOT a wall—your shields were just down!
+  - Only when `dest_terrain` was unscanned (`'?'`) and the move failed (while shields/battery were positive) could it be a hidden `'#'` wall, or if shields were down it stays unscanned until scanned. Even better, in auto-pilot shields are always topped up first and tiles are always scanned before moving!
 
 ---
 
@@ -246,22 +291,32 @@ bool veh_action_allocate(VehDataType *vehicle, long amount, bool print_stats)
 }
 ```
 
+```mermaid
+flowchart TD
+    S0["veh_action_scan(vehicle, dir, ...)"] --> S1["Snapshot before = *vehicle & run mission_control_scan()"]
+    S1 --> S2["Count scan in stats & log scan_e delta (even if scan failed!)"]
+    S2 --> CheckOK{"Did terrain != null char?"}
+    CheckOK -- "No (BEYOND map range!)" --> Fail["Compute (dx, dy) & mark cell BLOCKED so auto-pilot never re-scans it!"]
+    Fail --> PrintFail["Print 'Scan <dir> (radius <r>) failed.' + optional energy line"]
+    CheckOK -- "Yes (e.g. '.', '#', 'E', 'X')" --> Save["Compute (dx, dy) & local_map_record_scan(dx, dy, terrain)"]
+    Save --> PrintOK["Print terrain symbol + optional energy line + optional Scanned Map"]
+```
+
 #### Every Term Explained Inline
-- **`ok = (terrain != '\0');`:** `mission_control_scan` returns `'\0'` (null character) when a scan fails (for example, scanning past the outer edge of the arena). Any non-null character (`'.'`, `'#'`, `'E'`, `'X'`, `'h'`, etc.) means the scan succeeded!
-- **Why record `stats_add_scan_energy` BEFORE `if (!ok)`?** Even an out-of-bounds scan outside the map border still consumes battery energy inside `libsatcom.so`! Recording `scan_e` before returning on `!ok` ensures our Stage 3 energy table accounts for every unit of scan energy spent.
-- **`mission_control_scan_offset(dir, &dx, &dy);`:** Passes the addresses `&dx` and `&dy` (`&` address-of operator) so `mission_control_scan_offset` fills `dx` and `dy` with the relative offset (e.g., `(-2, -2)` for `NW` at radius `2`).
-- **`local_map_mark_blocked_at_offset(dx, dy);` on failed scan (`!ok`):** Crucial for auto-pilot! When scanning beyond the arena edge returns `'\0'`, marking `(x + dx, y + dy)` blocked tells auto-pilot *"that coordinate is outside the arena—don't keep scanning it forever!"*
-- **`veh_action_allocate`:** Calls [`mission_control_allocate_shield(vehicle, amount)`](file:///c:/Users/nathanyu/Documents/GitHub/RSE1201_Group_Project/VehExplorer/src/mission_control.c#L169-L194) and prints the vehicle status line only when `ok && print_stats` is true (`&&` short-circuit AND).
+- **`ok = (terrain != '\0');`:** `'\0'` is the null character returned when a scan goes beyond the map's outer edge (like scanning West at radius 2 when standing right next to the West wall!).
+- **`mission_control_scan_offset(dir, &dx, &dy);`:** Passes `&dx` and `&dy` (`&` address-of) so `dx` and `dy` get filled with the target tile's relative offset (e.g. `dx = -2, dy = 0`).
+- **Why mark failed scans blocked (`local_map_mark_blocked_at_offset(dx, dy)`)?** Imagine auto-pilot is standing next to the West border wall `'#'`. Radius-1 West is `'#'`, and Radius-2 West (`dx = -2`) is *outside the arena*! When scanning `(-2, 0)` returns `'\0'`, marking `(-2, 0)` **blocked** teaches auto-pilot *"that coordinate doesn't exist—never waste energy scanning `(-2, 0)` again!"*
+- **`if (ok && print_stats)` in `veh_action_allocate`:** `&&` (logical AND) prints the updated energy summary after auto-pilot allocates shields whenever `print_stats` is enabled.
 
 ---
 
-## 4. Ready-to-Use Presentation Script & Likely Teacher Q&A
+## 5. Ready-to-Use Presentation Script & Likely Teacher Q&A
 
 ### 45-Second Walkthrough Script
-> "`veh_action.c` is the shared action layer used by both manual keys in `ui_cli.c` and autonomous decisions in `autopilot.c`, avoiding duplicate code. Before each move or scan, we save a copy `before = *vehicle` so afterward we can subtract `vehicle->totEnergyUsed - before.totEnergyUsed` to measure the exact battery and shield cost of that single step for our Stage 3 tables. `veh_action_move` dispatches `'N'`, `'S'`, `'E'`, or `'W'` via a `switch`, updates stats and the explored map on success, and marks unknown walls as blocked. `veh_action_scan` records the returned terrain symbol on our local map—or marks out-of-bounds cells blocked if a scan returns `'\0'` so auto-pilot never re-scans past map edges. Boolean print flags let manual mode always show maps while auto-pilot obeys the user's `'o'` display settings."
+> "`veh_action.c` is the shared execution layer called by both manual commands in `ui_cli.c` and autonomous actions in `autopilot.c`, ensuring statistics and map updates never get out of sync. Before every move or scan, we copy `before = *vehicle` so afterward we can subtract `vehicle->totEnergyUsed - before.totEnergyUsed` to get the exact battery and shield cost of that single action. `veh_action_move` peeks the destination terrain first, dispatches `'N'`, `'S'`, `'E'`, or `'W'` via a `switch`, logs per-terrain energy and advances `(x, y)` on success, and prints optional status and map views. `veh_action_scan` saves scanned terrain symbols into `local_map`—and if an out-of-bounds scan returns `'\0'`, it marks that offset blocked so auto-pilot never repeats out-of-range scans."
 
 ### Likely Questions From Your Lecturer
-1. **Q: Why does `before` use `before.totEnergyUsed` (a dot `.`) while `vehicle` uses `vehicle->totEnergyUsed` (an arrow `->`)?**
-   - **A:** `vehicle` is a struct pointer (`VehDataType *`), so C uses `->` to dereference and read a member. `before` is a local struct copy (`VehDataType`), so C uses `.` directly.
-2. **Q: What happens in `veh_action_scan` when the player scans outside the boundary of the map?**
-   - **A:** `SatComRelay` returns `'\0'`, so `ok` is `false`. We still log any energy the scan consumed, then call `local_map_mark_blocked_at_offset(dx, dy)` so auto-pilot remembers that tile is out-of-bounds and won't waste energy scanning it again.
+1. **Q: Why do you log `stats_add_scan_energy` *before* checking `if (!ok)` in `veh_action_scan`?**
+   - **A:** Because in `libsatcom.so`, attempting a scan beyond map boundaries still consumes radar energy (`totEnergyUsed` increases even though `terrain` is `'\0'`). Logging the delta before returning on `!ok` ensures our Stage 3 scan energy table matches `totEnergyUsed` accurately.
+2. **Q: Why does `veh_action_move` peek `dest_terrain` *before* calling `mission_control_move_*`?**
+   - **A:** `local_map_peek_terrain_at_offset(dx, dy)` adds `(dx, dy)` to the vehicle's *current* coordinates. Once `local_map_move_success(dx, dy)` runs, the vehicle is already standing at the new coordinates! Peeking beforehand grabs the symbol at the destination cell cleanly.
