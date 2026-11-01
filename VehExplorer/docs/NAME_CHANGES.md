@@ -47,6 +47,7 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `inc/stats.h` | `vdt` | `vehicle` | parameter |
 | `inc/ui_cli.h` | `label` | removed | parameter |
 | `inc/ui_cli.h` | `vdt` | `vehicle` | parameter |
+| `inc/veh_action.h` | `move_fn` | `direction` (`char`) | parameter |
 | `inc/veh_action.h` | `print_explored` | `print_travelled_map` | parameter |
 | `inc/veh_action.h` | `print_scanned` | `print_scanned_map` | parameter |
 | `inc/veh_action.h` | `dir_name` | `scan_direction_name` | parameter |
@@ -58,7 +59,7 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `src/autopilot.c` | `k_scan_name` | `scan_direction_labels` | variable |
 | `src/autopilot.c` | `k_scan_order` | `scan_order` | variable |
 | `src/autopilot.c` | `ApMove` | `AutopilotMove` | type |
-| `src/autopilot.c` | `fn` | `move` | field |
+| `src/autopilot.c` | `fn` | `direction` (`char`) | field |
 | `src/autopilot.c` | `k_moves` | `cardinal_moves` | variable |
 | `src/autopilot.c` | `k8dx` | `neighbor_dx` | variable |
 | `src/autopilot.c` | `k8dy` | `neighbor_dy` | variable |
@@ -72,8 +73,7 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `src/autopilot.c` | `ap_all_known_ends_visited` | `autopilot_all_known_ends_visited` | function |
 | `src/autopilot.c` | `ap_end_count` | `autopilot_end_count` | function |
 | `src/autopilot.c` | `ap_goal_met` | `autopilot_goal_met` | function |
-| `src/autopilot.c` | `ap_caps_hit` | `autopilot_action_limit_reached` | function |
-| `src/autopilot.c` | `ap_energy_hit` | `autopilot_energy_below_floor` | function |
+| `src/autopilot.c` | `ap_caps_hit` + `ap_energy_hit` | `autopilot_stop_limit_hit` | function |
 | `src/autopilot.c` | `ap_options_set_defaults` | `autopilot_options_set_defaults` | function |
 | `src/autopilot.c` | `ap_print_options` | `autopilot_print_options` | function |
 | `src/autopilot.c` | `ap_prompt_options` | `autopilot_prompt_options` | function |
@@ -81,6 +81,7 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `src/autopilot.c` | `ap_sleep_secs` | `autopilot_sleep_secs` | function |
 | `src/autopilot.c` | `ap_after_action` | `autopilot_show_action_result` | function |
 | `src/autopilot.c` | `ap_bfs_step` | `autopilot_bfs_step` | function |
+| `src/autopilot.c` | `q`, `came`, `seen`, `prev` | `queue`, `came_from`, `visited`, `step_index` | variables |
 | `src/autopilot.c` | `ap_pick_scan` | `autopilot_pick_scan` | function |
 | `src/autopilot.c` | `ap_pick_move` | `autopilot_pick_move` | function |
 | `src/autopilot.c` | `ap_shield_chunk` | `autopilot_shield_amount` | function |
@@ -112,18 +113,8 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `src/mission_control.c` | `apply_move` | `capture_move_and_reprint` | function |
 | `src/mission_control.c` | `tmp` | `captured_output` | variable |
 | `src/mission_control.c` | `buf` | `read_chunk` | variable |
-| `src/mission_control.c` | `mc_move_north` | `mission_control_move_north` | function |
-| `src/mission_control.c` | `mc_move_south` | `mission_control_move_south` | function |
-| `src/mission_control.c` | `mc_move_east` | `mission_control_move_east` | function |
-| `src/mission_control.c` | `mc_move_west` | `mission_control_move_west` | function |
-| `src/mission_control.c` | `mc_allocate_shield` | `mission_control_allocate_shield` | function |
-| `src/mission_control.c` | `mc_is_mission_over` | `mission_control_is_mission_over` | function |
-| `src/mission_control.c` | `mc_get_scan_radius` | `mission_control_get_scan_radius` | function |
-| `src/mission_control.c` | `mc_toggle_scan_radius` | `mission_control_toggle_scan_radius` | function |
-| `src/mission_control.c` | `mc_set_scan_radius` | `mission_control_set_scan_radius` | function |
-| `src/mission_control.c` | `mc_scan` | `mission_control_scan` | function |
-| `src/mission_control.c` | `mc_scan_offset` | `mission_control_scan_offset` | function |
-| `src/mission_control.c` | `vdt` | `vehicle` | parameter |
+| `src/mission_control.c` | `total` | `captured_len` | variable |
+| `src/mission_control.c` | `r` | `radius` | variable |
 | `src/stats.c` | `g_stats` | `move_scan_counts` | variable |
 | `src/stats.c` | `g_terrain_energy` | `terrain_energy_rows` | variable |
 | `src/stats.c` | `g_terrain_energy_n` | `terrain_energy_count` | variable |
@@ -144,6 +135,7 @@ Old name to current name, grouped by file. Course names stay as they are: `VehDa
 | `src/ui_cli.c` | `ap_run` | `autopilot_run` | function |
 | `src/ui_cli.c` | `AP_RUN_QUIT` | `AUTOPILOT_RUN_QUIT` | enum |
 | `src/ui_cli.c` | `vdt` | `vehicle` | parameter |
+| `src/veh_action.c` | `move_fn` | `direction` (`char`) | parameter |
 | `src/veh_action.c` | `print_explored` | `print_travelled_map` | parameter |
 | `src/veh_action.c` | `print_scanned` | `print_scanned_map` | parameter |
 | `src/veh_action.c` | `dir_name` | `scan_direction_name` | parameter |

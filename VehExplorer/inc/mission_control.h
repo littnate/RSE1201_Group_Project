@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 
+/* Eight compass directions matching the numpad scan layout. */
 typedef enum {
     MISSION_CONTROL_DIR_NORTHWEST = 0,
     MISSION_CONTROL_DIR_NORTH,
@@ -17,35 +18,28 @@ typedef enum {
     MISSION_CONTROL_DIR_COUNT
 } MissionControlScanDir;
 
-/* Call the matching Move API and refresh *vehicle.
- * Returns true if the library reported a successful move
- * ("Vehicle moved …"); false on INVALID / IMPASSABLE / destroy (or I/O error).
- * Library stdout is captured then re-printed so the operator still sees it.
- * On vehicle destruction the library frees its state — call mission_control_is_mission_over()
- * and skip further vehicle APIs / Close. */
-bool mission_control_move_north(VehDataType *vehicle); /* was vdt */
-bool mission_control_move_south(VehDataType *vehicle); /* was vdt */
-bool mission_control_move_east(VehDataType *vehicle); /* was vdt */
-bool mission_control_move_west(VehDataType *vehicle); /* was vdt */
+/* Move the vehicle in one cardinal direction and update *vehicle.
+ * Returns true only when SatComRelay reports "Vehicle moved". */
+bool mission_control_move_north(VehDataType *vehicle);
+bool mission_control_move_south(VehDataType *vehicle);
+bool mission_control_move_east(VehDataType *vehicle);
+bool mission_control_move_west(VehDataType *vehicle);
 
-/* True after the library reported DESTROYED / MISSION OVER (do not Close). */
+/* Returns true once SatComRelay reports DESTROYED or MISSION OVER. */
 bool mission_control_is_mission_over(void);
 
-/* Validate amount locally, then AllocateToShield and refresh *vehicle.
- * Returns false if rejected before calling the API (≤0 or > currEnergy). */
-bool mission_control_allocate_shield(VehDataType *vehicle, long amount); /* was vdt */
+/* Check that 1 <= amount <= currEnergy, then transfer energy to shields. */
+bool mission_control_allocate_shield(VehDataType *vehicle, long amount);
 
-/* Scan radius mode: starts at 1; toggle flips 1 <-> 2. */
+/* Read, toggle (1 <-> 2), or set the active scan radius. */
 int mission_control_get_scan_radius(void);
 int mission_control_toggle_scan_radius(void);
 int mission_control_set_scan_radius(int radius);
 
-/* Call Scan* or Scan*2 for dir based on current radius; refresh *vehicle.
- * Returns the terrain char, or '\0' if the scan failed. */
-char mission_control_scan(VehDataType *vehicle, MissionControlScanDir dir); /* was vdt */
+/* Scan in direction dir at the active scan radius; returns '\0' on failure. */
+char mission_control_scan(VehDataType *vehicle, MissionControlScanDir dir);
 
-/* Relative (dx, dy) for dir at the current scan radius (1 or 2).
- * North decreases y; East increases x. */
+/* Compute relative grid offset (dx, dy) for dir at the active scan radius. */
 void mission_control_scan_offset(MissionControlScanDir dir, int *dx, int *dy);
 
 #endif /* MISSION_CONTROL_H */

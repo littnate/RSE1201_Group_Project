@@ -14,37 +14,45 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-#define AUTOPILOT_SHIELD_RESERVE 2500L 
-#define AUTOPILOT_END 'E' 
-#define AUTOPILOT_DANGER 'X' 
-#define AUTOPILOT_WALL '#' 
+#define AUTOPILOT_SHIELD_RESERVE 2500L
+#define AUTOPILOT_END 'E'
+#define AUTOPILOT_DANGER 'X'
+#define AUTOPILOT_WALL '#'
 
-static const char *scan_direction_labels[MISSION_CONTROL_DIR_COUNT] = { 
+/* Compass labels matching MissionControlScanDir enum order. */
+static const char *scan_direction_labels[MISSION_CONTROL_DIR_COUNT] = {
     "NW", "N", "NE", "W", "E", "SW", "S", "SE"
 };
 
-/* Prefer cheaper cardinal scans first. */
-static const MissionControlScanDir scan_order[MISSION_CONTROL_DIR_COUNT] = { /* was k_scan_order */
-    MISSION_CONTROL_DIR_NORTH, MISSION_CONTROL_DIR_EAST, MISSION_CONTROL_DIR_SOUTH, MISSION_CONTROL_DIR_WEST,
-    MISSION_CONTROL_DIR_NORTHEAST, MISSION_CONTROL_DIR_NORTHWEST, MISSION_CONTROL_DIR_SOUTHEAST, MISSION_CONTROL_DIR_SOUTHWEST
+/* Check cheaper cardinal scans (N, E, S, W) before diagonal scans. */
+static const MissionControlScanDir scan_order[MISSION_CONTROL_DIR_COUNT] = {
+    MISSION_CONTROL_DIR_NORTH,
+    MISSION_CONTROL_DIR_EAST,
+    MISSION_CONTROL_DIR_SOUTH,
+    MISSION_CONTROL_DIR_WEST,
+    MISSION_CONTROL_DIR_NORTHEAST,
+    MISSION_CONTROL_DIR_NORTHWEST,
+    MISSION_CONTROL_DIR_SOUTHEAST,
+    MISSION_CONTROL_DIR_SOUTHWEST
 };
 
+/* Pairs a direction character ('N', 'E', 'S', 'W') with its (dx, dy) step. */
 typedef struct {
-    bool (*move)(VehDataType *); 
+    char direction;
     int dx;
     int dy;
 } AutopilotMove;
 
-static const AutopilotMove cardinal_moves[4] = { 
-    { mission_control_move_north, 0, -1 },
-    { mission_control_move_east, 1, 0 },
-    { mission_control_move_south, 0, 1 },
-    { mission_control_move_west, -1, 0 },
+static const AutopilotMove cardinal_moves[4] = {
+    { 'N', 0, -1 },
+    { 'E', 1, 0 },
+    { 'S', 0, 1 },
+    { 'W', -1, 0 },
 };
 
-/* MissionControlScanDir order, radius 1. */
-static const int neighbor_dx[MISSION_CONTROL_DIR_COUNT] = { -1, 0, 1, -1, 1, -1, 0, 1 }; 
-static const int neighbor_dy[MISSION_CONTROL_DIR_COUNT] = { -1, -1, -1, 0, 0, 1, 1, 1 }; 
+/* Eight surrounding neighbour offsets at radius 1. */
+static const int neighbor_dx[MISSION_CONTROL_DIR_COUNT] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+static const int neighbor_dy[MISSION_CONTROL_DIR_COUNT] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 
 static bool autopilot_is_end(char ch)
 {
@@ -56,6 +64,7 @@ static bool autopilot_is_danger(char ch)
     return ch == AUTOPILOT_DANGER;
 }
 
+/* Return true only if (x, y) has been scanned and is safe to walk onto. */
 static bool autopilot_cell_is_passable(int x, int y)
 {
     char ch;
@@ -76,12 +85,14 @@ static bool autopilot_cell_is_passable(int x, int y)
     return true;
 }
 
+/* Return true if (x, y) has not been scanned yet and is not marked blocked. */
 static bool autopilot_unknown_at(int x, int y)
 {
     return !local_map_is_blocked(x, y) &&
            local_map_peek_terrain(x, y) == LOCAL_MAP_TERRAIN_UNKNOWN;
 }
 
+/* Return true if any known non-wall cell still has an unscanned neighbour. */
 static bool autopilot_unknown_cell_remains(void)
 {
     int min_x;
@@ -115,6 +126,7 @@ static bool autopilot_unknown_cell_remains(void)
     return false;
 }
 
+/* Return true if any safe scanned cell has not been stepped on yet. */
 static bool autopilot_has_unvisited_passable(void)
 {
     int min_x;
@@ -139,6 +151,7 @@ static bool autopilot_has_unvisited_passable(void)
     return false;
 }
 
+/* Return true if at least one 'E' was found and every known 'E' was visited. */
 static bool autopilot_all_known_ends_visited(void)
 {
     int min_x;
@@ -173,6 +186,7 @@ static unsigned autopilot_end_count(void)
     return local_map_count_scanned(AUTOPILOT_END);
 }
 
+/* Check whether the goal condition for mission_type (1-8) has been met. */
 static bool autopilot_goal_met(int mission_type)
 {
     char here;
@@ -205,47 +219,53 @@ static bool autopilot_goal_met(int mission_type)
     }
 }
 
-static bool autopilot_action_limit_reached(const AutopilotOptions *opt, const char **why)
+/* Check battery floor and move/scan action limits, printing the stop reason. */
+static bool autopilot_stop_limit_hit(const VehDataType *vehicle,
+                                     const AutopilotOptions *opt)
 {
     StatsCounters s = stats_get();
 
-    if (opt->max_moves > 0 && s.moves_issued >= opt->max_moves) {
-        *why = "move limit reached.";
-        return true;
-    }
-    if (opt->max_scans > 0 && s.scans_issued >= opt->max_scans) {
-        *why = "scan limit reached.";
-        return true;
-    }
-    return false;
-}
-
-static bool autopilot_energy_below_floor(const VehDataType *vehicle, 
-                          const AutopilotOptions *opt,
-                          const char **why)
-{
     if (vehicle->currEnergy <= 0) {
-        *why = "energy depleted.";
+        printf("Auto-pilot stopped: energy depleted.\n");
         return true;
     }
     if (vehicle->currEnergy < opt->energy_floor) {
-        *why = "energy below limit.";
+        printf("Auto-pilot stopped: energy below limit.\n");
+        return true;
+    }
+    if (opt->max_moves > 0 && s.moves_issued >= opt->max_moves) {
+        printf("Auto-pilot stopped: move limit reached.\n");
+        return true;
+    }
+    if (opt->max_scans > 0 && s.scans_issued >= opt->max_scans) {
+        printf("Auto-pilot stopped: scan limit reached.\n");
         return true;
     }
     return false;
 }
 
+/* Initialize default auto-pilot options before user configuration. */
 void autopilot_options_set_defaults(AutopilotOptions *opt)
 {
     if (opt == NULL) {
         return;
     }
-    memset(opt, 0, sizeof *opt);
+    memset(opt, 0, sizeof(*opt));
     opt->map_scan = true;
     opt->map_move = true;
     opt->energy_floor = 1;
 }
 
+/* Helper returning "y" or "n" for printing boolean option flags. */
+static const char *yes_no_text(bool flag)
+{
+    if (flag) {
+        return "y";
+    }
+    return "n";
+}
+
+/* Print a summary of the active auto-pilot configuration. */
 void autopilot_print_options(const AutopilotOptions *opt)
 {
     if (opt == NULL) {
@@ -253,25 +273,26 @@ void autopilot_print_options(const AutopilotOptions *opt)
     }
 
     printf("\n[ Auto-pilot options ]\n");
-    printf("  Stats after every action : %s\n", opt->stats_every ? "y" : "n");
+    printf("  Stats after every action : %s\n", yes_no_text(opt->stats_every));
     if (!opt->stats_every) {
         printf("  Stats after scan/move/shield : %s / %s / %s\n",
-               opt->stats_scan ? "y" : "n",
-               opt->stats_move ? "y" : "n",
-               opt->stats_shield ? "y" : "n");
+               yes_no_text(opt->stats_scan),
+               yes_no_text(opt->stats_move),
+               yes_no_text(opt->stats_shield));
     }
     printf("  Map after scan / move : %s / %s\n",
-           opt->map_scan ? "y" : "n",
-           opt->map_move ? "y" : "n");
+           yes_no_text(opt->map_scan),
+           yes_no_text(opt->map_move));
     printf("  Delays t1..t7 (s) : %ld %ld %ld %ld %ld %ld %ld\n",
            opt->t1, opt->t2, opt->t3, opt->t4, opt->t5, opt->t6, opt->t7);
     printf("  Stop if energy < %ld, moves > %lu (0=off), scans > %lu (0=off)\n",
            opt->energy_floor, opt->max_moves, opt->max_scans);
 }
 
+/* Run the 'o' configuration prompts (applying Appendix A skip rules). */
 bool autopilot_prompt_options(AutopilotOptions *opt)
 {
-    long entered_cap; 
+    long entered_cap;
 
     if (opt == NULL) {
         return false;
@@ -290,6 +311,7 @@ bool autopilot_prompt_options(AutopilotOptions *opt)
         return false;
     }
 
+    /* Skip Q2-Q4 if Q1 already enabled stats after every action */
     if (!opt->stats_every) {
         if (!util_prompt_yes_no_default(
                 "2) After every scan, show energy stats? (y/n) [n] : ",
@@ -334,6 +356,7 @@ bool autopilot_prompt_options(AutopilotOptions *opt)
         return false;
     }
 
+    /* Skip per-action delays t5-t7 if global delay t4 is non-zero */
     if (opt->t4 == 0) {
         if (!util_prompt_long_default(
                 "11) t5 secs delay after each auto scan [0] : ",
@@ -371,13 +394,14 @@ bool autopilot_prompt_options(AutopilotOptions *opt)
     return true;
 }
 
+/* Peek at stdin without blocking to see if the user entered 'p' or 'q'. */
 static bool autopilot_poll_interrupt(char *cmd)
 {
     fd_set rfds;
     struct timeval tv;
     int n;
 
-    
+    /* Ignore piped input so scripted commands after 'p' are not consumed early */
     if (!isatty(STDIN_FILENO)) {
         return false;
     }
@@ -395,6 +419,7 @@ static bool autopilot_poll_interrupt(char *cmd)
     return *cmd == 'p' || *cmd == 'q';
 }
 
+/* Sleep one second at a time while checking for 'p' or 'q' interrupts. */
 static bool autopilot_sleep_secs(long secs, char *cmd)
 {
     long i;
@@ -411,12 +436,13 @@ static bool autopilot_sleep_secs(long secs, char *cmd)
     return false;
 }
 
+/* Apply configured post-display and post-action delays (t1..t7). */
 static bool autopilot_show_action_result(const AutopilotOptions *opt,
-                            char kind,
-                            bool printed_stats,
-                            bool printed_scan_map,
-                            bool printed_move_map,
-                            char *cmd)
+                                         char kind,
+                                         bool printed_stats,
+                                         bool printed_scan_map,
+                                         bool printed_move_map,
+                                         char *cmd)
 {
     if (printed_stats && autopilot_sleep_secs(opt->t1, cmd)) {
         return true;
@@ -447,14 +473,14 @@ typedef struct {
     int y;
 } AutopilotPoint;
 
-static bool autopilot_bfs_step(int goal_x,
-                        int goal_y,
-                        bool any_frontier,
-                        bool any_unvisited,
-                        bool any_unvisited_end,
-                        bool any_end,
-                        int *out_dx,
-                        int *out_dy)
+/* Find the shortest safe path to a goal cell using Breadth-First Search (BFS)
+ * and output only the immediate first step (out_dx, out_dy). */
+static bool autopilot_bfs_step(bool any_frontier,
+                               bool any_unvisited,
+                               bool any_unvisited_end,
+                               bool any_end,
+                               int *out_dx,
+                               int *out_dy)
 {
     int min_x;
     int max_x;
@@ -468,20 +494,18 @@ static bool autopilot_bfs_step(int goal_x,
     int head;
     int tail;
     int i;
-    AutopilotPoint *q;
-    int *came;
-    bool *seen;
+    AutopilotPoint *queue;
+    int *came_from;
+    bool *visited;
     bool found = false;
     int fx = 0;
     int fy = 0;
-
-    (void)goal_x;
-    (void)goal_y;
 
     if (!local_map_has_grid()) {
         return false;
     }
 
+    /* Build a search window covering the known map plus a 1-cell margin */
     local_map_get_bounds(&min_x, &max_x, &min_y, &max_y);
     min_x--;
     min_y--;
@@ -494,28 +518,31 @@ static bool autopilot_bfs_step(int goal_x,
         return false;
     }
 
-    q = malloc((size_t)cap * sizeof *q);
-    came = malloc((size_t)cap * sizeof *came);
-    seen = calloc((size_t)cap, sizeof *seen);
-    if (q == NULL || came == NULL || seen == NULL) {
-        free(q);
-        free(came);
-        free(seen);
+    /* Allocate BFS queue, parent breadcrumb table, and visited flags */
+    queue = malloc((size_t)cap * sizeof(*queue));
+    came_from = malloc((size_t)cap * sizeof(*came_from));
+    visited = calloc((size_t)cap, sizeof(*visited));
+    if (queue == NULL || came_from == NULL || visited == NULL) {
+        free(queue);
+        free(came_from);
+        free(visited);
         return false;
     }
 
+    /* Enqueue vehicle's starting position (sx, sy) */
     sx = local_map_get_x();
     sy = local_map_get_y();
     head = 0;
     tail = 0;
-    q[tail].x = sx;
-    q[tail].y = sy;
+    queue[tail].x = sx;
+    queue[tail].y = sy;
     tail++;
-    seen[(sy - min_y) * w + (sx - min_x)] = true;
-    came[(sy - min_y) * w + (sx - min_x)] = -1;
+    visited[(sy - min_y) * w + (sx - min_x)] = true;
+    came_from[(sy - min_y) * w + (sx - min_x)] = -1;
 
+    /* Expand outward layer-by-layer until a matching goal cell is reached */
     while (head < tail) {
-        AutopilotPoint cur = q[head++];
+        AutopilotPoint cur = queue[head++];
         int ci = (cur.y - min_y) * w + (cur.x - min_x);
         bool is_goal = false;
 
@@ -536,18 +563,16 @@ static bool autopilot_bfs_step(int goal_x,
                     break;
                 }
             }
-        } else {
-            is_goal = (cur.x == goal_x && cur.y == goal_y);
         }
 
         if (is_goal && !(cur.x == sx && cur.y == sy)) {
             found = true;
             fx = cur.x;
             fy = cur.y;
-            (void)ci;
             break;
         }
 
+        /* Add safe, unvisited cardinal neighbours to the back of the queue */
         for (i = 0; i < 4; i++) {
             int nx = cur.x + cardinal_moves[i].dx;
             int ny = cur.y + cardinal_moves[i].dy;
@@ -560,43 +585,45 @@ static bool autopilot_bfs_step(int goal_x,
                 continue;
             }
             ni = (ny - min_y) * w + (nx - min_x);
-            if (seen[ni]) {
+            if (visited[ni]) {
                 continue;
             }
-            seen[ni] = true;
-            came[ni] = ci;
-            q[tail].x = nx;
-            q[tail].y = ny;
+            visited[ni] = true;
+            came_from[ni] = ci;
+            queue[tail].x = nx;
+            queue[tail].y = ny;
             tail++;
         }
     }
 
+    /* Trace breadcrumbs back from goal to find the first step from (sx, sy) */
     if (found) {
         int gi = (fy - min_y) * w + (fx - min_x);
         int si = (sy - min_y) * w + (sx - min_x);
-        int prev = gi;
+        int step_index = gi;
 
-        while (came[prev] != si && came[prev] != -1) {
-            prev = came[prev];
+        while (came_from[step_index] != si && came_from[step_index] != -1) {
+            step_index = came_from[step_index];
         }
-        if (came[prev] == si) {
-            int px = min_x + (prev % w);
-            int py = min_y + (prev / w);
+        if (came_from[step_index] == si) {
+            int px = min_x + (step_index % w);
+            int py = min_y + (step_index / w);
             *out_dx = px - sx;
             *out_dy = py - sy;
-            free(q);
-            free(came);
-            free(seen);
+            free(queue);
+            free(came_from);
+            free(visited);
             return true;
         }
     }
 
-    free(q);
-    free(came);
-    free(seen);
+    free(queue);
+    free(came_from);
+    free(visited);
     return false;
 }
 
+/* Pick an unscanned cell within radius 1 or 2 (cardinal directions first). */
 static bool autopilot_pick_scan(MissionControlScanDir *dir, int *radius)
 {
     int r;
@@ -624,33 +651,31 @@ static bool autopilot_pick_scan(MissionControlScanDir *dir, int *radius)
     return false;
 }
 
+/* Choose the next cardinal move toward the mission goal or open frontier. */
 static bool autopilot_pick_move(int mission_type, int *move_i)
 {
     int dx = 0;
     int dy = 0;
+    bool step_found = false;
     int i;
 
     if (mission_type == 3) {
-        if (autopilot_bfs_step(0, 0, false, false, false, true, &dx, &dy)) {
-            goto found;
-        }
+        step_found = autopilot_bfs_step(false, false, false, true, &dx, &dy);
+    } else if (mission_type == 5) {
+        step_found = autopilot_bfs_step(false, false, true, false, &dx, &dy);
+    } else if (mission_type == 8) {
+        step_found = autopilot_bfs_step(false, true, false, false, &dx, &dy);
     }
-    if (mission_type == 5) {
-        if (autopilot_bfs_step(0, 0, false, false, true, false, &dx, &dy)) {
-            goto found;
-        }
-    }
-    if (mission_type == 8) {
-        if (autopilot_bfs_step(0, 0, false, true, false, false, &dx, &dy)) {
-            goto found;
-        }
-    }
-    if (autopilot_bfs_step(0, 0, true, false, false, false, &dx, &dy)) {
-        goto found;
-    }
-    return false;
 
-found:
+    /* Fall back to approaching the nearest unscanned frontier */
+    if (!step_found) {
+        step_found = autopilot_bfs_step(true, false, false, false, &dx, &dy);
+    }
+    if (!step_found) {
+        return false;
+    }
+
+    /* Match (dx, dy) to its entry in cardinal_moves[0..3] */
     for (i = 0; i < 4; i++) {
         if (cardinal_moves[i].dx == dx && cardinal_moves[i].dy == dy) {
             *move_i = i;
@@ -660,7 +685,8 @@ found:
     return false;
 }
 
-static long autopilot_shield_amount(const VehDataType *vehicle) 
+/* Calculate how much battery energy to divert when shields run low. */
+static long autopilot_shield_amount(const VehDataType *vehicle)
 {
     long chunk = vehicle->currEnergy / 10;
 
@@ -676,13 +702,26 @@ static long autopilot_shield_amount(const VehDataType *vehicle)
     return chunk;
 }
 
-AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, AutopilotOptions *opt)
+/* Print stop message and return matching result when interrupted by 'p' or 'q'. */
+static AutopilotRunResult stop_on_interrupt(char cmd)
+{
+    if (cmd == 'q') {
+        printf("Auto-pilot stopped: quit.\n");
+        return AUTOPILOT_RUN_QUIT;
+    }
+    printf("Auto-pilot stopped: toggled off.\n");
+    return AUTOPILOT_RUN_PAUSED;
+}
+
+/* Main auto-pilot loop: check stop rules, maintain shields, scan, or BFS move. */
+AutopilotRunResult autopilot_run(VehDataType *vehicle,
+                                 int mission_type,
+                                 AutopilotOptions *opt)
 {
     printf("\nAuto-pilot ON (mission type %d). Press p to pause, q to quit.\n",
            mission_type);
 
-    for (;;) {
-        const char *why = NULL;
+    while (true) {
         char cmd = '\0';
         MissionControlScanDir sdir;
         int radius;
@@ -691,15 +730,12 @@ AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, Autopil
         bool print_map;
         long chunk;
 
+        /* 1. Check whether the user typed 'p' or 'q' */
         if (autopilot_poll_interrupt(&cmd)) {
-            if (cmd == 'q') {
-                printf("Auto-pilot stopped: quit.\n");
-                return AUTOPILOT_RUN_QUIT;
-            }
-            printf("Auto-pilot stopped: toggled off.\n");
-            return AUTOPILOT_RUN_PAUSED;
+            return stop_on_interrupt(cmd);
         }
 
+        /* 2. Check mission completion, destruction, battery floor, and caps */
         if (mission_control_is_mission_over()) {
             printf("Auto-pilot stopped: mission over.\n");
             return AUTOPILOT_RUN_PAUSED;
@@ -708,25 +744,26 @@ AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, Autopil
             printf("Auto-pilot stopped: mission objective achieved.\n");
             return AUTOPILOT_RUN_PAUSED;
         }
-        if (autopilot_energy_below_floor(vehicle, opt, &why) || autopilot_action_limit_reached(opt, &why)) {
-            printf("Auto-pilot stopped: %s\n", why);
+        if (autopilot_stop_limit_hit(vehicle, opt)) {
             return AUTOPILOT_RUN_PAUSED;
         }
 
+        /* 3. Top up shields if below reserve threshold */
         if (vehicle->currShieldEnergy < AUTOPILOT_SHIELD_RESERVE &&
             vehicle->currEnergy > AUTOPILOT_SHIELD_RESERVE) {
             chunk = autopilot_shield_amount(vehicle);
             if (chunk > 0) {
                 print_stats = opt->stats_every || opt->stats_shield;
                 printf("Auto-pilot: allocate %ld to shields.\n", chunk);
-                (void)veh_action_allocate(vehicle, chunk, print_stats);
+                veh_action_allocate(vehicle, chunk, print_stats);
                 if (autopilot_show_action_result(opt, 'i', print_stats, false, false, &cmd)) {
-                    goto interrupted;
+                    return stop_on_interrupt(cmd);
                 }
                 continue;
             }
         }
 
+        /* 4. Scan any nearby unknown cell at radius 1 or 2 */
         if (autopilot_pick_scan(&sdir, &radius)) {
             StatsCounters before = stats_get();
 
@@ -742,11 +779,12 @@ AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, Autopil
                    radius);
             veh_action_scan(vehicle, sdir, scan_direction_labels[sdir], print_stats, print_map);
             if (autopilot_show_action_result(opt, 's', print_stats, print_map, false, &cmd)) {
-                goto interrupted;
+                return stop_on_interrupt(cmd);
             }
             continue;
         }
 
+        /* 5. Step along shortest safe BFS path toward goal or frontier */
         if (autopilot_pick_move(mission_type, &move_i)) {
             StatsCounters before = stats_get();
 
@@ -760,26 +798,19 @@ AutopilotRunResult autopilot_run(VehDataType *vehicle, int mission_type, Autopil
                    cardinal_moves[move_i].dx,
                    cardinal_moves[move_i].dy);
             veh_action_move(vehicle,
-                            cardinal_moves[move_i].move,
+                            cardinal_moves[move_i].direction,
                             cardinal_moves[move_i].dx,
                             cardinal_moves[move_i].dy,
                             print_stats,
                             print_map);
             if (autopilot_show_action_result(opt, 'm', print_stats, false, print_map, &cmd)) {
-                goto interrupted;
+                return stop_on_interrupt(cmd);
             }
             continue;
         }
 
+        /* 6. Nothing left to scan or reach */
         printf("Auto-pilot stopped: stuck / map exhausted.\n");
-        return AUTOPILOT_RUN_PAUSED;
-
-interrupted:
-        if (cmd == 'q') {
-            printf("Auto-pilot stopped: quit.\n");
-            return AUTOPILOT_RUN_QUIT;
-        }
-        printf("Auto-pilot stopped: toggled off.\n");
         return AUTOPILOT_RUN_PAUSED;
     }
 }
