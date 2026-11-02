@@ -693,9 +693,6 @@ static long autopilot_shield_amount(const VehDataType *vehicle)
     if (chunk < 1000) {
         chunk = vehicle->currEnergy / 2;
     }
-    if (chunk >= vehicle->currEnergy) {
-        chunk = vehicle->currEnergy / 2;
-    }
     if (chunk < 1) {
         return 0;
     }

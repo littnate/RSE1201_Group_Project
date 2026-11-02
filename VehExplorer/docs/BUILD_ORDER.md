@@ -1,14 +1,60 @@
 # BUILD_ORDER.md — Independently testable build slices
 
-MS_1 (B0–B20) and MS_2 (M2-0 through C16) are complete.  
-Current scope: **presentation link** — `libsatcom.so` and the reveal `.dat` files.  
+MS_1 (B0–B20), MS_2 (M2-0 through C16), and the student-style refactor (S0) are complete.  
+Current scope: **presentation** — slides and demo on the simplified sources.  
 Check off when verification passes. No implementation design here — order and proof only.
+
+---
+
+## Progress (slides)
+
+- [x] SL1 — Slide flow diagrams: MS1 overall, MS2 overall, scan, explore
+- [x] SL1b — Slide call graphs: which source file calls which, MS1 and MS2
+- [x] SL1c — MS1 slide: how `SatComRelay.h` was read, and which of our functions call it
+- [ ] SL2 — Assemble the slide deck and demo script
+
+### SL1 — Slide flow diagrams
+
+- **Objective:** Compact program-flow diagrams for the presentation: overall architecture for MS1 and MS2, plus scan and explore as separate flows.
+- **Dependencies:** S0 sources (the behaviour the diagrams describe).
+- **Deliverable:** Diagrams in the slides chat, matched to `main`, `ui_cli`, `veh_action`, and `autopilot_run`. No new program behaviour.
+- **Verification:** Each box names a stage or call that exists in those files. Scan writes the scanned grid only. A successful move marks the cell explored. MS2 `p` reuses `veh_action_*` and does not call SatComRelay itself.
+
+Drafted 2026-11-02. No binary change, so the existing `bin/VehExplorer.run` session was left running.
+
+### SL1b — File call graphs
+
+- **Objective:** One slide-sized chart of cross-file calls for manual control, and one with `autopilot.c` added.
+- **Dependencies:** SL1.
+- **Deliverable:** Diagrams in the slides chat. Arrow means a call into that file. Each arrow has a few words for when that call happens.
+- **Verification:** MS1 edges match `main.c`, `ui_cli.c`, `veh_action.c`, `mission_control.c`, `stats.c`. MS2 adds `ui_cli.c` → `autopilot.c`, and `autopilot.c` calls `veh_action`, `mission_control`, `local_map`, `stats`, and `util_input` only. `autopilot.c` does not call `SCRelay_Signal_Veh_*`.
+
+Drafted 2026-11-02. No binary change.
+
+### SL1c — SatComRelay usage (MS1)
+
+- **Objective:** One slide section on how the public header was interpreted, and which of our functions call each group.
+- **Dependencies:** SL1b.
+- **Deliverable:** Diagram and table in the slides chat. Only `main.c` and `mission_control.c` call `SCRelay_Signal_Veh_*`. The four `Print*` functions are unused.
+- **Verification:** Matches `MS_1_files/SatComRelay.h`, `main.c`, `mission_control.c`, and `docs/evidence/B16-discovery-notes.md`.
+
+Drafted 2026-11-02. No binary change.
 
 ---
 
 ## Progress (presentation link)
 
 - [x] P0 — Link `libsatcom.so`; smoke-test the reveal scenarios
+- [x] S0 — Student-style refactor from `nathan` (`be7b116`)
+
+### S0 — Student-style refactor
+
+- **Objective:** Keep MS_1 and MS_2 behaviour, written with `switch`, `if` / `else`, and `while (true)` instead of function pointers, `goto`, and ternaries.
+- **Dependencies:** P0.
+- **Deliverable:** Fast-forward of `origin/nathan` onto `main`. Same eight modules. Study guides in `docs/v2_student_*.md`.
+- **Verification:** `gcc -Wall -Wextra` from `VehExplorer/` with the usual link line, no warnings. Same scripted stdin on this binary and the previous `main` binary. Manual session on `New_2026_Basic_Scenario_MS_1.dat` (allocate 10000, north move, north scan, quit) and type 1 auto on `New_2026_Test_Scenario_MS_2.dat` (maps off, delays 0, move cap 3). Transcripts identical: auto stopped `move limit reached`, 3 successful moves, 31 successful scans.
+
+Verified 2026-11-01 on WSL after the fast-forward. Local `bin/VehExplorer.run` was rebuilt from the new sources.
 
 ### P0 — Shared library link
 
